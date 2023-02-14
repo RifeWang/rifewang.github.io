@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Elasticsearch on 凌虚 Blog</title><link>https://rifewang.github.io/categories/elasticsearch/</link><description>Recent content in Elasticsearch on 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 15 Apr 2022 00:00:00 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/elasticsearch/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch 向量搜索</title><link>https://rifewang.github.io/posts/es-vector-search/</link><pubDate>Fri, 15 Apr 2022 00:00:00 +0800</pubDate><guid>https://rifewang.github.io/posts/es-vector-search/</guid><description>Elasticsearch 向量搜索 Link to heading 本文将会介绍 Elasticsearch 向量搜索的两种方式。
+向量搜索 Link to heading 提到向量搜索，我想你一定想知道：
+向量搜索是什么？ 向量搜索的应用场景有哪些？ 向量搜索与全文搜索有何不同？ ES 的全文搜索简而言之就是将文本进行分词，然后基于词通过 BM25 算法计算相关性得分，从而找到与搜索语句相似的文本，其本质上是一种 term-based（基于词）的搜索。
+全文搜索的实际使用已经非常广泛，核心技术也非常成熟。但是，除了文本内容之外，现实生活中还有非常多其它的数据形式，例如：图片、音频、视频等等，我们能不能也对这些数据进行搜索呢？
+答案是 Yes !
+随着机器学习和人工智能等技术的发展，万物皆可 Embedding。换句话说就是，我们可以对文本、图片、音频、视频等等一切数据通过 Embedding 相关技术将其转换成特征向量，而一旦向量有了，向量搜索的需求随之也越发强烈，向量搜索的应用场景也变得一望无际、充满想象力。
+ES 向量搜索说明 Link to heading ES 向量搜索目前有两种方式:
+script_score _knn_search script_score 精确搜索 Link to heading ES 7.6 版本对新增的字段类型 dense_vector 确认了稳定性保证，这个字段类型就是用来表示向量数据的。
+数据建模示例：
+PUT my-index { &amp;#34;mappings&amp;#34;: { &amp;#34;properties&amp;#34;: { &amp;#34;my_vector&amp;#34;: { &amp;#34;type&amp;#34;: &amp;#34;dense_vector&amp;#34;, &amp;#34;dims&amp;#34;: 128 }, &amp;#34;my_text&amp;#34; : { &amp;#34;type&amp;#34; : &amp;#34;keyword&amp;#34; } } } } 如上图所示，我们在索引中建立了一个 dims 维度为 128 的向量数据字段。</description></item></channel></rss>
