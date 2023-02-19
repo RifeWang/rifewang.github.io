@@ -8,7 +8,8 @@ draft: false
 
 [![Github](https://img.shields.io/badge/-Github-000?style=flat&logo=Github&logoColor=white)](https://github.com/RifeWang)   [![Gmail](https://img.shields.io/badge/-rifewang@gmail.com-c14438?style=flat&logo=Gmail&logoColor=white&link=mailto:rifewang@gmail.com)](mailto:rifewang@gmail.com)
 
-- 🧑‍💻 A back-end software developer.
+- 🧑‍💻 A back-end software developer and system architect.
+- ❤️ Love node.js and go, good at elasticsearch and kubernetes.
 - 🏠 Currently working and living in Hangzhou, China.
 - 💬 You can communicate technical issues with me through my WeChat: [rifewang](./Wechat-rifewang.jpeg) .
 
