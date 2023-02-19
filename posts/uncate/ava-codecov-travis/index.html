@@ -1,0 +1,112 @@
+<!doctype html><html lang=en><head><title>给你的库加上酷炫的小徽章 · 凌虚 Blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="凌虚"><meta name=description content="给你的库加上酷炫的小徽章"><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="给你的库加上酷炫的小徽章"><meta name=twitter:description content="给你的库加上酷炫的小徽章"><meta property="og:title" content="给你的库加上酷炫的小徽章"><meta property="og:description" content="给你的库加上酷炫的小徽章"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/posts/uncate/ava-codecov-travis/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-12-21T13:36:00+08:00"><meta property="article:modified_time" content="2019-12-21T13:36:00+08:00"><link rel=canonical href=https://rifewang.github.io/posts/uncate/ava-codecov-travis/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.0fa2dc75ed1b76894ac0e062b10a6c4730daa745096fa120114b290ed8a48788.css integrity="sha256-D6Lcde0bdolKwOBisQpsRzDap0UJb6EgEUspDtikh4g=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.593028e7f7ac55c003b79c230d1cd411bb4ca53b31556c3abb7f027170e646e9.css integrity="sha256-WTAo5/esVcADt5wjDRzUEbtMpTsxVWw6u38CcXDmRuk=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5><meta name=generator content="Hugo 0.110.0"></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>凌虚 Blog</a>
+<input type=checkbox id=menu-toggle>
+<label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Blog</a></li><li class=navigation-item><a class=navigation-link href=/about/>About</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://rifewang.github.io/posts/uncate/ava-codecov-travis/>给你的库加上酷炫的小徽章</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2019-12-21T13:36:00+08:00>December 21, 2019</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+3-minute read</span></div><div class=tags><i class="fa fa-tag" aria-hidden=true></i>
+<span class=tag><a href=/tags/github/>github</a></span>
+<span class=separator>•</span>
+<span class=tag><a href=/tags/node.js/>node.js</a></span></div></div></header><div class=post-content><h1 id=给库加上酷炫的小徽章--avacodecovtravis-示例>给库加上酷炫的小徽章 & ava、codecov、travis 示例
+<a class=heading-link href=#%e7%bb%99%e5%ba%93%e5%8a%a0%e4%b8%8a%e9%85%b7%e7%82%ab%e7%9a%84%e5%b0%8f%e5%be%bd%e7%ab%a0--avacodecovtravis-%e7%a4%ba%e4%be%8b><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>GitHub 很多开源库都会有几个酷炫的小徽章，比如：</p><p><img src=https://img.shields.io/npm/v/io-memcached/latest alt="npm (tag)"> <img src=https://img.shields.io/travis/com/rifewang/io-memcached alt="Travis (.com)"> <img src=https://img.shields.io/codecov/c/github/rifewang/io-memcached alt=Codecov> <img src=https://img.shields.io/npm/l/io-memcached alt=NPM> <img src=https://img.shields.io/github/last-commit/rifewang/io-memcached alt="GitHub last commit"></p><p>这些是怎么加上去的呢？</p><h2 id=shieldsio>Shields.io
+<a class=heading-link href=#shieldsio><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>首先这些徽章可以直接去 <a href=https://shields.io/>shields.io</a> 网站自动生成。</p><p>比如：</p><p><img src=https://img.shields.io/npm/v/io-memcached/latest alt="npm (tag)"></p><p>就是 <code>version</code> 这一类里的一种图标，选择 npm 一栏填入包名，然后复制成 Markdown 内容，就会得到诸如：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>![npm (tag)](https://img.shields.io/npm/v/io-memcached/latest)
+</span></span></code></pre></div><p>直接粘贴在 .md 文件中就可以使用了，最后展现的就是这个图标。</p><p>当然还有其他很多徽章都任由你挑选，不过某些徽章是需要额外进行一些配置，比如这里的 <img src=https://img.shields.io/travis/com/rifewang/io-memcached alt="Travis (.com)"> (自动构建通过) 和 <img src=https://img.shields.io/codecov/c/github/rifewang/io-memcached alt=Codecov> (测试覆盖率)。</p><h2 id=ava>AVA
+<a class=heading-link href=#ava><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>谈到测试覆盖率必须先有单元测试，本文使用 <code>ava</code> 作为示例，<code>ava</code> 是一个 js 测试库，强烈推荐你使用它。</p><p>1、安装</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>npm init ava
+</span></span></code></pre></div><p>2、使用示例</p><p>编写 <code>test.js</code> 文件：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>import test from &#39;ava&#39;
+</span></span><span style=display:flex><span>import Memcached from &#39;../lib/memcached&#39;;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>test.before(t =&gt; {
+</span></span><span style=display:flex><span>	const memcached = new Memcached([&#39;127.0.0.1:11211&#39;], {
+</span></span><span style=display:flex><span>        pool: {
+</span></span><span style=display:flex><span>            max: 2,
+</span></span><span style=display:flex><span>            min: 0
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        timeout: 5000
+</span></span><span style=display:flex><span>    });
+</span></span><span style=display:flex><span>    t.context.memcached = memcached;
+</span></span><span style=display:flex><span>});
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>test(&#39;memcached get/set&#39;, async t =&gt; {
+</span></span><span style=display:flex><span>    try {
+</span></span><span style=display:flex><span>        t.plan(3);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        const key = &#39;testkey&#39;;
+</span></span><span style=display:flex><span>        const testdata = &#39;testest\r\n\stese&#39;;
+</span></span><span style=display:flex><span>        const r = await t.context.memcached.set(key, testdata);
+</span></span><span style=display:flex><span>        t.is(r, &#39;STORED&#39;);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        const g = await t.context.memcached.get(key, testdata);
+</span></span><span style=display:flex><span>        t.is(g, testdata);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        const dr = await t.context.memcached.del(key);
+</span></span><span style=display:flex><span>        t.is(dr, &#39;DELETED&#39;);
+</span></span><span style=display:flex><span>    } catch (error) {
+</span></span><span style=display:flex><span>        t.fail(error.message);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>});
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>test(&#39;unit test title&#39;, t =&gt; {
+</span></span><span style=display:flex><span>    t.pass();
+</span></span><span style=display:flex><span>});
+</span></span></code></pre></div><p>说明：</p><ul><li><p><code>ava</code> 本身就支持很多 es6 及以上的特性，你不用另外再使用 babel 。</p></li><li><p><code>test.before</code> 就是一个钩子，你可以通过 <code>context</code> 向后传递变量并使用。</p></li><li><p><code>test('title', t => {})</code> 函数构造我们的单元测试，每项测试的名称可以自己定义，使用非常方便，多个 test 之间是并发执行的，如果你需要依次执行则使用 <code>test.serial()</code>。</p></li><li><p><code>t.plan()</code> 声明了每项测试中应该有几次断言。</p></li><li><p><code>t.is()</code> 则是进行断言判断。</p></li><li><p><code>t.fail()</code> 声明单项测试不通过。</p></li><li><p><code>t.pass()</code> 声明单项测试通过。</p></li></ul><p>当然这里只是展示了很少的几个用法，更多详细的内容看官方文档。</p><h3 id=coverage>coverage
+<a class=heading-link href=#coverage><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>单元测试有了，但是还没有测试覆盖率，为此我们还需要 <code>nyc</code> 。</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>npm install --save-dev nyc
+</span></span></code></pre></div><p>修改 <code>package.json</code> 文件:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;scripts&#34;: {
+</span></span><span style=display:flex><span>		&#34;test&#34;: &#34;nyc ava&#34;
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>获取测试覆盖率时会生成相关的文件，我们在 <code>.gitignore</code> 中忽略它们即可:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>.nyc_output
+</span></span><span style=display:flex><span>coverage*
+</span></span></code></pre></div><p>当我们再执行 <code>npm test</code> 时，其就会执行单元测试，并且获取测试覆盖率，结果类似于:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>$ npm test
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>&gt; nyc ava
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  4 tests passed
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>--------------|----------|----------|----------|----------|-------------------|
+</span></span><span style=display:flex><span>File          |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+</span></span><span style=display:flex><span>--------------|----------|----------|----------|----------|-------------------|
+</span></span><span style=display:flex><span>All files     |    72.07 |    63.37 |    79.49 |    72.07 |                   |
+</span></span><span style=display:flex><span> memcached.js |    72.59 |    64.37 |    74.19 |    72.59 |... 13,419,428,439 |
+</span></span><span style=display:flex><span> utils.js     |       68 |    57.14 |      100 |       68 |... 70,72,73,75,76 |
+</span></span><span style=display:flex><span>--------------|----------|----------|----------|----------|-------------------|
+</span></span></code></pre></div><h2 id=codecov>Codecov
+<a class=heading-link href=#codecov><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>测试覆盖率也有了，但这只是本地的，我们还不能生成 <img src=https://img.shields.io/codecov/c/github/rifewang/io-memcached alt=Codecov> 这种徽章。</p><p>为此，本文选择了 <a href=https://codecov.io/>codecov</a> 平台，我们需要使用 GitHub 账号登录 <a href=https://codecov.io/>codecov</a> 并关联我们的 repository 库，同时我们需要生成一个 token 令牌以便后续使用。</p><p>安装 <code>codecov</code> :</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>npm install --save-dev codecov
+</span></span></code></pre></div><p>在 <code>package.json</code> 文件中增加一个上报测试覆盖率的脚本:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;scripts&#34;: {
+</span></span><span style=display:flex><span>		&#34;report-coverage&#34;: &#34;nyc report --reporter=text-lcov &gt; coverage.lcov &amp;&amp; codecov&#34;
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>上报测试覆盖率的结果给 <a href=https://codecov.io/>codecov</a> 是需要权限的，这里的权限需要配置环境变量 <code>CODECOV_TOKEN=&lt;token></code> ，token 就是刚刚在 <a href=https://codecov.io/>codecov</a> 平台上设置的令牌，然后执行 <code>npm run report-coverage</code> 才会成功。</p><h2 id=travis-ci>Travis-ci
+<a class=heading-link href=#travis-ci><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>本文使用 <a href=https://travis-ci.com/>travis-ci</a> 来做持续集成，同样的你需要使用 GitHub 账号登录 <a href=https://travis-ci.com/>travis-ci</a> 并关联我们的 repository 库。</p><p>编写 <code>.travis.yml</code> 配置文件:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>language: node_js
+</span></span><span style=display:flex><span>node_js:
+</span></span><span style=display:flex><span>  - &#34;12&#34;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>sudo: required
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>before_install: sudo apt-get install libevent-dev -y
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>install:
+</span></span><span style=display:flex><span>  - wget -O memcached.tar.gz http://memcached.org/files/memcached-1.5.20.tar.gz
+</span></span><span style=display:flex><span>  - tar -zxvf memcached.tar.gz
+</span></span><span style=display:flex><span>  - cd memcached-1.5.20
+</span></span><span style=display:flex><span>  - ./configure &amp;&amp; make &amp;&amp; sudo make install
+</span></span><span style=display:flex><span>  - memcached -d
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>script:
+</span></span><span style=display:flex><span>    - npm ci &amp;&amp; npm test &amp;&amp; npm run report-coverage
+</span></span></code></pre></div><ul><li><code>language</code> : 声明语言环境，这里的 <code>node_js</code> 还声明了版本。</li><li><code>sudo</code> : 声明在 CI 的虚拟环境中是否需要管理员权限。</li><li><code>before_install</code> : 安装额外的系统依赖。</li><li><code>install</code> : 示例中另外安装了 memcached 并在后台启动，因为本文的测试需要。</li><li><code>script</code> : 声明 CI 执行的脚本命令。</li></ul><p>由于我们在 <a href=https://travis-ci.com/>travis-ci</a> 上执行 <code>npm run report-coverage</code> 向 <a href=https://codecov.io/>codecov</a> 上报测试覆盖率时需要其权限，因此还需要在 <a href=https://travis-ci.com/>travis-ci</a> 的 <code>Settings</code> 中设置环境变量 <code>CODECOV_TOKEN</code> 。</p><p>最后，当我们向 GitHub 库中提交了新的内容后，就会触发 CI 流程，虚拟化环境、安装依赖、执行命令等等，CI 通过后就可以得到 <img src=https://img.shields.io/travis/com/rifewang/io-memcached alt="Travis (.com)"> 徽章了。</p><h2 id=结语>结语
+<a class=heading-link href=#%e7%bb%93%e8%af%ad><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p><a href=https://shields.io/>shields.io</a> 徽章有多种，根据你的需要进行相应的配置即可，本文使用了 <a href=https://codecov.io/>codecov</a> 和 <a href=https://travis-ci.com/>travis-ci</a> 作为示例，但是还有很多其他的平台任由你选。</p></div><footer></footer></article></section></div><footer class=footer><section class=container>©
+2019 -
+2023
+凌虚
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

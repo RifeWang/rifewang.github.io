@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>node.js on 凌虚 Blog</title><link>https://rifewang.github.io/tags/node.js/</link><description>Recent content in node.js on 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 21 Dec 2019 13:36:00 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/tags/node.js/index.xml" rel="self" type="application/rss+xml"/><item><title>给你的库加上酷炫的小徽章</title><link>https://rifewang.github.io/posts/uncate/ava-codecov-travis/</link><pubDate>Sat, 21 Dec 2019 13:36:00 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/ava-codecov-travis/</guid><description>给库加上酷炫的小徽章 &amp;amp; ava、codecov、travis 示例 Link to heading GitHub 很多开源库都会有几个酷炫的小徽章，比如：
+这些是怎么加上去的呢？
+Shields.io Link to heading 首先这些徽章可以直接去 shields.io 网站自动生成。
+比如：
+就是 version 这一类里的一种图标，选择 npm 一栏填入包名，然后复制成 Markdown 内容，就会得到诸如：
+![npm (tag)](https://img.shields.io/npm/v/io-memcached/latest) 直接粘贴在 .md 文件中就可以使用了，最后展现的就是这个图标。
+当然还有其他很多徽章都任由你挑选，不过某些徽章是需要额外进行一些配置，比如这里的 (自动构建通过) 和 (测试覆盖率)。
+AVA Link to heading 谈到测试覆盖率必须先有单元测试，本文使用 ava 作为示例，ava 是一个 js 测试库，强烈推荐你使用它。
+1、安装
+npm init ava 2、使用示例
+编写 test.js 文件：
+import test from &amp;#39;ava&amp;#39; import Memcached from &amp;#39;../lib/memcached&amp;#39;; test.before(t =&amp;gt; { const memcached = new Memcached([&amp;#39;127.0.0.1:11211&amp;#39;], { pool: { max: 2, min: 0 }, timeout: 5000 }); t.</description></item><item><title>实现 memcached 客户端：TCP、连接池、一致性哈希、自定义协议</title><link>https://rifewang.github.io/posts/uncate/create-memcached-client/</link><pubDate>Mon, 09 Dec 2019 13:41:38 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/create-memcached-client/</guid><description>实现 memcached 客户端：TCP、连接池、一致性哈希、自定义协议。 Link to heading 废话不多说，文本将带你实现一个简单的 memcached 客户端。
+集群：一致性哈希 Link to heading memcached 本身并不支持集群，为了使用集群，我们可以自己在客户端实现路由分发，将相同的 key 路由到同一台 memcached 上去即可。 路由算法有很多，这里我们使用一致性哈希算法。
+一致性哈希算法的原理：
+一致性哈希算法已经有开源库 hashring 实现，基本用法：
+const HashRing = require(&amp;#39;hashring&amp;#39;); // 输入集群地址构造 hash ring const ring = new HashRing([&amp;#39;127.0.0.1:11211&amp;#39;, &amp;#39;127.0.0.2:11211&amp;#39;]); // 输入 key 获取指定节点 const host = ring.get(key); TCP 编程 Link to heading 包括 memcached 在内的许多系统对外都是通过 TCP 通信。在 Node.js 中建立一个 TCP 连接并进行数据的收发很简单：
+const net = require(&amp;#39;net&amp;#39;); const socket = new net.Socket(); socket.</description></item></channel></rss>

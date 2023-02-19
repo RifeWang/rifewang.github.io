@@ -74,4 +74,28 @@ from keras.applications.vgg16 import VGG16 from keras.preprocessing import image
 图像的哈希值是对这张图像的整体抽象表示。
 比如 Average Hash 算法的计算过程： Reduce size : 将原图压缩到 8 x 8 即 64 像素大小，忽略细节。 Reduce color : 灰度处理得到 64 级灰度图像。 Average the colors : 计算 64 级灰度均值。 Compute the bits : 二值化处理，将每个像素与上一步均值比较并分别记为 0 或者 1 。 Construct the hash : 根据上一步结果矩阵构成一个 64 bit 整数，比如按照从左到右、从上到下的顺序。最后得到的就是图像的均值哈希值。 参考：http://www.hackerfactor.com/blog/?/archives/432-Looks-Like-It.html
 图像哈希算法有很多种，包含但不限于:
-AverageHash : 也叫 Different Hash PHash : Perceptual Hash MarrHildrethHash : Marr-Hildreth Operator Based Hash RadialVarianceHash : Image hash based on Radon transform BlockMeanHash : Image hash based on block mean ColorMomentHash : Image hash based on color moments 我们最常见可能就是 PHash 。</description></item></channel></rss>
+AverageHash : 也叫 Different Hash PHash : Perceptual Hash MarrHildrethHash : Marr-Hildreth Operator Based Hash RadialVarianceHash : Image hash based on Radon transform BlockMeanHash : Image hash based on block mean ColorMomentHash : Image hash based on color moments 我们最常见可能就是 PHash 。</description></item><item><title>GitHub Actions 指南</title><link>https://rifewang.github.io/posts/uncate/github-actions/</link><pubDate>Mon, 23 Dec 2019 00:00:00 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/github-actions/</guid><description>GitHub Actions 指南 Link to heading GitHub Actions 使你可以直接在你的 GitHub 库中创建自定义的工作流，工作流指的就是自动化的流程，比如构建、测试、打包、发布、部署等等，也就是说你可以直接进行 CI（持续集成）和 CD （持续部署）。
+基本概念 Link to heading workflow : 一个 workflow 工作流就是一个完整的过程，每个 workflow 包含一组 jobs 任务。 job : jobs 任务包含一个或多个 job ，每个 job 包含一系列的 steps 步骤。 step : 每个 step 步骤可以执行指令或者使用一个 action 动作。 action : 每个 action 动作就是一个通用的基本单元。 配置 workflow Link to heading workflow 必须存储在你的项目库根路径下的 .github/workflows 目录中，每一个 workflow 对应一个具体的 .yml 文件（或者 .yaml）。
+workflow 示例：
+name: Greet Everyone # This workflow is triggered on pushes to the repository.</description></item><item><title>给你的库加上酷炫的小徽章</title><link>https://rifewang.github.io/posts/uncate/ava-codecov-travis/</link><pubDate>Sat, 21 Dec 2019 13:36:00 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/ava-codecov-travis/</guid><description>给库加上酷炫的小徽章 &amp;amp; ava、codecov、travis 示例 Link to heading GitHub 很多开源库都会有几个酷炫的小徽章，比如：
+这些是怎么加上去的呢？
+Shields.io Link to heading 首先这些徽章可以直接去 shields.io 网站自动生成。
+比如：
+就是 version 这一类里的一种图标，选择 npm 一栏填入包名，然后复制成 Markdown 内容，就会得到诸如：
+![npm (tag)](https://img.shields.io/npm/v/io-memcached/latest) 直接粘贴在 .md 文件中就可以使用了，最后展现的就是这个图标。
+当然还有其他很多徽章都任由你挑选，不过某些徽章是需要额外进行一些配置，比如这里的 (自动构建通过) 和 (测试覆盖率)。
+AVA Link to heading 谈到测试覆盖率必须先有单元测试，本文使用 ava 作为示例，ava 是一个 js 测试库，强烈推荐你使用它。
+1、安装
+npm init ava 2、使用示例
+编写 test.js 文件：
+import test from &amp;#39;ava&amp;#39; import Memcached from &amp;#39;../lib/memcached&amp;#39;; test.before(t =&amp;gt; { const memcached = new Memcached([&amp;#39;127.0.0.1:11211&amp;#39;], { pool: { max: 2, min: 0 }, timeout: 5000 }); t.</description></item><item><title>使用 Makefile 构建指令集</title><link>https://rifewang.github.io/posts/uncate/makefile/</link><pubDate>Sun, 15 Dec 2019 13:39:47 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/makefile/</guid><description>使用 Makefile 构建指令集 Link to heading make 是一个历史悠久的构建工具，通过配置 Makefile 文件就可以很方便的使用你自己自定义的各种指令集，且与具体的编程语言无关。 例如配置如下的 Makefile :
+run dev: NODE_ENV=development nodemon server.js 这样当你在命令行执行 make run dev 时其实就会执行 NODE_ENV=development nodemon server.js 指令。
+使用 Makefile 构建指令集可以很大的提升工作效率。
+Makefile 基本语法 Link to heading &amp;lt;target&amp;gt;: &amp;lt;prerequisites&amp;gt; &amp;lt;commands&amp;gt; target 其实就是执行的目标，prerequisites 是执行这条指令的前置条件，commands 就是具体的指令内容。
+示例：
+build: clean go build -o myapp main.go clean: rm -rf myapp 这里的 build 有一个前置条件 clean ，意思就是当你执行 make build 时，会先执行 clean 的指令内容 rm -rf myapp ，然后再执行 build 的内容 go build -o myapp main.</description></item><item><title>实现 memcached 客户端：TCP、连接池、一致性哈希、自定义协议</title><link>https://rifewang.github.io/posts/uncate/create-memcached-client/</link><pubDate>Mon, 09 Dec 2019 13:41:38 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/create-memcached-client/</guid><description>实现 memcached 客户端：TCP、连接池、一致性哈希、自定义协议。 Link to heading 废话不多说，文本将带你实现一个简单的 memcached 客户端。
+集群：一致性哈希 Link to heading memcached 本身并不支持集群，为了使用集群，我们可以自己在客户端实现路由分发，将相同的 key 路由到同一台 memcached 上去即可。 路由算法有很多，这里我们使用一致性哈希算法。
+一致性哈希算法的原理：
+一致性哈希算法已经有开源库 hashring 实现，基本用法：
+const HashRing = require(&amp;#39;hashring&amp;#39;); // 输入集群地址构造 hash ring const ring = new HashRing([&amp;#39;127.0.0.1:11211&amp;#39;, &amp;#39;127.0.0.2:11211&amp;#39;]); // 输入 key 获取指定节点 const host = ring.get(key); TCP 编程 Link to heading 包括 memcached 在内的许多系统对外都是通过 TCP 通信。在 Node.js 中建立一个 TCP 连接并进行数据的收发很简单：
+const net = require(&amp;#39;net&amp;#39;); const socket = new net.Socket(); socket.</description></item></channel></rss>
