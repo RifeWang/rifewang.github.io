@@ -63,6 +63,10 @@ pygmentscodefencesguesssyntax = true
   weight = 1
   url  = "/posts/"
 [[menu.main]]
+  name = "Translation"
+  weight = 1
+  url  = "/translation/"
+[[menu.main]]
   name = "About"
   weight = 2
   url = "/about/"
