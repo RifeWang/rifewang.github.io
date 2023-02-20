@@ -143,4 +143,4 @@ shard group 只是一个逻辑概念，并没有实际的磁盘文件夹，shard
 InfluxDB 分为免费的社区开源版本，以及需要收费的闭源商业版本，目前只有商业版本支持集群。
 InfluxDB 的底层数据结构从 LSM 树到 B+ 树折腾了一通，最后自创了一个 TSM 树（ Time-Structured Merge Tree ），这也是它性能高且资源占用少的重要原因。
 InfluxDB 由 go 语言编写而成，没有额外的依赖，它的查询语言 InfluxQL 与 SQL 极其相似，使用特别简单。
-InfluxDB 基本概念 Link to heading InfluxDB 有以下几个核心概念： 1、database ： 数据库。</description></item></channel></rss>
+InfluxDB 基本概念 Link to heading InfluxDB 有以下几个核心概念： 1、database ： 数据库。</description></item><item><title/><link>https://rifewang.github.io/translation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://rifewang.github.io/translation/</guid><description/></item></channel></rss>
