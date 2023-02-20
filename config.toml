@@ -59,14 +59,14 @@ pygmentscodefencesguesssyntax = true
 
 # Menu links
 [[menu.main]]
-  name = "Blog"
+  name = "博客"
   weight = 1
   url  = "/posts/"
 [[menu.main]]
-  name = "Translation"
+  name = "译文"
   weight = 1
   url  = "/translation/"
 [[menu.main]]
-  name = "About"
+  name = "关于"
   weight = 2
   url = "/about/"
