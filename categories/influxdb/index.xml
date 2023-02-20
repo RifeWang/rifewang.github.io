@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>InfluxDB on 凌虚 Blog</title><link>https://rifewang.github.io/categories/influxdb/</link><description>Recent content in InfluxDB on 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 17 Nov 2019 13:43:48 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/influxdb/index.xml" rel="self" type="application/rss+xml"/><item><title>时序数据库 InfluxDB（七）</title><link>https://rifewang.github.io/posts/influxdb/7/</link><pubDate>Sun, 17 Nov 2019 13:43:48 +0800</pubDate><guid>https://rifewang.github.io/posts/influxdb/7/</guid><description> 单点故障和容灾备份 Link to heading InfluxDB 开源的社区版本面临的最大的问题就是单点故障和容灾备份，有没有一个简单的方案去解决这个问题呢？
+既然有单点故障的可能，那么索性写入多个节点，同时也解决了容灾备份的问题：
+1、在不同的机器上配置多个 InfluxDB 实例，写入数据时，直接由客户端并发写入多个实例。（为什么不用代理，因为代理自身就是个单点）。
+2、当某个 InfluxDB 实例故障而导致写入失败时，记录失败的数据和节点，这些失败的数据可以临时存储在数据库、消息中间件、日志文件等等里面。
+3、通过自定义的 worker 拉取上一步记录的失败的数据然后重写这些数据。
+4、多个 InfluxDB 中的数据最终一致。
+当然你需要注意的是：
+1、由于是并发写入多个节点，且不同机器的状况不一，所以写入数据应该设置一个超时时间。
+2、写入失败的数据必须要与节点相对应，同时你应该考虑如何去定义失败的数据：由于格式不正确或者权限问题导致的 4xx 或者 InfluxDB 本身异常导致的 5xx ，这些与 InfluxDB 宕机等故障导致的失败显然是不同的。
+3、由于失败的数据需要临时存储在一个数据容器中，你应该考虑所使用的数据容器能否承载故障期间写入的数据压力，以及如果数据要求不可丢失，那么数据容器也需要有对应的支持。
+4、失败数据的重写是一个异步的过程，所以写入的数据应该由客户端指定明确的时间戳，而不是使用 InfluxDB 写入时默认生成的时间戳。
+5、故障期间多个 InfluxDB 可能存在数据不一致的情况。
+相关文章：
+时序数据库 InfluxDB（一） 时序数据库 InfluxDB（二） 时序数据库 InfluxDB（三） 时序数据库 InfluxDB（四） 时序数据库 InfluxDB（五） 时序数据库 InfluxDB（六） 时序数据库 InfluxDB（七）</description></item><item><title>时序数据库 InfluxDB（六）</title><link>https://rifewang.github.io/posts/influxdb/6/</link><pubDate>Wed, 06 Nov 2019 13:36:39 +0800</pubDate><guid>https://rifewang.github.io/posts/influxdb/6/</guid><description>CQ 连续查询 Link to heading 连续查询 Continuous Queries（ CQ ）是 InfluxDB 很重要的一项功能，它的作用是在 InfluxDB 数据库内部自动定期的执行查询，然后将查询结果存储到指定的 measurement 里。
+配置文件中的相关配置：
+[continuous_queries] enabled = true log-enabled = true query-stats-enabled = false run-interval = &amp;#34;1s&amp;#34; enabled = true ：开启CQ log-enabled = true ：输出 CQ 日志 query-stats-enabled = false ：关闭 CQ 执行相关的监控，不会将统计数据写入默认的监控数据库 _internal run-interval = &amp;ldquo;1s&amp;rdquo; ：InfluxDB 每隔 1s 检查是否有 CQ 需要执行 基本语法 Link to heading 一 、 Link to heading 基本语法：
+CREATE CONTINUOUS QUERY &amp;lt;cq_name&amp;gt; ON &amp;lt;database_name&amp;gt; BEGIN &amp;lt;cq_query&amp;gt; END 在某个数据库上创建一个 CQ ，而查询的具体内容 cq_query 的语法为：</description></item><item><title>时序数据库 InfluxDB（五）</title><link>https://rifewang.github.io/posts/influxdb/5/</link><pubDate>Wed, 30 Oct 2019 13:33:30 +0800</pubDate><guid>https://rifewang.github.io/posts/influxdb/5/</guid><description>系统监控 Link to heading InfluxDB 自带有一个监控系统，默认情况下此功能是开启的，每隔 10 秒中采集一次系统数据并把数据写入到 _internal 数据库中，其默认使用名称为 monitor 的 RP（数据保留 7 天），相关配置见配置文件中的：
+[monitor] store-enabled = true store-database = &amp;#34;_internal&amp;#34; store-interval = &amp;#34;10s&amp;#34; _internal 数据库与其它数据库的使用方式完全一致，其记录的统计数据分为多个 measurements ：
+cq ：连续查询 database ：数据库 httpd ：HTTP 相关 queryExecutor ：查询执行器 runtime ：运行时 shard ：分片 subscriber ：订阅者 tsm1_cache ：TSM cache 缓存 tsm1_engine ：TSM 引擎 tsm1_filestore ：TSM filestore tsm1_wal ：TSM 预写日志 write ：数据写入 比如查询最近一次统计的数据写入情况：
+select * from &amp;#34;write&amp;#34; order by time desc limit 1 _internal 数据库里的这些 measurements 中具体有哪些 field ，每个 field 数据又代表了什么含义，请参考官方文档：</description></item><item><title>时序数据库 InfluxDB（四）</title><link>https://rifewang.github.io/posts/influxdb/4/</link><pubDate>Mon, 28 Oct 2019 13:27:36 +0800</pubDate><guid>https://rifewang.github.io/posts/influxdb/4/</guid><description>存储引擎 Link to heading InfluxDB 数据的写入如下图所示：
+所有数据先写入到 WAL（ Write Ahead Log ）预写日志文件，并同步到 Cache 缓存中，当 Cache 缓存的数据达到了一定的大小，或者达到一定的时间间隔之后，数据会被写入到 TSM 文件中。
+为了更高效的存储大量数据，存储引擎会将数据进行压缩处理，压缩的输入和输出都是 TSM 文件，因此为了以原子方式替换以及删除 TSM 文件，存储引擎由 FileStore 负责调节对所有 TSM 文件的访问权限。
+Compaction Planner 负责确定哪些 TSM 文件已经准备好了可以进行压缩，并确保多个并发压缩不会互相干扰。
+Compactor 压缩器则负责具体的 Compression 压缩工作。
+为了处理文件，存储引擎通过 Writers/Readers 处理数据的写和读。另外存储引擎还会使用 In-Memory Index 内存索引快速访问 measurements、tags、series 等数据。
+存储引擎的组成部分：
+In-Memory Index ：跨分片的共享内存索引，并不是存储引擎本身特有的，存储引擎只是用到了它。 WAL ：预写日志。 Cache ：同步缓存 WAL 的内容，并最终刷写到 TSM 文件中去。 TSM Files ：特定格式存储最终数据的磁盘文件。 FileStore ：调节对磁盘上所有TSM文件的访问。 Compactor ：压缩器。 Compaction Planner ：压缩计划。 Compression ：编码解码压缩。 Writers/Readers ：读写文件。 硬件指南 Link to heading 为了应对不同的负载情况，我需要机器具有怎样的硬件配置？</description></item><item><title>时序数据库 InfluxDB（三）</title><link>https://rifewang.github.io/posts/influxdb/3/</link><pubDate>Sun, 27 Oct 2019 13:25:48 +0800</pubDate><guid>https://rifewang.github.io/posts/influxdb/3/</guid><description>数据类型 Link to heading InfluxDB 是一个无结构模式，这也就是说你无需事先定义好表以及表的数据结构。
+InfluxDB 支持的数据类型非常简单：
+measurement : string tag key : string tag value : string field key : string field value : string , float , interger , boolean 你可以看到除了 field value 支持的数据类型多一点之外，其余全是字符串类型。
+当然还有最重要的 timestamp ，InfluxDB 中的时间都是 UTC 时间，而且时间精度非常高，默认为纳秒。
+数据结构设计 Link to heading 在实际使用中，数据都是存储在 tag 或者 field 中，这两者最重要的区别就是，tag 会构建索引（也就是说查询时，where 条件里的是 tag ，则查询性能更高），field 则不会被索引。
+存储数据到底是使用 tag 还是 field ，参考以下原则：
+常用于查询条件的数据存储为 tag 。 计划使用 GROUP BY() 的数据存储为 tag 。 计划使用 InfluxQL function 的数据存储为 field 。 数据不只是 string 类型的存储为 field 。 对于标识性的名称，如 database、RP、user、measurement、tag key、field key 这些应该避免使用 InfluxQL 中的关键字。</description></item><item><title>时序数据库 InfluxDB（二）</title><link>https://rifewang.github.io/posts/influxdb/2/</link><pubDate>Sat, 26 Oct 2019 13:14:35 +0800</pubDate><guid>https://rifewang.github.io/posts/influxdb/2/</guid><description>RP Link to heading 先回顾一下 RP 策略（ retention policy ），它由三个部分构成：
+DURATION：数据的保留时长。 REPLICATION：集群模式下数据的副本数，单节点无效。 SHARD DURATION：可选项，shard group 划分的时间范围。 前两个部分没啥好说的，而 shard duration 和 shard group 的概念你可能会感到比较陌生。
+shard 是什么？
+先来看数据的层次结构：
+如果所示，一个 database 对应一个实际的磁盘上的文件夹，该数据库下不同的 RP 策略对应不同的文件夹。
+shard group 只是一个逻辑概念，并没有实际的磁盘文件夹，shard group 包含有一个或多个 shard 。
+最终的数据是存储在 shard 中的，每个 shard 也对应一个具体的磁盘文件目录，数据是按照时间范围分割存储的，shard duration 也就是划分 shard group 的时间范围（例如 shard duration 如果是一周，那么第一周的数据就会存储到一个 shard group 中，第二周的数据会存储到另外一个 shard group 中，以此类推）。
+另外，每个 shard 目录下都有一个 TSM 文件（后缀名为 .tsm ），正是这个文件存储了最后编码和压缩后的数据。shard group 下的 shard 是按照 series 来划分的，每个 shard 包含一组特定的 series ，换句话说特定 shard group 中的特定 series 上的所有 points 点都存储在同一个 TSM 文件中。</description></item><item><title>时序数据库 InfluxDB（一）</title><link>https://rifewang.github.io/posts/influxdb/1/</link><pubDate>Fri, 25 Oct 2019 13:02:58 +0800</pubDate><guid>https://rifewang.github.io/posts/influxdb/1/</guid><description>数据库种类有很多，比如传统的关系型数据库 RDBMS（ 如 MySQL ），NoSQL 数据库（ 如 MongoDB ），Key-Value 类型（ 如 redis ），Wide column 类型（ 如 HBase ）等等等等，当然还有本系列文章将会介绍的时序数据库 TSDB（ 如 InfluxDB ）。
+时序数据库 TSDB Link to heading 不同的数据库针对的应用场景有不同的偏重。TSDB（ time series database ）时序数据库是专门以时间维度进行设计和优化的。 TSDB 通常具有以下的特点：
+时间是不可或缺的绝对主角（就像 MySQL 中的主键一样），数据按照时间顺序组织管理 高并发高吞吐量的数据写入 数据的更新很少发生 过期的数据可以批量删除 InfluxDB 就是一款非常优秀的时序数据库，高居 DB-Engines TSDB rank 榜首。
+InfluxDB 分为免费的社区开源版本，以及需要收费的闭源商业版本，目前只有商业版本支持集群。
+InfluxDB 的底层数据结构从 LSM 树到 B+ 树折腾了一通，最后自创了一个 TSM 树（ Time-Structured Merge Tree ），这也是它性能高且资源占用少的重要原因。
+InfluxDB 由 go 语言编写而成，没有额外的依赖，它的查询语言 InfluxQL 与 SQL 极其相似，使用特别简单。
+InfluxDB 基本概念 Link to heading InfluxDB 有以下几个核心概念： 1、database ： 数据库。</description></item></channel></rss>
