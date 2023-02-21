@@ -45,6 +45,11 @@ disableComments = true
 - [OS command injection](/translation/web-security/command-injection/os-command-injection/)
 
 
+## Server-side template injection
+- [Server-side template injection](/translation/web-security/server-side-template-injection/server-side-template-injection/)
+- [Exploiting server-side template injection vulnerabilities](/translation/web-security/server-side-template-injection/exploiting-server-side-template-injection-vulnerabilities/)
+
+
 ## Directory traversal
 - [Directory traversal](/translation/web-security/directory-traversal/directory-traversal/)
 
