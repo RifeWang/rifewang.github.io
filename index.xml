@@ -301,4 +301,15 @@ shard group 只是一个逻辑概念，并没有实际的磁盘文件夹，shard
 InfluxDB 分为免费的社区开源版本，以及需要收费的闭源商业版本，目前只有商业版本支持集群。
 InfluxDB 的底层数据结构从 LSM 树到 B+ 树折腾了一通，最后自创了一个 TSM 树（ Time-Structured Merge Tree ），这也是它性能高且资源占用少的重要原因。
 InfluxDB 由 go 语言编写而成，没有额外的依赖，它的查询语言 InfluxQL 与 SQL 极其相似，使用特别简单。
-InfluxDB 基本概念 Link to heading InfluxDB 有以下几个核心概念： 1、database ： 数据库。</description></item></channel></rss>
+InfluxDB 基本概念 Link to heading InfluxDB 有以下几个核心概念： 1、database ： 数据库。</description></item><item><title>Elasticsearch 入门指南</title><link>https://rifewang.github.io/posts/elasticsearch/es-guide/</link><pubDate>Sun, 29 Jul 2018 16:24:53 +0800</pubDate><guid>https://rifewang.github.io/posts/elasticsearch/es-guide/</guid><description>引言 Link to heading Elasticsearch 是什么？一个开源的可扩展、高可用、分布式的全文搜索引擎。
+你为什么需要它？《人生一串》中有这样一段话：
+没了烟火气，人生就是一段孤独的旅程。
+而我们如何通过烟火气、人生或者旅程等这样的关键词来搜索出这部纪录片呢？显然无论是传统的关系型数据库，还是 NOSQL 数据库都无法实现这样的需求，而这里 Elasticsearch 就派上了用场。
+再来理解全文搜索是什么？举例来说，就是将上面那段话按照语义拆分成不同的词组并记录其出现的频率（专业术语叫构建倒排索引），这样当你输入一个简单的关键词就能将其搜索出来。
+总而言之，Elasticsearch 就是为搜索而生。
+一、基本概念 Link to heading Near Realtime（近实时） Elasticsearch 是一个近实时的搜索平台。为什么是近实时？在传统的数据库中一旦我们插入了某条数据，则立刻可以搜索到它，这就是实时。反之在 Elasticsearch 中为某条数据构建了索引（插入数据的意思）之后，并不能立刻就搜索到，因为它在底层需要进行构建倒排索引、将数据同步到副本等等一系列操作，所以是近实时（通常一秒以内，无需过于担心）。
+Cluster（集群）&amp;amp; Node（节点） 每一个单一的 Elasticsearch 服务器称之为一个 Node 节点，而一个或多个 Node 节点则组成了 Cluster 集群。Cluster 和 Node 一定是同时存在的，换句话说我们至少拥有一个由单一节点构成的集群，而在实际对外提供索引和搜索服务时，我们应该将 Cluster 集群视为一个基本单元。
+Cluster 集群默认的名称就是 elasticsearch ，而 Node 节点默认的名称是一个随机的 UUID ，我们只要将不同 Node 节点的 cluster name 设置为同一个名称便构成了一个集群（不论这些节点是否在同一台服务器上，只要网络有效可达，Elasticsearch 本身会自己去搜索并发现这些节点并构成集群）。
+Index（索引）&amp;amp; Type（类型）&amp;amp; Document（文档） Document（文档）是最基本的数据单元，我们可以将其理解为 mysql 中的具体的某一行数据。
+Type（类型）在 6.0 版本之后被移除，它是一个逻辑分类，我们可以将其理解为 mysql 中的某一张表。
+Index（索引）是具有类似特征的 Document 文档的集合，我们可以将其理解为 mysql 中的某一个数据库。</description></item></channel></rss>
