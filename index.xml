@@ -312,7 +312,19 @@ Cluster（集群）&amp;amp; Node（节点） 每一个单一的 Elasticsearch �
 Cluster 集群默认的名称就是 elasticsearch ，而 Node 节点默认的名称是一个随机的 UUID ，我们只要将不同 Node 节点的 cluster name 设置为同一个名称便构成了一个集群（不论这些节点是否在同一台服务器上，只要网络有效可达，Elasticsearch 本身会自己去搜索并发现这些节点并构成集群）。
 Index（索引）&amp;amp; Type（类型）&amp;amp; Document（文档） Document（文档）是最基本的数据单元，我们可以将其理解为 mysql 中的具体的某一行数据。
 Type（类型）在 6.0 版本之后被移除，它是一个逻辑分类，我们可以将其理解为 mysql 中的某一张表。
-Index（索引）是具有类似特征的 Document 文档的集合，我们可以将其理解为 mysql 中的某一个数据库。</description></item><item><title>Docker 入门教程</title><link>https://rifewang.github.io/posts/kubernetes/docker-guide/</link><pubDate>Tue, 17 Apr 2018 10:50:21 +0800</pubDate><guid>https://rifewang.github.io/posts/kubernetes/docker-guide/</guid><description>一 Link to heading 程序明明在我本地跑得好好的，怎么部署上去就出问题了？如果要在同一台物理机上同时部署多个 node 版本并独立运行互不影响，这又该怎么做？如何更快速的将服务部署到多个物理机上？
+Index（索引）是具有类似特征的 Document 文档的集合，我们可以将其理解为 mysql 中的某一个数据库。</description></item><item><title>消息队列 NSQ 入门指南</title><link>https://rifewang.github.io/posts/middleware/nsq/</link><pubDate>Sun, 08 Jul 2018 11:17:45 +0800</pubDate><guid>https://rifewang.github.io/posts/middleware/nsq/</guid><description>一 Link to heading NSQ 是什么？使用 go 语言开发的一款开源的消息队列，具有轻量级、高性能的特点。
+概述 Link to heading NSQ 组件：
+1、nsqd：接受、排队、传递消息的守护进程，消息队列中的核心。
+2、nsqlookupd：管理拓扑信息，其实就是围绕 nsqd 的发现服务，因为其存储了 nsqd 节点的注册信息，所以通过它就可以查询到指定 topic 主题的 nsqd 节点。
+3、nsqadmin：一套封装好的 WEB UI ，可以看到各种统计数据并进行管理操作。
+4、utilities：封装好的一些简单的工具（实际开发中用的不多）。
+如下图所示：
+1、生产者 producer 将消息投递到指定的 nsqd 中指定的 topic 主题。
+2、nsqd 可以有多个 topic 主题，一旦其接受到消息，将会把消息广播到所有与这个 topic 相连的 channel 队列中。
+3、channel 队列接收到消息则会以负载均衡的方式随机的将消息传递到与其连接的所有 consumer 消费者中的某一个。
+注意：生产者关注的是 topic，消费者关注的是 channel。消息是存在 channel 队列中的，其会一直保存消息直到有消费者将消息消费掉，同时 channel 队列一旦创建其本身也不会自动消失，另外消息默认是存在内存中的，一旦超过内存大小（可通过 &amp;ndash;mem-queue-size 配置）则会被存储到磁盘上。
+再看下图：
+通过 nsqadmin 可以看到整个集群的统计信息并进行管理，多个 nsqd 节点组成集群并将其基本信息注册到 nsqlookupd 中，通过 nsqlookupd 可以寻址到具体的 nsqd 节点，而不论是消息的生产者还是消费者，其本质上都是与 nsqd 进行通信（如第一张图所示）。</description></item><item><title>Docker 入门教程</title><link>https://rifewang.github.io/posts/kubernetes/docker-guide/</link><pubDate>Tue, 17 Apr 2018 10:50:21 +0800</pubDate><guid>https://rifewang.github.io/posts/kubernetes/docker-guide/</guid><description>一 Link to heading 程序明明在我本地跑得好好的，怎么部署上去就出问题了？如果要在同一台物理机上同时部署多个 node 版本并独立运行互不影响，这又该怎么做？如何更快速的将服务部署到多个物理机上？
 “Build once , run anywhere” ，既可以保证环境的一致性，同时又能更方便的将各个环境相互隔离，还能更快速的部署各种服务，这就是 docker 的能力。
 基本概念 Link to heading 一张图慢慢讲：
 1、本地开发写好了 code ，首先我们需要通过 build 命令构建 image 镜像，而构建的规则呢，就需要写在这个 dockerfile 文件里。

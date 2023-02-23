@@ -1,4 +1,16 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>MQ on 凌虚 Blog</title><link>https://rifewang.github.io/tags/mq/</link><description>Recent content in MQ on 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 27 Feb 2018 18:53:07 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/tags/mq/index.xml" rel="self" type="application/rss+xml"/><item><title>RabbitMQ 入门教程及示例</title><link>https://rifewang.github.io/posts/middleware/rabbitmq/</link><pubDate>Tue, 27 Feb 2018 18:53:07 +0800</pubDate><guid>https://rifewang.github.io/posts/middleware/rabbitmq/</guid><description>一 Link to heading 消息中间件 MQ（也称消息队列）的基本功能是传递和转发消息，其最重要的作用是能够解耦业务及系统架构，可以说是一个系统发展壮大到一定阶段绕不开的东西。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>MQ on 凌虚 Blog</title><link>https://rifewang.github.io/tags/mq/</link><description>Recent content in MQ on 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 08 Jul 2018 11:17:45 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/tags/mq/index.xml" rel="self" type="application/rss+xml"/><item><title>消息队列 NSQ 入门指南</title><link>https://rifewang.github.io/posts/middleware/nsq/</link><pubDate>Sun, 08 Jul 2018 11:17:45 +0800</pubDate><guid>https://rifewang.github.io/posts/middleware/nsq/</guid><description>一 Link to heading NSQ 是什么？使用 go 语言开发的一款开源的消息队列，具有轻量级、高性能的特点。
+概述 Link to heading NSQ 组件：
+1、nsqd：接受、排队、传递消息的守护进程，消息队列中的核心。
+2、nsqlookupd：管理拓扑信息，其实就是围绕 nsqd 的发现服务，因为其存储了 nsqd 节点的注册信息，所以通过它就可以查询到指定 topic 主题的 nsqd 节点。
+3、nsqadmin：一套封装好的 WEB UI ，可以看到各种统计数据并进行管理操作。
+4、utilities：封装好的一些简单的工具（实际开发中用的不多）。
+如下图所示：
+1、生产者 producer 将消息投递到指定的 nsqd 中指定的 topic 主题。
+2、nsqd 可以有多个 topic 主题，一旦其接受到消息，将会把消息广播到所有与这个 topic 相连的 channel 队列中。
+3、channel 队列接收到消息则会以负载均衡的方式随机的将消息传递到与其连接的所有 consumer 消费者中的某一个。
+注意：生产者关注的是 topic，消费者关注的是 channel。消息是存在 channel 队列中的，其会一直保存消息直到有消费者将消息消费掉，同时 channel 队列一旦创建其本身也不会自动消失，另外消息默认是存在内存中的，一旦超过内存大小（可通过 &amp;ndash;mem-queue-size 配置）则会被存储到磁盘上。
+再看下图：
+通过 nsqadmin 可以看到整个集群的统计信息并进行管理，多个 nsqd 节点组成集群并将其基本信息注册到 nsqlookupd 中，通过 nsqlookupd 可以寻址到具体的 nsqd 节点，而不论是消息的生产者还是消费者，其本质上都是与 nsqd 进行通信（如第一张图所示）。</description></item><item><title>RabbitMQ 入门教程及示例</title><link>https://rifewang.github.io/posts/middleware/rabbitmq/</link><pubDate>Tue, 27 Feb 2018 18:53:07 +0800</pubDate><guid>https://rifewang.github.io/posts/middleware/rabbitmq/</guid><description>一 Link to heading 消息中间件 MQ（也称消息队列）的基本功能是传递和转发消息，其最重要的作用是能够解耦业务及系统架构，可以说是一个系统发展壮大到一定阶段绕不开的东西。
 而 RabbitMQ 是对 AMQP（高级消息队列协议）的实现，成熟可靠并且开源，本系列文章将会讲述如何在 node 中入门这一利器。
 RabbitMQ 概述 Link to heading 先来简单的了解一下 RabbitMQ 相关的基本概念：
 Producer ：生产者，生成消息并把消息发送给 RabbitMQ 。
