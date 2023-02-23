@@ -154,7 +154,17 @@ Cluster（集群）&amp;amp; Node（节点） 每一个单一的 Elasticsearch �
 Cluster 集群默认的名称就是 elasticsearch ，而 Node 节点默认的名称是一个随机的 UUID ，我们只要将不同 Node 节点的 cluster name 设置为同一个名称便构成了一个集群（不论这些节点是否在同一台服务器上，只要网络有效可达，Elasticsearch 本身会自己去搜索并发现这些节点并构成集群）。
 Index（索引）&amp;amp; Type（类型）&amp;amp; Document（文档） Document（文档）是最基本的数据单元，我们可以将其理解为 mysql 中的具体的某一行数据。
 Type（类型）在 6.0 版本之后被移除，它是一个逻辑分类，我们可以将其理解为 mysql 中的某一张表。
-Index（索引）是具有类似特征的 Document 文档的集合，我们可以将其理解为 mysql 中的某一个数据库。</description></item><item><title>RabbitMQ 入门教程及示例</title><link>https://rifewang.github.io/posts/middleware/rabbitmq/</link><pubDate>Tue, 27 Feb 2018 18:53:07 +0800</pubDate><guid>https://rifewang.github.io/posts/middleware/rabbitmq/</guid><description>一 Link to heading 消息中间件 MQ（也称消息队列）的基本功能是传递和转发消息，其最重要的作用是能够解耦业务及系统架构，可以说是一个系统发展壮大到一定阶段绕不开的东西。
+Index（索引）是具有类似特征的 Document 文档的集合，我们可以将其理解为 mysql 中的某一个数据库。</description></item><item><title>Docker 入门教程</title><link>https://rifewang.github.io/posts/kubernetes/docker-guide/</link><pubDate>Tue, 17 Apr 2018 10:50:21 +0800</pubDate><guid>https://rifewang.github.io/posts/kubernetes/docker-guide/</guid><description>一 Link to heading 程序明明在我本地跑得好好的，怎么部署上去就出问题了？如果要在同一台物理机上同时部署多个 node 版本并独立运行互不影响，这又该怎么做？如何更快速的将服务部署到多个物理机上？
+“Build once , run anywhere” ，既可以保证环境的一致性，同时又能更方便的将各个环境相互隔离，还能更快速的部署各种服务，这就是 docker 的能力。
+基本概念 Link to heading 一张图慢慢讲：
+1、本地开发写好了 code ，首先我们需要通过 build 命令构建 image 镜像，而构建的规则呢，就需要写在这个 dockerfile 文件里。
+2、image 镜像是什么？静态的、只读的文件（先不着急，有个基本印象，后面再慢慢讲）。如何更方便的区分不同的镜像呢，通过 tag 命令给镜像打上标签就行了。
+3、image 镜像存在哪里？通过 push 命令推送到 repository 镜像仓库，每个仓库可以存放多个镜像。
+4、registry 是啥？仓库服务器，所有 repository 仓库都必须依赖于一个 registry 才能提供镜像存储的服务。我们在自己的物理机上安装一个 registry ，这样可以构建自己私有的镜像仓库了。
+5、镜像光存到仓库里可没用，还要能部署并运行起来。
+6、首先通过 pull 命令将仓库里的镜像拉到服务器上，然后通过 run 命令即可将这个镜像构建成一个 container 容器，容器又是什么？是镜像的运行时，读取镜像里的各种配置文件并如同一个小而独立的服务器一样运行你的各种服务。到这里，你的一个服务就算是部署并运行起来了。
+7、数据怎么办？通过 volume 数据卷可以将容器使用的数据挂在到物理机本地，而各个容器之间相互传递处理数据呢，统一通过另一个 volume container 数据卷容器提供数据的服务，数据卷容器也只是一个普通的容器。
+8、image 镜像怎么导入导出到本地？通过 save 命令即可导出成压缩包到物理机本地磁盘上，通过 load 命令就可以导入成 docker 环境下的镜像。</description></item><item><title>RabbitMQ 入门教程及示例</title><link>https://rifewang.github.io/posts/middleware/rabbitmq/</link><pubDate>Tue, 27 Feb 2018 18:53:07 +0800</pubDate><guid>https://rifewang.github.io/posts/middleware/rabbitmq/</guid><description>一 Link to heading 消息中间件 MQ（也称消息队列）的基本功能是传递和转发消息，其最重要的作用是能够解耦业务及系统架构，可以说是一个系统发展壮大到一定阶段绕不开的东西。
 而 RabbitMQ 是对 AMQP（高级消息队列协议）的实现，成熟可靠并且开源，本系列文章将会讲述如何在 node 中入门这一利器。
 RabbitMQ 概述 Link to heading 先来简单的了解一下 RabbitMQ 相关的基本概念：
 Producer ：生产者，生成消息并把消息发送给 RabbitMQ 。
