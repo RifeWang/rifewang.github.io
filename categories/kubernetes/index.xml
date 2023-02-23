@@ -7,4 +7,14 @@ IfNotPresent：只有当镜像在本地不存在时才会拉取。 Always：kube
 本地缓存的镜像一定会占用节点的磁盘空间，也就是说缓存的镜像越多，占用的磁盘空间越大，并且缓存的镜像默认一直存在，并没有 TTL 机制（比如说多长时间以后自动过期删除）。
 但是，k8s 的 GC 机制会自动清理掉镜像。当节点的磁盘使用率达到 HighThresholdPercent 高百分比阈值时（默认 85% ）会触发垃圾回收，此时 kubelet 会根据使用情况删除最旧的不再使用的镜像，直到磁盘使用率达到 LowThresholdPercent（默认 80% ）。
 题外话 2：镜像 layer 层数真的越少越好吗？
-我们经常会看到一些文章说在 Dockerfile 里使用更少的 RUN 命令之类的减少镜像的 layer 层数然后缩减镜像的大小，layer 越少镜像越小这确实没错，但是某些场景下得不偿失。首先，如果你的 RUN 命令很大，一旦你修改了其中某一个小的部分，那么这个 layer 在构建的时候就只能重新再来，无法使用任何缓存；其次，镜像的 layer 在上传和下载的过程中是可以并发的，而单独一个大的层无法进行并发传输。</description></item></channel></rss>
+我们经常会看到一些文章说在 Dockerfile 里使用更少的 RUN 命令之类的减少镜像的 layer 层数然后缩减镜像的大小，layer 越少镜像越小这确实没错，但是某些场景下得不偿失。首先，如果你的 RUN 命令很大，一旦你修改了其中某一个小的部分，那么这个 layer 在构建的时候就只能重新再来，无法使用任何缓存；其次，镜像的 layer 在上传和下载的过程中是可以并发的，而单独一个大的层无法进行并发传输。</description></item><item><title>Docker 入门教程</title><link>https://rifewang.github.io/posts/kubernetes/docker-guide/</link><pubDate>Tue, 17 Apr 2018 10:50:21 +0800</pubDate><guid>https://rifewang.github.io/posts/kubernetes/docker-guide/</guid><description>一 Link to heading 程序明明在我本地跑得好好的，怎么部署上去就出问题了？如果要在同一台物理机上同时部署多个 node 版本并独立运行互不影响，这又该怎么做？如何更快速的将服务部署到多个物理机上？
+“Build once , run anywhere” ，既可以保证环境的一致性，同时又能更方便的将各个环境相互隔离，还能更快速的部署各种服务，这就是 docker 的能力。
+基本概念 Link to heading 一张图慢慢讲：
+1、本地开发写好了 code ，首先我们需要通过 build 命令构建 image 镜像，而构建的规则呢，就需要写在这个 dockerfile 文件里。
+2、image 镜像是什么？静态的、只读的文件（先不着急，有个基本印象，后面再慢慢讲）。如何更方便的区分不同的镜像呢，通过 tag 命令给镜像打上标签就行了。
+3、image 镜像存在哪里？通过 push 命令推送到 repository 镜像仓库，每个仓库可以存放多个镜像。
+4、registry 是啥？仓库服务器，所有 repository 仓库都必须依赖于一个 registry 才能提供镜像存储的服务。我们在自己的物理机上安装一个 registry ，这样可以构建自己私有的镜像仓库了。
+5、镜像光存到仓库里可没用，还要能部署并运行起来。
+6、首先通过 pull 命令将仓库里的镜像拉到服务器上，然后通过 run 命令即可将这个镜像构建成一个 container 容器，容器又是什么？是镜像的运行时，读取镜像里的各种配置文件并如同一个小而独立的服务器一样运行你的各种服务。到这里，你的一个服务就算是部署并运行起来了。
+7、数据怎么办？通过 volume 数据卷可以将容器使用的数据挂在到物理机本地，而各个容器之间相互传递处理数据呢，统一通过另一个 volume container 数据卷容器提供数据的服务，数据卷容器也只是一个普通的容器。
+8、image 镜像怎么导入导出到本地？通过 save 命令即可导出成压缩包到物理机本地磁盘上，通过 load 命令就可以导入成 docker 环境下的镜像。</description></item></channel></rss>
