@@ -1,0 +1,80 @@
+<!doctype html><html lang=en><head><title>图像处理基础 · 凌虚 Blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="凌虚"><meta name=description content="图像处理基础"><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="图像处理基础"><meta name=twitter:description content="图像处理基础"><meta property="og:title" content="图像处理基础"><meta property="og:description" content="图像处理基础"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/posts/uncate/image-processing/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-02-26T14:51:44+08:00"><meta property="article:modified_time" content="2019-02-26T14:51:44+08:00"><link rel=canonical href=https://rifewang.github.io/posts/uncate/image-processing/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.0fa2dc75ed1b76894ac0e062b10a6c4730daa745096fa120114b290ed8a48788.css integrity="sha256-D6Lcde0bdolKwOBisQpsRzDap0UJb6EgEUspDtikh4g=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.593028e7f7ac55c003b79c230d1cd411bb4ca53b31556c3abb7f027170e646e9.css integrity="sha256-WTAo5/esVcADt5wjDRzUEbtMpTsxVWw6u38CcXDmRuk=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5><meta name=generator content="Hugo 0.110.0"></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>凌虚 Blog</a>
+<input type=checkbox id=menu-toggle>
+<label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>博客</a></li><li class=navigation-item><a class=navigation-link href=/translation/>译文</a></li><li class=navigation-item><a class=navigation-link href=/about/>关于</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://rifewang.github.io/posts/uncate/image-processing/>图像处理基础</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2019-02-26T14:51:44+08:00>February 26, 2019</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+3-minute read</span></div><div class=tags><i class="fa fa-tag" aria-hidden=true></i>
+<span class=tag><a href=/tags/python/>Python</a></span>
+<span class=separator>•</span>
+<span class=tag><a href=/tags/opencv/>OpenCV</a></span></div></div></header><div class=post-content><h1 id=图像处理基础>图像处理基础
+<a class=heading-link href=#%e5%9b%be%e5%83%8f%e5%a4%84%e7%90%86%e5%9f%ba%e7%a1%80><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>现如今我们每时每刻都在与图像打交道，而图像处理也是我们绕不开的问题，本文将会简述图像处理的基础知识以及对常见的裁剪、画布、水印、平移、旋转、缩放等处理的实现。</p><p>在进行图像处理之前，我们必须要先回答这样一个问题：什么是图像？</p><p>答案是像素点的集合。</p><p><img src=/images/pixel2.png alt=image-pixel2></p><p>如上图所示，假设红色圈的部分是一幅图像，其中每一个独立的小方格就是一个像素点（简称像素），像素是最基本的信息单元，而这幅图像的大小就是 11 x 11 px 。</p><p>1、二值图像：</p><p>图像中的每个像素点只有黑白两种状态，因此每个像素点的信息可以用 0 和 1 来表示。</p><p>2、灰度图像：</p><p>图像中的每个像素点在黑色和白色之间还有许多级的颜色深度（表现为灰色），通常我们使用 8 个 bit 来表示灰度级别，因此总共有 2 ^ 8 = 256 级灰度，所以可以使用 0 到 255 范围内的数字来对应表示灰度级别。</p><p>3、RGB图像：</p><p>红（Red）、绿（Green）、蓝（Blue）作为三原色可以调和成任意的颜色，对于 RGB 图像，每个像素点包含 RGB 共三个通道的基本信息，类似的，如果每个通道用 8 bit 表示即 256 级灰度，那么一个像素点可以表示为：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>([0 ... 255], [0 ... 255], [0 ... 255])
+</span></span></code></pre></div><p>图像矩阵：</p><p>每个图像都可以很自然的用矩阵来表示，每个像素对应矩阵中的每个元素。</p><p>例如：</p><p>1、4 x 4 二值图像：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>0   1   0   1
+</span></span><span style=display:flex><span>1   0   0   0
+</span></span><span style=display:flex><span>1   1   1   1
+</span></span><span style=display:flex><span>0   0   0   0
+</span></span></code></pre></div><p>2、4 x 4 灰度图像：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>156   255   0     14
+</span></span><span style=display:flex><span>12    78    94    134
+</span></span><span style=display:flex><span>240   55    1     11
+</span></span><span style=display:flex><span>0     4     50    100
+</span></span></code></pre></div><p>3、4 x 4 RGB 图像：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>(156, 22, 45)   (255, 0, 0)     (0, 156, 32)    (14, 2, 90)
+</span></span><span style=display:flex><span>(12, 251, 88)   (78, 12, 34)    (94, 90, 87)    (134, 0, 2)
+</span></span><span style=display:flex><span>(240, 33, 44)   (55, 66, 77)    (1, 28, 167)    (11, 11, 11)
+</span></span><span style=display:flex><span>(0, 0, 0)       (4, 4, 4)       (50, 50, 50)    (100, 10, 10)
+</span></span></code></pre></div><p>在编程语言中使用哪种数据类型来表示矩阵？答案是多维数组。例如上述 4 x 4 RGB 图像可转换为：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[
+</span></span><span style=display:flex><span>    [ (156, 22, 45), (255, 0, 0),  (0, 156, 32),  (14, 2, 90)   ],
+</span></span><span style=display:flex><span>    [ (12, 251, 88), (78, 12, 34), (94, 90, 87),  (134, 0, 2)   ],
+</span></span><span style=display:flex><span>    [ (240, 33, 44), (55, 66, 77), (1, 28, 167),  (11, 11, 11)  ],
+</span></span><span style=display:flex><span>    [ (0, 0, 0),     (4, 4, 4),    (50, 50, 50),  (100, 10, 10) ]
+</span></span><span style=display:flex><span>]
+</span></span></code></pre></div><p>图像处理的本质实际上就是在处理像素矩阵即像素多维数组运算。</p><h2 id=基本处理实现>基本处理实现
+<a class=heading-link href=#%e5%9f%ba%e6%9c%ac%e5%a4%84%e7%90%86%e5%ae%9e%e7%8e%b0><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>对于图像的基本处理，本文示例使用的是 opencv-python 和 numpy 库。</p><p>示例：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span># -*- coding: utf-8 -*-
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span># 图像处理
+</span></span><span style=display:flex><span>import numpy as np
+</span></span><span style=display:flex><span>import cv2 as cv
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>img = cv.imread(&#39;../images/cat.jpg&#39;)  # 333 x 500
+</span></span><span style=display:flex><span>rows, cols, channels = img.shape
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span># 1、裁剪：切割矩阵
+</span></span><span style=display:flex><span>cut = img[100:200, 333:444]  # 选取第100到200行，第333到444列的区间
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span># 2、画布：填充矩阵
+</span></span><span style=display:flex><span>background = np.zeros((600, 600, 3), dtype=np.uint8)  # 创建 600 x 600 黑色画布
+</span></span><span style=display:flex><span>background[100:433, 50:550] = img  # 画布指定区域填充图像
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span># 3、水印：合并矩阵
+</span></span><span style=display:flex><span># addWeighted 参数：src1, alpha, src2, beta, gamma
+</span></span><span style=display:flex><span># dst = src1 * alpha + src2 * beta + gamma;
+</span></span><span style=display:flex><span>watermark = cv.imread(&#39;../images/node.jpg&#39;) # 600 x 800
+</span></span><span style=display:flex><span>watermark = watermark[200:533, 200:700];
+</span></span><span style=display:flex><span>dst = cv.addWeighted(watermark, 0.3, img, 0.7, 0); # 确保相同的 size 和 channel
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span># 4、平移
+</span></span><span style=display:flex><span># shift (x, y), 构建平移变换矩阵 M: [[1, 0, tx], [0, 1, ty]], 缺省部分填充黑色
+</span></span><span style=display:flex><span>M = np.array([[1, 0, -100], [0, 1, 100]], dtype=np.float32)
+</span></span><span style=display:flex><span>shift = cv.warpAffine(img, M, (cols, rows))
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span># 5、旋转
+</span></span><span style=display:flex><span># getRotationMatrix2D 参数： center 中心点，angle 旋转角度，scale 缩放
+</span></span><span style=display:flex><span>M = cv.getRotationMatrix2D(((cols-1)/2.0, (rows-1)/2.0), -60, 1)
+</span></span><span style=display:flex><span>rotation = cv.warpAffine(img, M, (cols, rows))
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span># 6、缩放
+</span></span><span style=display:flex><span># resize 参数：src 输入图像，dsize 输出图片大小，dst 输出图像，fx 水平方向缩放，fy 垂直方向缩放，interpolation 缩放算法
+</span></span><span style=display:flex><span>resize = cv.resize(img, None, fx = 2, fy = 2, interpolation = cv.INTER_LINEAR)
+</span></span></code></pre></div><ol><li>裁剪：切割矩阵即可。</li><li>画布：先构建指定大小的画布背景，再填充图像即可。</li><li>水印：矩阵合并运算，使用 cv : addWeighted 方法。</li><li>平移：构建平移变换矩阵，使用 cv : warpAffine 方法。</li><li>旋转：构建旋转变换矩阵，使用 cv : warpAffine 方法。</li><li>缩放：使用 cv : resize 方法。</li></ol><p>OpenCV 提供的 resize 缩放算法包括：</p><p><img src=/images/uncate/opencv-resize.jpeg alt></p><p>根据官方的文档，缩小图像时建议使用 INTER_AREA 算法，放大图像时建议使用 INTER_CUBIC（较慢）算法或者 INTER_LINEAR（更快效果也不错）算法。</p><h2 id=结语>结语
+<a class=heading-link href=#%e7%bb%93%e8%af%ad><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>本文介绍了图像处理的基础，以及通过 OpenCV 实现了几种常见的图像处理功能。</p></div><footer></footer></article></section></div><footer class=footer><section class=container>©
+2019 -
+2023
+凌虚
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

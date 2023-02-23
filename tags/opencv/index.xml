@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>OpenCV on 凌虚 Blog</title><link>https://rifewang.github.io/tags/opencv/</link><description>Recent content in OpenCV on 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 14 Mar 2019 15:15:10 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/tags/opencv/index.xml" rel="self" type="application/rss+xml"/><item><title>图像相似性：哈希和特征</title><link>https://rifewang.github.io/posts/uncate/image-similarity/</link><pubDate>Thu, 14 Mar 2019 15:15:10 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/image-similarity/</guid><description>引言 Link to heading 如何判断图像的相似性？
+直接比较图像内容的 md5 值肯定是不行的，md5 的方式只能判断像素级别完全一致。图像的基本单元是像素，如果两张图像完全相同，那么图像内容的 md5 值一定相同，然而一旦小部分像素发生变化，比如经过缩放、水印、噪声等处理，那么它们的 md5 值就会天差地别。
+本文将会介绍图像相似性的两大有关概念：图像哈希、图像特征。
+图像哈希 Link to heading 图像通过一系列的变换和处理最终得到的一组哈希值称之为图像的哈希值，而中间的变换和处理过程则称之为哈希算法。
+下面以 Average Hash 算法为例描述这一基本过程：
+1、Reduce size : 将原图压缩到 8 x 8 即 64 像素大小，忽略细节。
+2、Reduce color : 灰度处理得到 64 级灰度图像。
+3、Average the colors : 计算 64 级灰度均值。
+4、Compute the bits : 二值化处理，将每个像素与上一步均值比较并分别记为 0 或者 1 。
+5、Construct the hash : 根据上一步结果矩阵构成一个 64 bit 整数，比如按照从左到右、从上到下的顺序。最后得到的就是图像的均值哈希值。
+参考：http://www.hackerfactor.com/blog/?/archives/432-Looks-Like-It.html
+如果你稍加留意，就会发现 Average Hash 均值哈希算法的处理过程相当简单，优点就是计算速度快，缺点就是局限性比较明显。
+当然计算机视觉领域发展到现在已经有了多种图像哈希算法，OpenCV 支持的图像哈希算法包括：</description></item><item><title>图像处理基础</title><link>https://rifewang.github.io/posts/uncate/image-processing/</link><pubDate>Tue, 26 Feb 2019 14:51:44 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/image-processing/</guid><description>图像处理基础 Link to heading 现如今我们每时每刻都在与图像打交道，而图像处理也是我们绕不开的问题，本文将会简述图像处理的基础知识以及对常见的裁剪、画布、水印、平移、旋转、缩放等处理的实现。
+在进行图像处理之前，我们必须要先回答这样一个问题：什么是图像？
+答案是像素点的集合。
+如上图所示，假设红色圈的部分是一幅图像，其中每一个独立的小方格就是一个像素点（简称像素），像素是最基本的信息单元，而这幅图像的大小就是 11 x 11 px 。
+1、二值图像：
+图像中的每个像素点只有黑白两种状态，因此每个像素点的信息可以用 0 和 1 来表示。
+2、灰度图像：
+图像中的每个像素点在黑色和白色之间还有许多级的颜色深度（表现为灰色），通常我们使用 8 个 bit 来表示灰度级别，因此总共有 2 ^ 8 = 256 级灰度，所以可以使用 0 到 255 范围内的数字来对应表示灰度级别。
+3、RGB图像：
+红（Red）、绿（Green）、蓝（Blue）作为三原色可以调和成任意的颜色，对于 RGB 图像，每个像素点包含 RGB 共三个通道的基本信息，类似的，如果每个通道用 8 bit 表示即 256 级灰度，那么一个像素点可以表示为：
+([0 ... 255], [0 ... 255], [0 ... 255]) 图像矩阵：
+每个图像都可以很自然的用矩阵来表示，每个像素对应矩阵中的每个元素。
+例如：
+1、4 x 4 二值图像：
+0 1 0 1 1 0 0 0 1 1 1 1 0 0 0 0 2、4 x 4 灰度图像：</description></item></channel></rss>
