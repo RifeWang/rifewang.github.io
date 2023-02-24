@@ -7,7 +7,14 @@ IfNotPresent：只有当镜像在本地不存在时才会拉取。 Always：kube
 本地缓存的镜像一定会占用节点的磁盘空间，也就是说缓存的镜像越多，占用的磁盘空间越大，并且缓存的镜像默认一直存在，并没有 TTL 机制（比如说多长时间以后自动过期删除）。
 但是，k8s 的 GC 机制会自动清理掉镜像。当节点的磁盘使用率达到 HighThresholdPercent 高百分比阈值时（默认 85% ）会触发垃圾回收，此时 kubelet 会根据使用情况删除最旧的不再使用的镜像，直到磁盘使用率达到 LowThresholdPercent（默认 80% ）。
 题外话 2：镜像 layer 层数真的越少越好吗？
-我们经常会看到一些文章说在 Dockerfile 里使用更少的 RUN 命令之类的减少镜像的 layer 层数然后缩减镜像的大小，layer 越少镜像越小这确实没错，但是某些场景下得不偿失。首先，如果你的 RUN 命令很大，一旦你修改了其中某一个小的部分，那么这个 layer 在构建的时候就只能重新再来，无法使用任何缓存；其次，镜像的 layer 在上传和下载的过程中是可以并发的，而单独一个大的层无法进行并发传输。</description></item><item><title>Docker 入门教程</title><link>https://rifewang.github.io/posts/kubernetes/docker-guide/</link><pubDate>Tue, 17 Apr 2018 10:50:21 +0800</pubDate><guid>https://rifewang.github.io/posts/kubernetes/docker-guide/</guid><description>一 Link to heading 程序明明在我本地跑得好好的，怎么部署上去就出问题了？如果要在同一台物理机上同时部署多个 node 版本并独立运行互不影响，这又该怎么做？如何更快速的将服务部署到多个物理机上？
+我们经常会看到一些文章说在 Dockerfile 里使用更少的 RUN 命令之类的减少镜像的 layer 层数然后缩减镜像的大小，layer 越少镜像越小这确实没错，但是某些场景下得不偿失。首先，如果你的 RUN 命令很大，一旦你修改了其中某一个小的部分，那么这个 layer 在构建的时候就只能重新再来，无法使用任何缓存；其次，镜像的 layer 在上传和下载的过程中是可以并发的，而单独一个大的层无法进行并发传输。</description></item><item><title>Dockerfile 最佳实践</title><link>https://rifewang.github.io/posts/kubernetes/dockerfile-best-practice/</link><pubDate>Wed, 10 Jul 2019 16:32:36 +0800</pubDate><guid>https://rifewang.github.io/posts/kubernetes/dockerfile-best-practice/</guid><description>Dockerfile 是用来构建 docker 镜像的配置文件，语法简单上手容易，你可以很轻松的就编写一个能正常使用的 Dockerfile ，但是它很有可能还不够好，本文将会从细节上介绍一些 tips 助你实现最佳实践。
+1、注意构建顺序
+FROM debian - COPY ../app RUN apt-get update RUN apt-get -y install cron vim ssh + COPY ../app 上例中第二步一旦本地文件发生了变化将会导致包括此后步骤的缓存全部失效，必须重新构建，尤其是在开发环境，这将会增加你构建镜像的耗时。构建步骤的排序很重要，改变小的步骤放前面，改变大的步骤放后面，这有助于你优化使用缓存加速整个构建过程。
+2、使用更精确的 COPY
+只 copy 真正需要的文件，比如 node_modules 或者其它一些对于构建镜像毫无作用的文件一定要忽略掉（写入 .dockerignore 文件），这些无用的文件百害而无一利。
+3、合并指令
+- RUN apt-get update - RUN apt-get -y install cron vim ssh + RUN apt-get update \ &amp;amp;&amp;amp; apt-get -y install cron vim ssh 像这种 apt-get 升级和安装分为两个步骤毫无必要，反之统一为一个步骤更有利于缓存。你如果仔细观察各种官方镜像的 Dockerfile 是怎么写的，你肯定会发现他们单条 RUN 指令的内容相当的冗长也不会拆分，这样写是有道理的。
+4、移除不必要的依赖</description></item><item><title>Docker 入门教程</title><link>https://rifewang.github.io/posts/kubernetes/docker-guide/</link><pubDate>Tue, 17 Apr 2018 10:50:21 +0800</pubDate><guid>https://rifewang.github.io/posts/kubernetes/docker-guide/</guid><description>一 Link to heading 程序明明在我本地跑得好好的，怎么部署上去就出问题了？如果要在同一台物理机上同时部署多个 node 版本并独立运行互不影响，这又该怎么做？如何更快速的将服务部署到多个物理机上？
 “Build once , run anywhere” ，既可以保证环境的一致性，同时又能更方便的将各个环境相互隔离，还能更快速的部署各种服务，这就是 docker 的能力。
 基本概念 Link to heading 一张图慢慢讲：
 1、本地开发写好了 code ，首先我们需要通过 build 命令构建 image 镜像，而构建的规则呢，就需要写在这个 dockerfile 文件里。

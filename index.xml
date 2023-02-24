@@ -301,7 +301,48 @@ shard group 只是一个逻辑概念，并没有实际的磁盘文件夹，shard
 InfluxDB 分为免费的社区开源版本，以及需要收费的闭源商业版本，目前只有商业版本支持集群。
 InfluxDB 的底层数据结构从 LSM 树到 B+ 树折腾了一通，最后自创了一个 TSM 树（ Time-Structured Merge Tree ），这也是它性能高且资源占用少的重要原因。
 InfluxDB 由 go 语言编写而成，没有额外的依赖，它的查询语言 InfluxQL 与 SQL 极其相似，使用特别简单。
-InfluxDB 基本概念 Link to heading InfluxDB 有以下几个核心概念： 1、database ： 数据库。</description></item><item><title>图像相似性：哈希和特征</title><link>https://rifewang.github.io/posts/uncate/image-similarity/</link><pubDate>Thu, 14 Mar 2019 15:15:10 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/image-similarity/</guid><description>引言 Link to heading 如何判断图像的相似性？
+InfluxDB 基本概念 Link to heading InfluxDB 有以下几个核心概念： 1、database ： 数据库。</description></item><item><title>Dockerfile 最佳实践</title><link>https://rifewang.github.io/posts/kubernetes/dockerfile-best-practice/</link><pubDate>Wed, 10 Jul 2019 16:32:36 +0800</pubDate><guid>https://rifewang.github.io/posts/kubernetes/dockerfile-best-practice/</guid><description>Dockerfile 是用来构建 docker 镜像的配置文件，语法简单上手容易，你可以很轻松的就编写一个能正常使用的 Dockerfile ，但是它很有可能还不够好，本文将会从细节上介绍一些 tips 助你实现最佳实践。
+1、注意构建顺序
+FROM debian - COPY ../app RUN apt-get update RUN apt-get -y install cron vim ssh + COPY ../app 上例中第二步一旦本地文件发生了变化将会导致包括此后步骤的缓存全部失效，必须重新构建，尤其是在开发环境，这将会增加你构建镜像的耗时。构建步骤的排序很重要，改变小的步骤放前面，改变大的步骤放后面，这有助于你优化使用缓存加速整个构建过程。
+2、使用更精确的 COPY
+只 copy 真正需要的文件，比如 node_modules 或者其它一些对于构建镜像毫无作用的文件一定要忽略掉（写入 .dockerignore 文件），这些无用的文件百害而无一利。
+3、合并指令
+- RUN apt-get update - RUN apt-get -y install cron vim ssh + RUN apt-get update \ &amp;amp;&amp;amp; apt-get -y install cron vim ssh 像这种 apt-get 升级和安装分为两个步骤毫无必要，反之统一为一个步骤更有利于缓存。你如果仔细观察各种官方镜像的 Dockerfile 是怎么写的，你肯定会发现他们单条 RUN 指令的内容相当的冗长也不会拆分，这样写是有道理的。
+4、移除不必要的依赖</description></item><item><title>Let's Encrypt 配置 HTTPS 免费泛域名证书</title><link>https://rifewang.github.io/posts/uncate/lets-encrypt/</link><pubDate>Thu, 27 Jun 2019 16:26:45 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/lets-encrypt/</guid><description>想要使用 HTTPS ，你必须先拥有权威 CA（证书签发机构）签发的证书（对于自签名的证书，浏览器是不认账的）。Let&amp;rsquo;s Encrypt 就是一家权威的 CA 证书签发机构，你可以向他申请免费的证书（一般商业证书的价格比较贵）。
+推荐使用 acme.sh 这个工具，申请泛域名证书示例：
+注意：以下示例中，我的二级域名是 rifewang.club （一般你向云服务商购买的都是二级域名），泛域名是 *.x.rifewang.club 。
+1、在系统上安装 acme.sh ，默认安装位置是 ~/.acme.sh :
+curl https://get.acme.sh | sh 安装要求系统必须已经安装了 cron , crontab , crontabs , vivie-cron 其中任意一个工具，不然会提示你安装失败，没有的话先安装一个即可。
+注意：以下操作使用的是 DNS manual mode 的方式。
+2、发起 issue 申请获取域名 DNS TXT 记录：
+acme.sh --issue --force --dns -d &amp;lt;二级域名&amp;gt; -d &amp;lt;泛域名&amp;gt; \ --yes-I-know-dns-manual-mode-enough-go-ahead-please 注意：你必须先将 acme.sh 这个可执行文件的路径添加到系统的环境变量 PATH 中，或者直接在可执行文件目录下执行，否则肯定会提示你 acme.sh command not found 。
+&amp;ndash;force 强制 issue ，某些情况下你的域名已经验证成功了就会跳过验证，不会生成新的 TXT 记录，所以这里强制执行一下。</description></item><item><title>深入理解 Node.js 事件循环架构</title><link>https://rifewang.github.io/posts/uncate/nodejs-event-loop-architecture/</link><pubDate>Tue, 28 May 2019 15:53:48 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/nodejs-event-loop-architecture/</guid><description>关于 Node.js ，相信你已经了解过不少内容，诸如 Node.js 内核、事件循环、单线程、setTimeout 或 setImmediate 函数的执行机制等等。
+当然最重要的，你应该知道 Node.js 使用的是非阻塞 IO 模型以及异步的编程风格。本文仍将深入核心进行相关内容的探讨。
+01 Link to heading 事件循环到底是什么？Node.js 到底是单线程还是多线程？
+关于这个问题，网络上充斥着各种不清晰甚至错误的答案。本文将会深入 Node.js 内核，阐述它是如何实现的以及它的工作机制。 Node.js 并不仅仅只是 &amp;quot; JavaScript on the Server &amp;quot; ，更重要的是，其中约 30% 的部分是 C++ 而不是 JS 。本文将会讲述这些 C++ 部分在 Node.js 中实际做了什么。
+Node.js 是单线程？
+答案：Node.js 既是单线程，但同时也不是。
+一些相关名词：multitasking（多任务）、single-threaded（单线程）、multi-threaded（多线程），thread pool（线程池）、epoll loop（epoll 循环）、event loop（事件循环）。
+让我们从头开始深入了解 Node.js 内核中发生了什么？
+处理器可以一次处理一件事，也可以一次并行地处理多个任务（multitasking）。 对于单核处理器，其只能一次处理一个任务，应用程序在完成任务后调用 yield 去通知处理器开始处理下一个任务，就像 JavaScript 中的 generator 函数一样，否则没有 yield 则将返回当前任务。在过去，当应用程序无法调用 yield 时，其服务将处于无法访问的状态。
+进程是一个 top level 执行容器，它有自己专用的内存系统。 这意味着在一个进程中无法直接获取另一个进程的内存中的数据，为了使两个进程进行通信，我们必须要另外做一些工作，称之为 inter-process communication（ IPC ，进程间通信），它依赖于 system sockets（系统套接字）。</description></item><item><title>流平台 Kafka</title><link>https://rifewang.github.io/posts/middleware/kafka/</link><pubDate>Thu, 11 Apr 2019 14:49:58 +0800</pubDate><guid>https://rifewang.github.io/posts/middleware/kafka/</guid><description>简介 Link to heading Kafka 作为一个分布式的流平台，正在大数据相关领域得到越来越广泛的应用，本文将会介绍 kafka 的相关内容。
+流平台如 kafka 具备三大关键能力：
+发布和订阅消息流，类似于消息队列。 以容错的方式存储消息流。 实时处理消息流。 kafka 通常应用于两大类应用：
+构建实时数据流管道，以可靠的获取系统或应用之间的数据。 构建实时转换或响应数据流的应用程序。 kafka 作为一个消息系统，可以接受 producer 生产者投递消息，以及 consumer 消费者消费消息。
+kafka 作为一个存储系统，会将所有消息以追加的方式顺序写入磁盘，这意味着消息是会被持久化的，传统消息队列中的消息一旦被消费通常都会被立即删除，而 kafka 却并不会这样做，kafka 中的消息是具有存活时间的，只有超出存活时间才会被删除，这意味着在 kafka 中能够进行消息回溯，从而实现历史消息的重新消费。
+kafka 的流处理，可以持续获取输入流的数据，然后进行加工处理，最后写入到输出流。kafka 的流处理强依赖于 kafka 本身，并且只是一个类库，与当前知名的流处理框架如 spark 和 flink 还是有不小的区别和差距。
+大多数使用者以及本文重点关注的也只是 kafka 的前两种能力，下面将会对此进行更加详细的介绍。
+相关概念 Link to heading kafka 中的相关概念如下图所示：
+1、Producer ：生产者，投递消息。
+2、Topic ：消息的逻辑分类，所有消息都必须归属于一个特定的 topic 主题。
+3、Broker ：kafka 集群具有多个 broker（代理节点），一个 broker 其实就是一个 kafka 服务器。
+4、Partition ：topic 只是逻辑上的概念，每个 topic 主题下的消息都会被分开存储在多个 partition 分区中，为了容错，kafka 提供了备份机制，每个 partition 可以设置多个 replication 副本。</description></item><item><title>使用 Puppeteer 构建自动化端到端测试</title><link>https://rifewang.github.io/posts/uncate/puppeteer/</link><pubDate>Fri, 22 Mar 2019 15:04:16 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/puppeteer/</guid><description>端到端测试指的是将系统作为一个黑盒，模拟正常用户行为，跨越从前端到后端整个软件系统，是一种全局性的整体测试。
+来看本文的示例：
+There should have been a video here but your browser does not seem to support it. 你在视频中看到的所有操作全部都是由程序自动完成的，就像真实的用户一样，通过这种自动化的方式可以很好的提升我们的测试效率从而保证交付的质量。
+完成这样的操作相当简单，只需要 Puppeteer 就够了。Puppeteer 是一个 node 库，通过它提供的高级 API 便可以控制 chromium 或者 chrome ，换句话说，在浏览器中进行的绝大部分人工操作都可以通过在 node 程序中调用 Puppeteer 的 API 来完成。
+本文示例中的所有操作无外乎于：
+获取页面元素 键盘输入 鼠标操作 文件上传 执行原生JS 一、打开浏览器跳转页面：
+const browser = await puppeteer.launch({ headless: false, // 打开浏览器 defaultViewport: { // 设置视窗宽高 width: 1200, height: 800 } }); const page = await browser.newPage(); await page.goto(url); // 跳转页面 二、获取输入框并输入：</description></item><item><title>图像相似性：哈希和特征</title><link>https://rifewang.github.io/posts/uncate/image-similarity/</link><pubDate>Thu, 14 Mar 2019 15:15:10 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/image-similarity/</guid><description>引言 Link to heading 如何判断图像的相似性？
 直接比较图像内容的 md5 值肯定是不行的，md5 的方式只能判断像素级别完全一致。图像的基本单元是像素，如果两张图像完全相同，那么图像内容的 md5 值一定相同，然而一旦小部分像素发生变化，比如经过缩放、水印、噪声等处理，那么它们的 md5 值就会天差地别。
 本文将会介绍图像相似性的两大有关概念：图像哈希、图像特征。
 图像哈希 Link to heading 图像通过一系列的变换和处理最终得到的一组哈希值称之为图像的哈希值，而中间的变换和处理过程则称之为哈希算法。

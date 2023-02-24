@@ -14,7 +14,22 @@ import test from &amp;#39;ava&amp;#39; import Memcached from &amp;#39;../lib/mem
 一致性哈希算法的原理：
 一致性哈希算法已经有开源库 hashring 实现，基本用法：
 const HashRing = require(&amp;#39;hashring&amp;#39;); // 输入集群地址构造 hash ring const ring = new HashRing([&amp;#39;127.0.0.1:11211&amp;#39;, &amp;#39;127.0.0.2:11211&amp;#39;]); // 输入 key 获取指定节点 const host = ring.get(key); TCP 编程 Link to heading 包括 memcached 在内的许多系统对外都是通过 TCP 通信。在 Node.js 中建立一个 TCP 连接并进行数据的收发很简单：
-const net = require(&amp;#39;net&amp;#39;); const socket = new net.Socket(); socket.</description></item><item><title>RabbitMQ 入门教程及示例</title><link>https://rifewang.github.io/posts/middleware/rabbitmq/</link><pubDate>Tue, 27 Feb 2018 18:53:07 +0800</pubDate><guid>https://rifewang.github.io/posts/middleware/rabbitmq/</guid><description>一 Link to heading 消息中间件 MQ（也称消息队列）的基本功能是传递和转发消息，其最重要的作用是能够解耦业务及系统架构，可以说是一个系统发展壮大到一定阶段绕不开的东西。
+const net = require(&amp;#39;net&amp;#39;); const socket = new net.Socket(); socket.</description></item><item><title>深入理解 Node.js 事件循环架构</title><link>https://rifewang.github.io/posts/uncate/nodejs-event-loop-architecture/</link><pubDate>Tue, 28 May 2019 15:53:48 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/nodejs-event-loop-architecture/</guid><description>关于 Node.js ，相信你已经了解过不少内容，诸如 Node.js 内核、事件循环、单线程、setTimeout 或 setImmediate 函数的执行机制等等。
+当然最重要的，你应该知道 Node.js 使用的是非阻塞 IO 模型以及异步的编程风格。本文仍将深入核心进行相关内容的探讨。
+01 Link to heading 事件循环到底是什么？Node.js 到底是单线程还是多线程？
+关于这个问题，网络上充斥着各种不清晰甚至错误的答案。本文将会深入 Node.js 内核，阐述它是如何实现的以及它的工作机制。 Node.js 并不仅仅只是 &amp;quot; JavaScript on the Server &amp;quot; ，更重要的是，其中约 30% 的部分是 C++ 而不是 JS 。本文将会讲述这些 C++ 部分在 Node.js 中实际做了什么。
+Node.js 是单线程？
+答案：Node.js 既是单线程，但同时也不是。
+一些相关名词：multitasking（多任务）、single-threaded（单线程）、multi-threaded（多线程），thread pool（线程池）、epoll loop（epoll 循环）、event loop（事件循环）。
+让我们从头开始深入了解 Node.js 内核中发生了什么？
+处理器可以一次处理一件事，也可以一次并行地处理多个任务（multitasking）。 对于单核处理器，其只能一次处理一个任务，应用程序在完成任务后调用 yield 去通知处理器开始处理下一个任务，就像 JavaScript 中的 generator 函数一样，否则没有 yield 则将返回当前任务。在过去，当应用程序无法调用 yield 时，其服务将处于无法访问的状态。
+进程是一个 top level 执行容器，它有自己专用的内存系统。 这意味着在一个进程中无法直接获取另一个进程的内存中的数据，为了使两个进程进行通信，我们必须要另外做一些工作，称之为 inter-process communication（ IPC ，进程间通信），它依赖于 system sockets（系统套接字）。</description></item><item><title>使用 Puppeteer 构建自动化端到端测试</title><link>https://rifewang.github.io/posts/uncate/puppeteer/</link><pubDate>Fri, 22 Mar 2019 15:04:16 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/puppeteer/</guid><description>端到端测试指的是将系统作为一个黑盒，模拟正常用户行为，跨越从前端到后端整个软件系统，是一种全局性的整体测试。
+来看本文的示例：
+There should have been a video here but your browser does not seem to support it. 你在视频中看到的所有操作全部都是由程序自动完成的，就像真实的用户一样，通过这种自动化的方式可以很好的提升我们的测试效率从而保证交付的质量。
+完成这样的操作相当简单，只需要 Puppeteer 就够了。Puppeteer 是一个 node 库，通过它提供的高级 API 便可以控制 chromium 或者 chrome ，换句话说，在浏览器中进行的绝大部分人工操作都可以通过在 node 程序中调用 Puppeteer 的 API 来完成。
+本文示例中的所有操作无外乎于：
+获取页面元素 键盘输入 鼠标操作 文件上传 执行原生JS 一、打开浏览器跳转页面：
+const browser = await puppeteer.launch({ headless: false, // 打开浏览器 defaultViewport: { // 设置视窗宽高 width: 1200, height: 800 } }); const page = await browser.newPage(); await page.goto(url); // 跳转页面 二、获取输入框并输入：</description></item><item><title>RabbitMQ 入门教程及示例</title><link>https://rifewang.github.io/posts/middleware/rabbitmq/</link><pubDate>Tue, 27 Feb 2018 18:53:07 +0800</pubDate><guid>https://rifewang.github.io/posts/middleware/rabbitmq/</guid><description>一 Link to heading 消息中间件 MQ（也称消息队列）的基本功能是传递和转发消息，其最重要的作用是能够解耦业务及系统架构，可以说是一个系统发展壮大到一定阶段绕不开的东西。
 而 RabbitMQ 是对 AMQP（高级消息队列协议）的实现，成熟可靠并且开源，本系列文章将会讲述如何在 node 中入门这一利器。
 RabbitMQ 概述 Link to heading 先来简单的了解一下 RabbitMQ 相关的基本概念：
 Producer ：生产者，生成消息并把消息发送给 RabbitMQ 。
