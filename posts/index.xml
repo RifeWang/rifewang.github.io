@@ -143,7 +143,41 @@ shard group 只是一个逻辑概念，并没有实际的磁盘文件夹，shard
 InfluxDB 分为免费的社区开源版本，以及需要收费的闭源商业版本，目前只有商业版本支持集群。
 InfluxDB 的底层数据结构从 LSM 树到 B+ 树折腾了一通，最后自创了一个 TSM 树（ Time-Structured Merge Tree ），这也是它性能高且资源占用少的重要原因。
 InfluxDB 由 go 语言编写而成，没有额外的依赖，它的查询语言 InfluxQL 与 SQL 极其相似，使用特别简单。
-InfluxDB 基本概念 Link to heading InfluxDB 有以下几个核心概念： 1、database ： 数据库。</description></item><item><title>Dockerfile 最佳实践</title><link>https://rifewang.github.io/posts/kubernetes/dockerfile-best-practice/</link><pubDate>Wed, 10 Jul 2019 16:32:36 +0800</pubDate><guid>https://rifewang.github.io/posts/kubernetes/dockerfile-best-practice/</guid><description>Dockerfile 是用来构建 docker 镜像的配置文件，语法简单上手容易，你可以很轻松的就编写一个能正常使用的 Dockerfile ，但是它很有可能还不够好，本文将会从细节上介绍一些 tips 助你实现最佳实践。
+InfluxDB 基本概念 Link to heading InfluxDB 有以下几个核心概念： 1、database ： 数据库。</description></item><item><title>CPU 密集型任务会阻塞 Node.js 吗【译】</title><link>https://rifewang.github.io/posts/uncate/nodejs-thread-block/</link><pubDate>Tue, 24 Sep 2019 17:19:31 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/nodejs-thread-block/</guid><description>本文翻译自： https://betterprogramming.pub/is-node-js-really-single-threaded-7ea59bcc8d64
+CPU密集型任务会阻塞 Node.js 吗？
+让我们使用加密任务做个简单测试：
+如图所示，连续执行四次加密任务，打印耗时，结果会发生什么？
+结果输出：
+Hash: 1232 Hash: 1237 Hash: 1268 Hash: 1297 这四次加密任务计时的起始时间都是相同的，然后最终的结束时间却几乎一致，这个结果说明了什么？说明它们是并发执行的。
+如果不是并发执行，那么结果就会如下图所示：
+那么为什么这里没有发生阻塞？
+Node.js 的执行过程如上图所示，我们要注意的是 libuv 默认使用了四个线程！上述示例中的四个加密任务分别推送到了四个不同的线程中去并发执行，所以才没有发生阻塞。
+那么问题来了？如果连续执行五个加密任务呢？
+输出结果：
+Hash: 1432 Hash: 1437 Hash: 1468 Hash: 1497 Hash: 2104 可以看到前四个任务仍然是并发执行的，但是第五个任务发生了阻塞。
+为什么？因此 libuv 的四个线程都在忙碌，第五个任务只有等待线程的任务执行完毕才能推送到线程中去执行。
+过程如下图所示：
+1、四个线程都在忙碌，其它任务必须等待：
+2、某个线程任务完成，继续执行其它任务：
+libuv 线程池中的线程数量是否可以设置？ 通过环境变量 UV_THREADPOOL_SIZE 即可设置。
+比如：
+我把线程数设置为 5 ，执行的结果就会是下图所示：
+请注意测试环境的 CPU 核心数是四个，需要说明的有两点：第一，五个任务被推送到了五个线程中去并发执行，这一点上文已经说明；第二，每个任务的耗时有了明显的增加，为什么？因为我们只有四核，但是却有五个线程，操作系统需要进行平衡调度、通过上下文切换以保证每个线程分配到相同的时间去执行任务。</description></item><item><title>从 V8 优化看高效 JavaScript【译】</title><link>https://rifewang.github.io/posts/uncate/efficient-js-from-v8-optimization/</link><pubDate>Wed, 18 Sep 2019 19:15:57 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/efficient-js-from-v8-optimization/</guid><description>文本翻译自: https://blog.logrocket.com/how-javascript-works-optimizing-the-v8-compiler-for-efficiency
+理解 JavaScript 是如何工作的对于编写高效的 JS 大有帮助。
+V8 执行 JS 分为三个阶段：
+源代码转换为 AST 抽象语法树。 语法树转换为字节码：这个过程由 V8 的 Ignition 完成，2017年之前是没有的。 字节码编译成机器码：由 V8 的编译器 TurboFan 来完成。 第一个阶段并不是文本的讨论范围，第二三阶段对于编写优化 JS 有直接影响。
+实际上第二三阶段是紧耦合的，它们都在 just-in-time（ JIT ）内运作。为了理解 JIT ，我们先回顾下源代码转换为机器码的两种方法：
+1、解释器 解释器逐行转换和执行代码，其优点是易于实现和理解、及时反馈、更宽泛的编程环境，缺点也非常明显，那就是速度慢，慢的原因在于（1）反复解释的开销和（2）无法优化程序的各个部分。
+换句话说，解释器在处理不同的代码段时无法识别重复的工作量。如果你通过解释器运行相同的代码 100 次，那么解释器将会翻译并执行相同的代码 100 次，其中不必要的重新翻译了 99 次。
+解释器很简单、启动快速，但执行速度慢。
+2、编译器 编译器在执行之前翻译所有的源代码。编译器更加复杂，但是可以进行全局优化（例如，共享重复代码），其执行速度也更快。
+编译器更复杂、启动慢，但执行速度更快。
+JIT 的作用就是尽可能结合解释器和编译器的优点，以使翻译代码和执行都能快速。
+基本思想是尽可能避免重新翻译。首先，探测器通过解释器运行代码，在执行期间，探测器会追踪代码段并将其会被划分为 warm（运行少数几次） 和 hot（运行重复多次）。
+JIT 把 warm 代码段直接丢给基准编译器，尽可能重用已编译的代码。
+JIT 把 hot 代码段丢给优化编译器，其根据解释器收集来的信息（1）作出假设，（2）基于假设（比如，对象属性始终以特定顺序出现）进行优化。 然而，一旦假设不成立，优化编译器就会进行 deoptimization 去优化，就是丢弃优化的代码。
+优化和去优化的周期是昂贵的。由于需要存储优化过的机器码和探测器的信息，JIT 引入了额外的内存成本。这种成本激发了 V8 的解释器 Ignition 。
+Ignition 将 AST 转换为字节码，字节码序列被执行，其反馈信息被 inline caches 内联高速缓存。 反馈信息被用于（1）Ignition 随后的解释，和（2）TurboFan 推测性优化。 TurboFan 基于反馈推测性的优化将字节码转换为机器码。</description></item><item><title>Dockerfile 最佳实践</title><link>https://rifewang.github.io/posts/kubernetes/dockerfile-best-practice/</link><pubDate>Wed, 10 Jul 2019 16:32:36 +0800</pubDate><guid>https://rifewang.github.io/posts/kubernetes/dockerfile-best-practice/</guid><description>Dockerfile 是用来构建 docker 镜像的配置文件，语法简单上手容易，你可以很轻松的就编写一个能正常使用的 Dockerfile ，但是它很有可能还不够好，本文将会从细节上介绍一些 tips 助你实现最佳实践。
 1、注意构建顺序
 FROM debian - COPY ../app RUN apt-get update RUN apt-get -y install cron vim ssh + COPY ../app 上例中第二步一旦本地文件发生了变化将会导致包括此后步骤的缓存全部失效，必须重新构建，尤其是在开发环境，这将会增加你构建镜像的耗时。构建步骤的排序很重要，改变小的步骤放前面，改变大的步骤放后面，这有助于你优化使用缓存加速整个构建过程。
 2、使用更精确的 COPY
@@ -158,7 +192,8 @@ curl https://get.acme.sh | sh 安装要求系统必须已经安装了 cron , cro
 注意：以下操作使用的是 DNS manual mode 的方式。
 2、发起 issue 申请获取域名 DNS TXT 记录：
 acme.sh --issue --force --dns -d &amp;lt;二级域名&amp;gt; -d &amp;lt;泛域名&amp;gt; \ --yes-I-know-dns-manual-mode-enough-go-ahead-please 注意：你必须先将 acme.sh 这个可执行文件的路径添加到系统的环境变量 PATH 中，或者直接在可执行文件目录下执行，否则肯定会提示你 acme.sh command not found 。
-&amp;ndash;force 强制 issue ，某些情况下你的域名已经验证成功了就会跳过验证，不会生成新的 TXT 记录，所以这里强制执行一下。</description></item><item><title>深入理解 Node.js 事件循环架构</title><link>https://rifewang.github.io/posts/uncate/nodejs-event-loop-architecture/</link><pubDate>Tue, 28 May 2019 15:53:48 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/nodejs-event-loop-architecture/</guid><description>关于 Node.js ，相信你已经了解过不少内容，诸如 Node.js 内核、事件循环、单线程、setTimeout 或 setImmediate 函数的执行机制等等。
+&amp;ndash;force 强制 issue ，某些情况下你的域名已经验证成功了就会跳过验证，不会生成新的 TXT 记录，所以这里强制执行一下。</description></item><item><title>深入理解 Node.js 事件循环架构【译】</title><link>https://rifewang.github.io/posts/uncate/nodejs-event-loop-architecture/</link><pubDate>Tue, 28 May 2019 15:53:48 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/nodejs-event-loop-architecture/</guid><description>本文翻译自： https://medium.com/preezma/node-js-event-loop-architecture-go-deeper-node-core-c96b4cec7aa4
+关于 Node.js ，相信你已经了解过不少内容，诸如 Node.js 内核、事件循环、单线程、setTimeout 或 setImmediate 函数的执行机制等等。
 当然最重要的，你应该知道 Node.js 使用的是非阻塞 IO 模型以及异步的编程风格。本文仍将深入核心进行相关内容的探讨。
 01 Link to heading 事件循环到底是什么？Node.js 到底是单线程还是多线程？
 关于这个问题，网络上充斥着各种不清晰甚至错误的答案。本文将会深入 Node.js 内核，阐述它是如何实现的以及它的工作机制。 Node.js 并不仅仅只是 &amp;quot; JavaScript on the Server &amp;quot; ，更重要的是，其中约 30% 的部分是 C++ 而不是 JS 。本文将会讲述这些 C++ 部分在 Node.js 中实际做了什么。

@@ -14,7 +14,27 @@ import test from &amp;#39;ava&amp;#39; import Memcached from &amp;#39;../lib/mem
 一致性哈希算法的原理：
 一致性哈希算法已经有开源库 hashring 实现，基本用法：
 const HashRing = require(&amp;#39;hashring&amp;#39;); // 输入集群地址构造 hash ring const ring = new HashRing([&amp;#39;127.0.0.1:11211&amp;#39;, &amp;#39;127.0.0.2:11211&amp;#39;]); // 输入 key 获取指定节点 const host = ring.get(key); TCP 编程 Link to heading 包括 memcached 在内的许多系统对外都是通过 TCP 通信。在 Node.js 中建立一个 TCP 连接并进行数据的收发很简单：
-const net = require(&amp;#39;net&amp;#39;); const socket = new net.Socket(); socket.</description></item><item><title>深入理解 Node.js 事件循环架构</title><link>https://rifewang.github.io/posts/uncate/nodejs-event-loop-architecture/</link><pubDate>Tue, 28 May 2019 15:53:48 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/nodejs-event-loop-architecture/</guid><description>关于 Node.js ，相信你已经了解过不少内容，诸如 Node.js 内核、事件循环、单线程、setTimeout 或 setImmediate 函数的执行机制等等。
+const net = require(&amp;#39;net&amp;#39;); const socket = new net.Socket(); socket.</description></item><item><title>CPU 密集型任务会阻塞 Node.js 吗【译】</title><link>https://rifewang.github.io/posts/uncate/nodejs-thread-block/</link><pubDate>Tue, 24 Sep 2019 17:19:31 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/nodejs-thread-block/</guid><description>本文翻译自： https://betterprogramming.pub/is-node-js-really-single-threaded-7ea59bcc8d64
+CPU密集型任务会阻塞 Node.js 吗？
+让我们使用加密任务做个简单测试：
+如图所示，连续执行四次加密任务，打印耗时，结果会发生什么？
+结果输出：
+Hash: 1232 Hash: 1237 Hash: 1268 Hash: 1297 这四次加密任务计时的起始时间都是相同的，然后最终的结束时间却几乎一致，这个结果说明了什么？说明它们是并发执行的。
+如果不是并发执行，那么结果就会如下图所示：
+那么为什么这里没有发生阻塞？
+Node.js 的执行过程如上图所示，我们要注意的是 libuv 默认使用了四个线程！上述示例中的四个加密任务分别推送到了四个不同的线程中去并发执行，所以才没有发生阻塞。
+那么问题来了？如果连续执行五个加密任务呢？
+输出结果：
+Hash: 1432 Hash: 1437 Hash: 1468 Hash: 1497 Hash: 2104 可以看到前四个任务仍然是并发执行的，但是第五个任务发生了阻塞。
+为什么？因此 libuv 的四个线程都在忙碌，第五个任务只有等待线程的任务执行完毕才能推送到线程中去执行。
+过程如下图所示：
+1、四个线程都在忙碌，其它任务必须等待：
+2、某个线程任务完成，继续执行其它任务：
+libuv 线程池中的线程数量是否可以设置？ 通过环境变量 UV_THREADPOOL_SIZE 即可设置。
+比如：
+我把线程数设置为 5 ，执行的结果就会是下图所示：
+请注意测试环境的 CPU 核心数是四个，需要说明的有两点：第一，五个任务被推送到了五个线程中去并发执行，这一点上文已经说明；第二，每个任务的耗时有了明显的增加，为什么？因为我们只有四核，但是却有五个线程，操作系统需要进行平衡调度、通过上下文切换以保证每个线程分配到相同的时间去执行任务。</description></item><item><title>深入理解 Node.js 事件循环架构【译】</title><link>https://rifewang.github.io/posts/uncate/nodejs-event-loop-architecture/</link><pubDate>Tue, 28 May 2019 15:53:48 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/nodejs-event-loop-architecture/</guid><description>本文翻译自： https://medium.com/preezma/node-js-event-loop-architecture-go-deeper-node-core-c96b4cec7aa4
+关于 Node.js ，相信你已经了解过不少内容，诸如 Node.js 内核、事件循环、单线程、setTimeout 或 setImmediate 函数的执行机制等等。
 当然最重要的，你应该知道 Node.js 使用的是非阻塞 IO 模型以及异步的编程风格。本文仍将深入核心进行相关内容的探讨。
 01 Link to heading 事件循环到底是什么？Node.js 到底是单线程还是多线程？
 关于这个问题，网络上充斥着各种不清晰甚至错误的答案。本文将会深入 Node.js 内核，阐述它是如何实现的以及它的工作机制。 Node.js 并不仅仅只是 &amp;quot; JavaScript on the Server &amp;quot; ，更重要的是，其中约 30% 的部分是 C++ 而不是 JS 。本文将会讲述这些 C++ 部分在 Node.js 中实际做了什么。
