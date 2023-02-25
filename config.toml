@@ -14,10 +14,10 @@ pygmentscodefencesguesssyntax = true
 
 [params]
   author = "凌虚"
-  info = "Backend Developer and System Architect"
-  description = "Lingxu's personal website"
+  info = "Software Engineer and System Architect"
+  description = "Lingxu's personal blog website"
   keywords = "blog,developer,personal"
-  avatarurl = "images/WechatIMG63.jpeg"
+  avatarurl = "images/avatar.jpeg"
   #gravatar = ""
 
   favicon_32 = "images/favicon-32x32.png"
