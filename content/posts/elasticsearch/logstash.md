@@ -1,8 +1,8 @@
 +++
 draft = false
 date = 2020-11-01T00:00:00+08:00
-title = "Logstash 入门"
-description = "Logstash 入门"
+title = "数据管道 Logstash 入门"
+description = "数据管道 Logstash 入门"
 slug = ""
 authors = []
 tags = []
