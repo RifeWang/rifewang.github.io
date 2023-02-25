@@ -1,8 +1,8 @@
 +++
 draft = false
 date = 2019-05-28T15:53:48+08:00
-title = "深入理解 Node.js 事件循环架构"
-description = "深入理解 Node.js 事件循环架构"
+title = "深入理解 Node.js 事件循环架构【译】"
+description = "深入理解 Node.js 事件循环架构【译】"
 slug = ""
 authors = []
 tags = ["Node.js"]
@@ -11,6 +11,11 @@ externalLink = ""
 series = []
 disableComments = true
 +++
+
+
+*本文翻译自：
+https://medium.com/preezma/node-js-event-loop-architecture-go-deeper-node-core-c96b4cec7aa4*
+
 
 ![](/images/uncate/node-event-loop1.jpeg)
 
@@ -179,7 +184,3 @@ Event loop
 Node.js v10.5.0 版本之后，新增了 worker_threads 工作线程模块，允许用户多线程并行执行 JavaScript 。
 
 工作线程对于执行 CPU 密集型 JavaScript 操作非常有用，但对于 IO 密集型工作没有多大帮助，因为 Node.js 内置的异步 IO 操作比这些 workers 更高效。
-
-
-*本文翻译自：
-https://medium.com/preezma/node-js-event-loop-architecture-go-deeper-node-core-c96b4cec7aa4*
