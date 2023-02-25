@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Golang on 凌虚 Blog</title><link>https://rifewang.github.io/categories/golang/</link><description>Recent content in Golang on 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 18 Oct 2019 16:41:26 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml"/><item><title>Go Errors 错误处理</title><link>https://rifewang.github.io/posts/go/errors/</link><pubDate>Fri, 18 Oct 2019 16:41:26 +0800</pubDate><guid>https://rifewang.github.io/posts/go/errors/</guid><description>Golang 中的 error 是一个内置的特殊的接口类型：
+type error interface { Error() string } 在 Go 1.13 版本之前，有关 error 的方法只有两个：
+errors.New : func New(text string) error fmt.Errorf : func Errorf(format string, a ...interface{}) error 这两个方法都是用来生成一个新的 error 类型的数据。
+1.13 版本之前的错误处理 Link to heading 最常见的，判断是否为 nil ：
+if err != nil { // something went wrong } 判断是否为某个特定的错误：
+var ErrNotFound = errors.New(&amp;#34;not found&amp;#34;) if err == ErrNotFound { // something wasn&amp;#39;t found } error 是一个带有 Error 方法的接口类型，这意味着你可以自己去实现这个接口：</description></item><item><title>Go 垃圾回收</title><link>https://rifewang.github.io/posts/go/gc/</link><pubDate>Wed, 25 Sep 2019 00:56:24 +0800</pubDate><guid>https://rifewang.github.io/posts/go/gc/</guid><description>Garbage Collection（ GC ）也就是垃圾回收到底是什么？内存空间是有限的，诸如变量等需要分配内存才能存储数据，而当这个变量不再使用的时候就需要释放它占用的内存，这就是垃圾回收。
+Go 的垃圾回收运行在后台的守护线程中，会自动追踪检查对象的使用情况，然后回收不再使用的空间，我们一般并不会也不需要直接接触到它。
+GC 模型 Link to heading Go 使用的是 Mark-Sweep（标记-清除）方式，其具体的垃圾回收算法一直都在调整优化，本文并不打算去介绍这些算法，而是从一个整体的角度去描述 GC 的过程。
+Collection 可以分为三个阶段：
+Mark Setup - STW Marking - Concurrent Mark Termination - STW STW 是 Stop The World 的缩写，意思是 GC 的时候会暂停其它所有任务，正是如此才导致了延迟的存在。
+1、Mark Setup - STW Link to heading 垃圾回收开始，首先需要开启 Write Barrier（写屏障），为此所有应用程序 goroutine 必须暂停，这个过程通常很快，平均 10 - 30 微秒。
+假设应用程序当前运行了四个 goroutine :
+我们需要等待所有 goroutine 暂停，而暂停操作是需要出现一次函数调用才能完成，如果某个 goroutine 始终没有发生函数调用（比如一直在执行某个非常长的循环操作）而其它 goroutine 却完成了会怎样，就会如下图：
+然而，必须所有的 goroutine 全部都暂停，垃圾回收才能继续进行，不然就会卡在这里一直等待，结果就是延迟越来越高。这个问题官方团队计划将在 1.14 版本通过优先策略进行优化。
+一旦这一阶段完成，Write Barrier（写屏障）开启，就会进入下一阶段。</description></item><item><title>微服务互通的桥梁: gRPC 入门示例</title><link>https://rifewang.github.io/posts/middleware/grpc/</link><pubDate>Fri, 23 Aug 2019 00:25:31 +0800</pubDate><guid>https://rifewang.github.io/posts/middleware/grpc/</guid><description>RPC 是什么？Remote Procedure Call ，远程过程调用，一种通信协议。你可以理解为，在某台机器上调用另外一台机器上的服务或方法。
+应用服务对外可以提供 REST 接口以供进行服务的调用，那么对于分布式系统内部的微服务之间的相互调用呢？REST 的方式仍然可行，但是效率不高，因此 RPC 出现了。
+gRPC 是谷歌开源的一套 RPC 实现机制，低延迟、高性能，其基于 HTTP/2 和 Protocol Buffers 。HTTP/2 在现行 HTTP/1.1 的基础上进行了大量优化，比如由文本传输变为二进制传输，同时具有多路复用、双向流等等特点，总之就是更牛了。Protocol Buffers 是一个序列化或反序列化数据的协议，说白了就是文本数据与二进制数据之间的相互转换。
+文本将会带你入门 gRPC ，并且提供 Node.js 和 Go 两个版本的示例。
+Protocol Buffers Link to heading 服务之间相互调用需要定义统一的数据格式（比如请求和响应），同时还要声明具体的服务及其方法，因此我们首先要做的就是定义一个 .proto 后缀的文件。
+示例：
+1、syntax 声明使用的 protocol buffers 协议版本，现行的是第三版。 2、package 声明自定义的包名，这里的 package 可以理解为 go 中的包，或者 node.js 中的 module 。 3、message 定义数据格式，比如这里的 ReqBody 是请求的数据，响应结果则是 UserOrders ，名称都是自定义的，message 可以嵌套使用，message 内部需要定义具体的字段名称和数据类型，字段需要从 1 开始依次编号，但是枚举类型比较特别，枚举值从 0 开始编号。通过 repeated 声明某个字段可以重复，也就是这个数据是一个数组的形式。 4、service 定义服务名称，rpc 定义该服务下具体的方法，以及请求和响应的数据格式。</description></item><item><title>Go 开发十种常犯错误【译】</title><link>https://rifewang.github.io/posts/go/top-10-mistakes/</link><pubDate>Mon, 29 Jul 2019 00:11:03 +0800</pubDate><guid>https://rifewang.github.io/posts/go/top-10-mistakes/</guid><description>文本翻译自: https://itnext.io/the-top-10-most-common-mistakes-ive-seen-in-go-projects-4b79d4f6cd65
+本文将会介绍 Go 开发中十种最常犯的错误，内容不算少，请耐心观看。
+1、未知的枚举值 Link to heading 示例：
+type Status uint32 const ( StatusOpen Status = iota StatusClosed StatusUnknown ) 示例中使用了 iota 创建了枚举值，其结果就是：
+StatusOpen = 0 StatusClosed = 1 StatusUnknown = 2 现在假设上述 Status 类型将会作为 JSON request 的一部分：
+type Request struct { ID int `json:&amp;#34;Id&amp;#34;` Timestamp int `json:&amp;#34;Timestamp&amp;#34;` Status Status `json:&amp;#34;Status&amp;#34;` } 然后你收到的数据可能是：
+{ &amp;#34;Id&amp;#34;: 1234, &amp;#34;Timestamp&amp;#34;: 1563362390, &amp;#34;Status&amp;#34;: 0 } 这看起来似乎没有任何问题，status 将会被解码为 StatusOpen 。
+但是如果另一个请求的数据是这样：
+{ &amp;#34;Id&amp;#34;: 1235, &amp;#34;Timestamp&amp;#34;: 1563362390 } 这时 status 即使没有传值（也就是 unknown 未知状态），但由于默认零值，其将会被解码为 StatusOpen ，显然不符合业务语义上的 StatusUnknown 。</description></item></channel></rss>
