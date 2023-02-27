@@ -5,7 +5,7 @@ title = "Docker 入门教程"
 description = "Docker 入门教程"
 slug = ""
 authors = []
-tags = ["Docker"]
+tags = ["Docker", "Kubernetes"]
 categories = ["Kubernetes"]
 externalLink = ""
 series = []
@@ -64,7 +64,7 @@ Docker 中的镜像到底是什么？它是一个可供执行的文件系统包�
 
 首先需要准备我们的项目代码：
 
-```
+```node.js
 const express = require('express');
 
 const app = express();
@@ -84,7 +84,7 @@ app.listen(PORT);
 
 编写 Dockerfile 文件：
 
-```
+```dockerfile
 # 指定基础镜像
 FROM node:8.11.1
 
@@ -212,7 +212,7 @@ docker run --name redis redis
 
 而我们的 web 程序中直接使用上面定义的连接名 redis_connetion 即可：
 
-```
+```node.js
 const express = require('express');
 const Redis = require('ioredis');
 const redis = new Redis({
@@ -310,7 +310,7 @@ docker network connect [network-name] [container]
 
 docker-compose.yml：
 
-```
+```yaml
 version: '3'  # 指定 compose 的版本
 services:
   web:  # 定义 service

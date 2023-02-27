@@ -5,7 +5,7 @@ title = "为什么你应该使用 Go module proxy"
 description = "为什么你应该使用 Go module proxy"
 slug = ""
 authors = []
-tags = []
+tags = ["Golang"]
 categories = ["Golang"]
 externalLink = ""
 series = []
@@ -114,7 +114,7 @@ Go v1.13 版本的相关更改：
 
 ---
 
-*相关资料：*
+## 参考资料
 
-- *https://github.com/golang/go/wiki/Modules*
-- *https://proxy.golang.org/*
+- https://github.com/golang/go/wiki/Modules
+- https://proxy.golang.org/

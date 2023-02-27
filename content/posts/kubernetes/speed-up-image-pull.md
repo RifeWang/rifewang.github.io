@@ -5,15 +5,14 @@ title = "加速 Kubernetes 镜像拉取"
 description = ""
 slug = ""
 authors = []
-tags = []
+tags = ["Kubernetes"]
 categories = ["Kubernetes"]
 externalLink = ""
 series = []
 disableComments = true
 +++
 
-# 加速 Kubernetes 镜像拉取
-
+## 加速 Kubernetes 镜像拉取
 Kubernetes pod 启动时会拉取用户指定的镜像，一旦这个过程耗时太久就会导致 pod 长时间处于 pending 的状态，从而无法快速提供服务。
 
 镜像拉取的过程参考下图所示：
@@ -39,13 +38,14 @@ Pod 的 `imagePullPolicy` 镜像拉取策略有三种：
 
 ---
 
-题外话 1：本地镜像缓存多久？是否会造成磁盘占用问题？
+## 题外话
+### 1：本地镜像缓存多久？是否会造成磁盘占用问题？
 
 本地缓存的镜像一定会占用节点的磁盘空间，也就是说缓存的镜像越多，占用的磁盘空间越大，并且缓存的镜像默认一直存在，并没有 TTL 机制（比如说多长时间以后自动过期删除）。
 
 但是，k8s 的 GC 机制会自动清理掉镜像。当节点的磁盘使用率达到 `HighThresholdPercent` 高百分比阈值时（默认 85% ）会触发垃圾回收，此时 kubelet 会根据使用情况删除最旧的不再使用的镜像，直到磁盘使用率达到 `LowThresholdPercent`（默认 80% ）。
 
 
-题外话 2：镜像 layer 层数真的越少越好吗？
+### 2：镜像 layer 层数真的越少越好吗？
 
 我们经常会看到一些文章说在 Dockerfile 里使用更少的 RUN 命令之类的减少镜像的 layer 层数然后缩减镜像的大小，layer 越少镜像越小这确实没错，但是某些场景下得不偿失。首先，如果你的 RUN 命令很大，一旦你修改了其中某一个小的部分，那么这个 layer 在构建的时候就只能重新再来，无法使用任何缓存；其次，镜像的 layer 在上传和下载的过程中是可以并发的，而单独一个大的层无法进行并发传输。

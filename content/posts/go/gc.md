@@ -5,7 +5,7 @@ title = "Go 垃圾回收"
 description = "Go 垃圾回收"
 slug = ""
 authors = []
-tags = []
+tags = ["Golang"]
 categories = ["Golang"]
 externalLink = ""
 series = []
@@ -109,8 +109,8 @@ GODEBUG=gctrace=1
 
 ---------
 
-*参考：*
+## 参考资料
 
-*https://www.ardanlabs.com/blog/2018/12/garbage-collection-in-go-part1-semantics.html*
-*https://www.ardanlabs.com/blog/2019/05/garbage-collection-in-go-part2-gctraces.html*
-*https://www.ardanlabs.com/blog/2019/07/garbage-collection-in-go-part3-gcpacing.html*
+- https://www.ardanlabs.com/blog/2018/12/garbage-collection-in-go-part1-semantics.html
+- https://www.ardanlabs.com/blog/2019/05/garbage-collection-in-go-part2-gctraces.html
+- https://www.ardanlabs.com/blog/2019/07/garbage-collection-in-go-part3-gcpacing.html

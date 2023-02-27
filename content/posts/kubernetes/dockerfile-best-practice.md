@@ -5,7 +5,7 @@ title = "Dockerfile 最佳实践"
 description = "Dockerfile 最佳实践"
 slug = ""
 authors = []
-tags = ["Docker"]
+tags = ["Docker", "Kubernetes"]
 categories = ["Kubernetes"]
 externalLink = ""
 series = []
@@ -36,11 +36,10 @@ RUN apt-get -y install cron vim ssh
 
 3、合并指令
 
-```
+```diff
 - RUN apt-get update
 - RUN apt-get -y install cron vim ssh
-+ RUN apt-get update \
-   && apt-get -y install cron vim ssh
++ RUN apt-get update && apt-get -y install cron vim ssh
 ```
 
 像这种 apt-get 升级和安装分为两个步骤毫无必要，反之统一为一个步骤更有利于缓存。你如果仔细观察各种官方镜像的 Dockerfile 是怎么写的，你肯定会发现他们单条 RUN 指令的内容相当的冗长也不会拆分，这样写是有道理的。
@@ -49,11 +48,9 @@ RUN apt-get -y install cron vim ssh
 
 4、移除不必要的依赖
 
-```
-- RUN apt-get update \
-   && apt-get -y install cron vim ssh
-+ RUN apt-get update \
-   && apt-get -y install --no-install-recommends cron
+```diff
+- RUN apt-get update && apt-get -y install cron vim ssh
++ RUN apt-get update && apt-get -y install --no-install-recommends cron
 ```
 
 只安装必须的依赖，某些 debug 的工具不要在构建的时候安装，首先线上 debug 的频率应该是很低的，其次真的要用的时候另外再安装就好了。另外 apt-get 这种包管理器可能会多安装一些额外推荐的东西，加上 `--no-install-recommends` 不要安装它们，如果某些工具是需要的则必须显示声明。
@@ -61,7 +58,7 @@ RUN apt-get -y install cron vim ssh
 
 5、移除包管理器的缓存
 
-```
+```diff
 RUN apt-get update \
    && apt-get -y install --no-install-recommends cron \
 +  && rm -rf /var/lib/apt/lists/*

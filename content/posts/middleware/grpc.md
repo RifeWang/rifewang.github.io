@@ -5,7 +5,7 @@ title = "微服务互通的桥梁: gRPC 入门示例"
 description = "微服务互通的桥梁: gRPC 入门示例"
 slug = ""
 authors = []
-tags = []
+tags = ["Golang"]
 categories = ["Golang"]
 externalLink = ""
 series = []
@@ -103,9 +103,9 @@ https://github.com/protocolbuffers/protobuf/releases
 
 ---
 
-*更多参考资料：*
+## 参考资料
 
-- *https://developers.google.com/protocol-buffers/docs/overview*
-- *https://www.grpc.io/docs/guides*
-- *https://github.com/grpc/grpc-node*
-- *https://github.com/grpc/grpc-go*
+- https://developers.google.com/protocol-buffers/docs/overview
+- https://www.grpc.io/docs/guides
+- https://github.com/grpc/grpc-node
+- https://github.com/grpc/grpc-go

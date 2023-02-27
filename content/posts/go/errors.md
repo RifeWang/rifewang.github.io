@@ -5,7 +5,7 @@ title = "Go Errors 错误处理"
 description = "Go Errors 错误处理"
 slug = ""
 authors = []
-tags = []
+tags = ["Golang"]
 categories = ["Golang"]
 externalLink = ""
 series = []
@@ -202,5 +202,5 @@ if errors.Is(err, ErrPermission) ...
 
 ---
 
-*本文参考资料:
-https://blog.golang.org/go1.13-errors*
+## 参考资料
+- https://blog.golang.org/go1.13-errors
