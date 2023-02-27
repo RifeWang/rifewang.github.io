@@ -1,0 +1,725 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>RabbitMQ 入门教程及示例 - 凌虚 Blog</title><meta name=Description content="RabbitMQ 入门教程及示例"><meta property="og:title" content="RabbitMQ 入门教程及示例"><meta property="og:description" content="RabbitMQ 入门教程及示例"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/rabbitmq/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-02-27T18:53:07+08:00"><meta property="article:modified_time" content="2023-02-23T10:35:44+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="RabbitMQ 入门教程及示例"><meta name=twitter:description content="RabbitMQ 入门教程及示例"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/rabbitmq/><link rel=next href=https://rifewang.github.io/docker-guide/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"RabbitMQ 入门教程及示例","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/rabbitmq\/"},"genre":"posts","keywords":"MQ, Node.js","wordcount":6164,"url":"https:\/\/rifewang.github.io\/rabbitmq\/","datePublished":"2018-02-27T18:53:07+08:00","dateModified":"2023-02-23T10:35:44+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"凌虚"},"description":"RabbitMQ 入门教程及示例"}</script></head><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">RabbitMQ 入门教程及示例</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span>&nbsp;<span class=post-category>included in <a href=/categories/rabbitmq/><i class="far fa-folder fa-fw" aria-hidden=true></i>RabbitMQ</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2018-02-27>2018-02-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;6164 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;13 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#一>一</a><ul><li><a href=#rabbitmq-概述>RabbitMQ 概述</a></li><li><a href=#交换器类型>交换器类型</a></li></ul></li><li><a href=#二>二</a><ul><li><a href=#流程>流程</a></li><li><a href=#hello-world-示例>Hello World 示例</a></li><li><a href=#work-queues>Work queues</a></li></ul></li><li><a href=#三>三</a><ul><li><a href=#publishsubscribe>Publish/Subscribe</a></li><li><a href=#routing>Routing</a></li><li><a href=#topics>Topics</a></li></ul></li><li><a href=#四>四</a><ul><li><a href=#rpc>RPC</a></li><li><a href=#延时队列>延时队列</a></li></ul></li></ul></nav></div></div><div class=content id=content><h2 id=一>一</h2><p>消息中间件 MQ（也称消息队列）的基本功能是传递和转发消息，其最重要的作用是能够解耦业务及系统架构，可以说是一个系统发展壮大到一定阶段绕不开的东西。</p><p>而 RabbitMQ 是对 AMQP（高级消息队列协议）的实现，成熟可靠并且开源，本系列文章将会讲述如何在 node 中入门这一利器。</p><h3 id=rabbitmq-概述>RabbitMQ 概述</h3><p>先来简单的了解一下 RabbitMQ 相关的基本概念：</p><p><img class=lazyload src=/svg/loading.min.svg data-src=/images/middleware/rabbitmq1-1.jpeg data-srcset="/images/middleware/rabbitmq1-1.jpeg, /images/middleware/rabbitmq1-1.jpeg 1.5x, /images/middleware/rabbitmq1-1.jpeg 2x" data-sizes=auto alt=/images/middleware/rabbitmq1-1.jpeg title=/images/middleware/rabbitmq1-1.jpeg></p><p>Producer ：生产者，生成消息并把消息发送给 RabbitMQ 。</p><p>Consumer ：消费者，从 RabbitMQ 中接收消息。</p><p>Exchange ：交换器，具有路由的作用，将生产者传递的消息根据不同的路由规则传递到对应的队列中。交换器具有四种不同的类型，每种类型对应不同的路由规则。</p><p>Queue ：队列，实际存储消息的地方，消费者通过订阅队列来获取队列中的消息。</p><p>Binding ：绑定交换器和队列，只有绑定后消息才能被交换器分发到具体的队列中，用一个字符串来代表 Binding Key 。</p><p>消息是如何由生产者传递到消费者：</p><ol><li><p>生产者 Producer 生成消息 msg ，并指定这条消息的路由键 Routing Key ，然后将消息传递给交换器 Exchange 。</p></li><li><p>交换器 Exchange 接收到消息后根据 Exchange Type 也就是交换器类型以及交换器和队列的 Binding 绑定关系来判断路由规则并分发消息到具体的队列 Queue 中。</p></li><li><p>消费者 Consumer 通过订阅具体的队列，一旦队列接收到消息便会将其传递给消费者。</p></li></ol><p>这里的 Routing Key 和 Binding 我是按照自己的理解解释的，与某些参考资料是有出入的，读者理解就好。</p><p>当然完成上述三个步骤还缺少两个关键的东西：</p><ul><li><p>Connection ：连接，不论生产者还是消费者想要使用 RabbitMQ 都必须首先建立到 RabbitMQ 的 TCP 连接。</p></li><li><p>Channel ：信道，建立完 TCP 连接后还必须建立一个信道，消息都是在信道中传递和操作的。</p></li></ul><p><img class=lazyload src=/svg/loading.min.svg data-src=/images/middleware/rabbitmq1-2.jpeg data-srcset="/images/middleware/rabbitmq1-2.jpeg, /images/middleware/rabbitmq1-2.jpeg 1.5x, /images/middleware/rabbitmq1-2.jpeg 2x" data-sizes=auto alt=/images/middleware/rabbitmq1-2.jpeg title=/images/middleware/rabbitmq1-2.jpeg></p><p>上图形象的展示了连接和信道之间的关系，一个连接中可以建立多个信道，而且每个信道之间都是完全隔离的，同时我们需要记住的是创建和销毁 TCP 连接是很消耗资源的，而信道则不是，所以能够通过创建多个信道来隔离环境的不要通过创建多个连接。</p><h3 id=交换器类型>交换器类型</h3><p>交换器具有路由分发消息的作用，其有四种不同的类型，每种类型对应不同的路由规则：</p><ul><li>fanout ：广播，将消息传递给所有该交换器绑定的队列。</li><li>direct ：直连，将消息传递给 Routing Key 与 Binding Key完全一致的队列中，可以有多个队列。</li><li>topic ：模糊匹配，Binding Key 是一个可以用符号 . 分隔单词的字符串，模糊匹配下，符号 * 用于匹配任意一个单词，符号 # 用于匹配零个或多个单词。</li><li>headers ：这个比较特殊，是根据消息中具体内容的 header 属性来作为路由规则的，这种类型对资源消耗太大，一般很少使用，前面三种类型就够了。</li></ul><hr><h2 id=二>二</h2><h3 id=流程>流程</h3><p>我们先来了解一下 RabbitMQ 的一般使用流程。</p><ol><li>建立到 RabbitMQ 的连接。</li><li>创建信道。</li><li>声明交换器。</li><li>声明队列。</li><li>绑定交换器和队列。</li><li>消息操作。生产者：生成并发布消息；消费者：订阅并消费消息。</li><li>关闭信道。</li><li>关闭连接。</li></ol><p>不论是生产者投递消息，还是消费者接受消息一般都遵循以上步骤，但针对具体的情况仍会有调整，比如声明交换器、声明队列、绑定交换器和队列，我们只需要在生产者或消费者其中之一进行，甚至隔离出来独立维护，只要保证在发布或消费消息之前交换器、队列、绑定等是有效的即可。</p><h3 id=hello-world-示例>Hello World 示例</h3><p>第一个示例，实现基本的投递和接收消息。</p><p>生产者投递消息（send.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);   //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();     //建立信道
+</span></span><span class=line><span class=cl>        const queueName = &#39;hello&#39;;
+</span></span><span class=line><span class=cl>        const msg = &#39;Hello world&#39;;
+</span></span><span class=line><span class=cl>        await ch.assertQueue(queueName, { durable: false });   //声明队列，durable：false 不对队列持久化
+</span></span><span class=line><span class=cl>        ch.sendToQueue(queueName, new Buffer(msg));   //发送消息
+</span></span><span class=line><span class=cl>        console.log(&#39; [x] Sent %s&#39;, msg);
+</span></span><span class=line><span class=cl>        await ch.close();   //关闭信道
+</span></span><span class=line><span class=cl>        await conn.close();  //关闭连接
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})()
+</span></span></code></pre></td></tr></table></div></div><p>消费者接收消息（receive.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);   //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();  //建立信道
+</span></span><span class=line><span class=cl>        const queueName = &#39;hello&#39;;
+</span></span><span class=line><span class=cl>        await ch.assertQueue(queueName, { durable: false });  //声明队列，durable：false 不对队列持久化
+</span></span><span class=line><span class=cl>        console.log(&#34; [*] Waiting for messages in queue: %s. To exit press CTRL+C&#34;, queueName);
+</span></span><span class=line><span class=cl>        ch.consume(queueName, msg =&gt; {   //订阅队列接受消息
+</span></span><span class=line><span class=cl>            console.log(&#34; [x] Received %s&#34;, msg.content.toString());
+</span></span><span class=line><span class=cl>        }, { noAck: true });   // noAck：true 不进行确认接受应答
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})()
+</span></span></code></pre></td></tr></table></div></div><p>对比上述流程，你会发现为什么没有交换器 Exchange 存在的身影呢？这是因为 RabbitMQ 存在一个默认交换器，类型为 direct （直连），每个新建的队列会自动绑定到默认交换器上，并且以队列的名称作为绑定路由规则。</p><p>声明队列时，同一个队列其属性前后相同时，重复声明不会有任何影响，反之其属性前后不相同时，重复声明会抛出一个错误，这种情况要注意不得重复声明，当然如果这个队列被声明有效了也不需要再次声明。</p><p>从上例中我们也了解到了队列的一个属性 durable，这个属性表明是否对队列进行持久化，也就是保存到磁盘上，一旦 RabbitMQ 服务器重启，持久化的队列可以被重新恢复。</p><p>消费者 consume 订阅接收消息时使用了另一个属性 noAck，这个属性表明消费者在接收到消息后是否需要向 RabbitMQ 服务器确认收到该消息。与之相对的是发后即忘模式，也就是 RabbitMQ 服务器向消费者发送完消息后即认为成功，无需等待消费者确认接收应答，这种模式吞吐量更高，但可靠性显然不如确认应答模式，而确认应答模式，我们需要注意的是， RabbitMQ 服务器若没有接收到 ack 确认会一直将该消息保存，如果消费者挂了就会造成消息持续堆叠不断占用内存的情况，极端情况下资源过载会造成 RabbitMQ 服务器重启，同时未被 ack 确认的消息会被尝试重新发送给消费者。</p><h3 id=work-queues>Work queues</h3><p>第二个示例，向多个消费者分发投递消息。</p><p>生产者投递消息（new_task.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);   //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();   //建立信道
+</span></span><span class=line><span class=cl>        const queueName = &#39;task_queue&#39;;
+</span></span><span class=line><span class=cl>        await ch.assertQueue(queueName, { durable: true });   //声明队列，durable：true 持久化队列
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        for (let i = 1; i &lt; 10; i++) {   //生成 9 条信息并在尾部添加小数点
+</span></span><span class=line><span class=cl>            let msg = i.toString().padEnd(i+1, &#39;.&#39;);
+</span></span><span class=line><span class=cl>            ch.sendToQueue(queueName, new Buffer(msg), { persistent: true });   //发送消息，persistent：true 将消息持久化
+</span></span><span class=line><span class=cl>            console.log(&#34; [x] Sent &#39;%s&#39;&#34;, msg);
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        await ch.close();     //关闭信道
+</span></span><span class=line><span class=cl>        await conn.close();    //关闭连接
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})()
+</span></span></code></pre></td></tr></table></div></div><p>消费者接收消息（worker.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);   //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();    //建立信道
+</span></span><span class=line><span class=cl>        const queueName = &#39;task_queue&#39;;
+</span></span><span class=line><span class=cl>        await ch.assertQueue(queueName, { durable: true });   //声明队列
+</span></span><span class=line><span class=cl>        ch.prefetch(1);  //每次接收不超过指定数量的消息
+</span></span><span class=line><span class=cl>        console.log(&#34; [*] Waiting for messages in %s. To exit press CTRL+C&#34;, queueName);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        ch.consume(queueName, msg =&gt; {
+</span></span><span class=line><span class=cl>            const secs = msg.content.toString().split(&#39;.&#39;).length - 1;
+</span></span><span class=line><span class=cl>            console.log(&#34; [x] Received %s&#34;, msg.content.toString());
+</span></span><span class=line><span class=cl>            setTimeout(() =&gt; {   //根据小数点的个数设置延时时长
+</span></span><span class=line><span class=cl>                console.log(&#34; [x] Done&#34;);
+</span></span><span class=line><span class=cl>                ch.ack(msg);    //确认接收消息
+</span></span><span class=line><span class=cl>            }, secs * 1000);
+</span></span><span class=line><span class=cl>        }, { noAck: false });   //对消息需要接收确认
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})()
+</span></span></code></pre></td></tr></table></div></div><p>我们在 shell 中运行多个 worker.js 会发现消息被一个一个分发到了不同的 worker 消费者，且同一条消息不会被重复发送给多个 worker 。</p><p>在这个示例中，我们对队列进行了持久化，并且在消费端使用了 ack 确认接收消息。发送消息时，我们使用了 persistent 属性，这个属性表明是否将消息持久化。另外，对消费者而言，还使用了 ch.prefetch() 方法，这个方法表明该消费者每次最多接收的消息数量，这样做是因为某些情况下消费消息是一个很耗时的业务操作，某些 worker 可能处于繁忙状态，而另外一些 worker 则很空闲，通过 prefetch 和 ack 其实是实现了类似于负载均衡的功能，也就是将消息分发给空闲的 worker 消费。</p><hr><h2 id=三>三</h2><p>我们再来回顾一遍 RabbitMQ 的一般使用流程：</p><ol><li>建立到 RabbitMQ 的连接。</li><li>创建信道。</li><li>声明交换器。</li><li>声明队列。</li><li>绑定交换器和队列。</li><li>消息操作。生产者：生成并发布消息；消费者：订阅并消费消息。</li><li>关闭信道。</li><li>关闭连接。</li></ol><p>交换器 Exchange 的四种类型：</p><ol><li>fanout：广播，将消息传递给所有该交换器绑定的队列。</li><li>direct ：直连，将消息传递给 Routing Key 与 Binding Key完全一致的队列中，可以有多个队列。</li><li>topic ：模糊匹配，Binding Key 是一个可以用符号 . 分隔单词的字符串，模糊匹配下，符号 * 用于匹配任意一个单词，符号 # 用于匹配零个或多个单词。</li><li>headers ：根据消息中具体内容的 header 属性来作为路由规则的，这种类型对资源消耗太大且很少使用，本节不对此类型进行讲述。</li></ol><h3 id=publishsubscribe>Publish/Subscribe</h3><p>此示例重点关注交换器 Exchange 的 fanout 类型。</p><p>消费者接收消息（receive_log.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);   //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();   //建立信道
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        const ex = &#39;logs&#39;;
+</span></span><span class=line><span class=cl>        await ch.assertExchange(ex, &#39;fanout&#39;, { durable: false });   //声明交换器
+</span></span><span class=line><span class=cl>        const q = await ch.assertQueue(&#39;&#39;, { exclusive: true });   //声明队列，临时队列即用即删
+</span></span><span class=line><span class=cl>        console.log(&#34; [*] Waiting for messages in %s. To exit press CTRL+C&#34;, q.queue);
+</span></span><span class=line><span class=cl>        await ch.bindQueue(q.queue, ex, &#39;&#39;);   //绑定交换器和队列，参数：队列名、交换器名、绑定键值
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        ch.consume(q.queue, msg =&gt; {   //订阅队列接收消息
+</span></span><span class=line><span class=cl>            console.log(&#34; [x] %s&#34;, msg.content.toString());
+</span></span><span class=line><span class=cl>        }, { noAck: true });
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})()
+</span></span></code></pre></td></tr></table></div></div><p>生产者投递消息（emit_log.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);   //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();  //建立信道
+</span></span><span class=line><span class=cl>        const ex = &#39;logs&#39;;
+</span></span><span class=line><span class=cl>        const msg = process.argv.slice(2).join(&#39; &#39;) || &#39;Hello World!&#39;;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        await ch.assertExchange(ex, &#39;fanout&#39;, { durable: false });   //声明 exchange ，类型为 fanout ，不持久化
+</span></span><span class=line><span class=cl>        ch.publish(ex, &#39;&#39;, new Buffer(msg));   //发送消息，fanout 类型无需指定 routing key
+</span></span><span class=line><span class=cl>        console.log(&#34; [x] Sent %s&#34;, msg);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        await ch.close();   //关闭信道
+</span></span><span class=line><span class=cl>        await conn.close();  //关闭连接
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})();
+</span></span></code></pre></td></tr></table></div></div><p>fanout 类型的交换器会直接将消息广播到所有与其绑定的队列，所以绑定交换器与队列时无需指定 binding key （空字符串），投递消息时也无需指定 routing key （空字符串）。</p><p>交换器与队列一样具有 durable 属性，此属性表示是否对交换器进行持久化，也就是保存到磁盘上，一旦 RabbitMQ 服务器重启，持久化的交换器可以被重新恢复。</p><p>这里在声明队列时，我们使用的是一种临时的队列，我们无需指定该队列的名称，RabbitMQ 会自动为其生成一个随机的名称，同时 exclusive 属性表明该队列是否只会被当前连接使用，也就是说连接一旦关闭则此队列也会被删除。</p><h3 id=routing>Routing</h3><p>此示例重点关注交换器 Exchange 的 direct 类型。</p><p>消费者接收消息（receive_log_direct.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const args = process.argv.slice(2);
+</span></span><span class=line><span class=cl>        if (args.length == 0) {
+</span></span><span class=line><span class=cl>            console.log(&#34;Usage: receive_logs_direct.js [info] [warning] [error]&#34;);
+</span></span><span class=line><span class=cl>            process.exit(1);
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);   //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();    //建立信道
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        const ex = &#39;direct_logs&#39;;
+</span></span><span class=line><span class=cl>        await ch.assertExchange(ex, &#39;direct&#39;, { durable: false });    //声明交换器
+</span></span><span class=line><span class=cl>        const q = await ch.assertQueue(&#39;&#39;, { exclusive: true });    //声明队列
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        console.log(&#39; [*] Waiting for logs. To exit press CTRL+C&#39;);
+</span></span><span class=line><span class=cl>        args.forEach(async severity =&gt; {
+</span></span><span class=line><span class=cl>            await ch.bindQueue(q.queue, ex, severity);  //绑定交换器和队列
+</span></span><span class=line><span class=cl>        });
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        ch.consume(q.queue, msg =&gt; {   //订阅队列接收消息
+</span></span><span class=line><span class=cl>            console.log(&#34; [x] %s: &#39;%s&#39;&#34;, msg.fields.routingKey, msg.content.toString());
+</span></span><span class=line><span class=cl>        }, { noAck: true });
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})()
+</span></span></code></pre></td></tr></table></div></div><p>生产者投递消息（emit_log_direct.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);   //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();  //建立信道
+</span></span><span class=line><span class=cl>        const ex = &#39;direct_logs&#39;;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        const args = process.argv.slice(2);
+</span></span><span class=line><span class=cl>        const msg = args.slice(1).join(&#39; &#39;) || &#39;Hello World!&#39;;
+</span></span><span class=line><span class=cl>        const severity = (args.length &gt; 0) ? args[0] : &#39;info&#39;;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        await ch.assertExchange(ex, &#39;direct&#39;, { durable: false });  //声明 exchange ，类型为 direct
+</span></span><span class=line><span class=cl>        ch.publish(ex, severity, new Buffer(msg));   //发送消息，参数：交换器、路由键、消息内容
+</span></span><span class=line><span class=cl>        console.log(&#34; [x] Sent %s: &#39;%s&#39;&#34;, severity, msg);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        await ch.close();   //关闭信道
+</span></span><span class=line><span class=cl>        await conn.close();  //关闭连接
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})();
+</span></span></code></pre></td></tr></table></div></div><p>交换器为 direct 类型，路由规则是 routing key 与 binding key 完全一致，这就是说与上例 fanout 类型不同的是，我们必须指定绑定交换器和队列的 binding key ，投递消息时也需要指定路由的 routing key 。其余地方基本一致。</p><h3 id=topics>Topics</h3><p>此示例重点关注交换器 Exchange 的 topic 类型。</p><p>消费者接收消息（receive_log_topic.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const args = process.argv.slice(2);
+</span></span><span class=line><span class=cl>        if (args.length == 0) {
+</span></span><span class=line><span class=cl>            console.log(&#34;Usage: receive_logs_topic.js &lt;facility&gt;.&lt;severity&gt;&#34;);
+</span></span><span class=line><span class=cl>            process.exit(1);
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);    //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();     //建立信道
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        const ex = &#39;topic_logs&#39;;
+</span></span><span class=line><span class=cl>        await ch.assertExchange(ex, &#39;topic&#39;, { durable: false });   //声明交换器
+</span></span><span class=line><span class=cl>        const q = await ch.assertQueue(&#39;&#39;, { exclusive: true });    //声明队列
+</span></span><span class=line><span class=cl>        console.log(&#39; [*] Waiting for logs. To exit press CTRL+C&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        args.forEach(async key =&gt; {
+</span></span><span class=line><span class=cl>            await ch.bindQueue(q.queue, ex, key);   //绑定交换器和队列
+</span></span><span class=line><span class=cl>        });
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        ch.consume(q.queue, msg =&gt; {    //订阅队列接收消息
+</span></span><span class=line><span class=cl>            console.log(&#34; [x] %s:&#39;%s&#39;&#34;, msg.fields.routingKey, msg.content.toString());
+</span></span><span class=line><span class=cl>        }, { noAck: true });
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})()
+</span></span></code></pre></td></tr></table></div></div><p>生产者投递消息（emit_log_topic.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);   //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();   //建立信道
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        const ex = &#39;topic_logs&#39;;
+</span></span><span class=line><span class=cl>        const args = process.argv.slice(2);
+</span></span><span class=line><span class=cl>        const key = (args.length &gt; 0) ? args[0] : &#39;anonymous.info&#39;;
+</span></span><span class=line><span class=cl>        const msg = args.slice(1).join(&#39; &#39;) || &#39;Hello World!&#39;;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        await ch.assertExchange(ex, &#39;topic&#39;, { durable: false });  //声明交换器
+</span></span><span class=line><span class=cl>        ch.publish(ex, key, new Buffer(msg));   //发送消息，指定 routing key
+</span></span><span class=line><span class=cl>        console.log(&#34; [x] Sent %s: &#39;%s&#39;&#34;, key, msg);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        await ch.close();   //关闭信道
+</span></span><span class=line><span class=cl>        await conn.close();  //关闭连接
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})()
+</span></span></code></pre></td></tr></table></div></div><p>交换器的 topic 类型，只需注意模糊匹配的规则即可，绑定交换器和队列的 binding key 以符号 . 将字符串分隔为不同的单词（不一定是真实的单词，理解为一个部分就行了），符号 * 用于匹配任意一个单词，符号 # 用于匹配零个或多个单词。</p><p>其实你会发现本节三个示例中的大部分地方都是类似的，唯一不同的地方就是不同的交换器类型需要对 binding key 和 routing key 进行不同的处理。通过本节了解了不同的交换器类型，有助于你在此基础上进行具体的路由规则设计。</p><hr><h2 id=四>四</h2><h3 id=rpc>RPC</h3><p>RPC 是什么？Remote Procedure Call，远程过程调用，比如某个服务器调用另一个远程服务器上的函数或方法获取其结果，当然这种类似需求毫无疑问是可以用我们熟悉的 REST 来实现的。</p><p>使用 RabbitMQ 如何实现 RPC 的功能：</p><p><img class=lazyload src=/svg/loading.min.svg data-src=/images/middleware/rabbitmq4-1.png data-srcset="/images/middleware/rabbitmq4-1.png, /images/middleware/rabbitmq4-1.png 1.5x, /images/middleware/rabbitmq4-1.png 2x" data-sizes=auto alt=/images/middleware/rabbitmq4-1.png title=/images/middleware/rabbitmq4-1.png></p><p>如上图所示，客户端发起请求到一个 rpc 队列，并指定一个 correlationId 作为该请求的唯一标识，且通过 reply_to 指定一个 callback 队列接收请求处理结果（这里的 callback 并不是指 node 中的回掉函数，注意区别）。服务端通过订阅指定的 rpc 队列接收到请求然后进行处理，处理完之后将结果发送到 reply_to 指定的 callback 队列中，客户端通过订阅 callback 队列获取请求结果，并通过 correlationId 对应不同的请求。</p><p>客户端示例（rpc_client.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const args = process.argv.slice(2);
+</span></span><span class=line><span class=cl>        if (args.length === 0) {
+</span></span><span class=line><span class=cl>            console.log(&#34;Usage: rpc_client.js num&#34;);
+</span></span><span class=line><span class=cl>            process.exit(1);
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);   //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();  //建立信道
+</span></span><span class=line><span class=cl>        const q = await ch.assertQueue(&#39;&#39;, { exclusive: true });    //声明一个临时队列作为 callback 接收结果
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        const corr = generateUuid();
+</span></span><span class=line><span class=cl>        const num = parseInt(args[0]);
+</span></span><span class=line><span class=cl>        console.log(&#39; [x] Requesting fib(%d)&#39;, num);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        ch.consume(q.queue, async (msg) =&gt; {   //订阅 callback 队列接收 RPC 结果
+</span></span><span class=line><span class=cl>            if (msg.properties.correlationId === corr) {    //根据 correlationId 判断是否为请求的结果
+</span></span><span class=line><span class=cl>                console.log(&#39; [.] Got %s&#39;, msg.content.toString());
+</span></span><span class=line><span class=cl>                await ch.close();   //关闭信道
+</span></span><span class=line><span class=cl>                await conn.close();    //关闭连接
+</span></span><span class=line><span class=cl>            }
+</span></span><span class=line><span class=cl>        }, { noAck: true });
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        ch.sendToQueue(&#39;rpc_queue&#39;,       //发送 RPC 请求
+</span></span><span class=line><span class=cl>            new Buffer(num.toString()),
+</span></span><span class=line><span class=cl>            {
+</span></span><span class=line><span class=cl>                correlationId: corr,      // correlationId 将 RPC 结果与对应的请求关联，replyTo 指定结果返回的队列
+</span></span><span class=line><span class=cl>                replyTo: q.queue
+</span></span><span class=line><span class=cl>            }
+</span></span><span class=line><span class=cl>        );
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})();
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>function generateUuid() {     //唯一标识
+</span></span><span class=line><span class=cl>    return Math.random().toString() + Math.random().toString() + Math.random().toString();
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>服务端示例（rpc_server.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);   //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();   //建立信道
+</span></span><span class=line><span class=cl>        const q = &#39;rpc_queue&#39;;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        await ch.assertQueue(q, { durable: false });  //声明队列
+</span></span><span class=line><span class=cl>        await ch.prefetch(1);   //每次最大接收消息数量
+</span></span><span class=line><span class=cl>        console.log(&#39; [x] Awaiting RPC requests&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        ch.consume(q, function reply(msg) {     //订阅 RPC 队列接收请求
+</span></span><span class=line><span class=cl>            const n = parseInt(msg.content.toString());
+</span></span><span class=line><span class=cl>            console.log(&#34; [.] fib(%d)&#34;, n);
+</span></span><span class=line><span class=cl>            const r = fibonacci(n);    //调用本地函数计算结果
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            ch.sendToQueue(msg.properties.replyTo,    //将 RPC 请求结果发送到 callback 队列
+</span></span><span class=line><span class=cl>                new Buffer(r.toString()),
+</span></span><span class=line><span class=cl>                { correlationId: msg.properties.correlationId }
+</span></span><span class=line><span class=cl>            );
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            ch.ack(msg);
+</span></span><span class=line><span class=cl>        });
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})();
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>function fibonacci(n) {   //时间复杂度比较高
+</span></span><span class=line><span class=cl>    let cache = {};
+</span></span><span class=line><span class=cl>    if (n === 0 || n === 1)
+</span></span><span class=line><span class=cl>        return n;
+</span></span><span class=line><span class=cl>    else
+</span></span><span class=line><span class=cl>        return fibonacci(n - 1) + fibonacci(n - 2);
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>上述就是一个简单的 RPC 示例。</p><h3 id=延时队列>延时队列</h3><p>某些场景下我们并不希望生产者投递消息后，消费者立即就接收到消息，而是延迟一段时间，比如某个订单提交后十五分钟内未支付则自动取消这种情况就可以用延时队列。</p><p>RabbitMQ 本身并没有直接支持延时队列这个功能，我们需要简单的拐个弯间接实现：</p><p><img class=lazyload src=/svg/loading.min.svg data-src=/images/middleware/rabbitmq4-4.jpeg data-srcset="/images/middleware/rabbitmq4-4.jpeg, /images/middleware/rabbitmq4-4.jpeg 1.5x, /images/middleware/rabbitmq4-4.jpeg 2x" data-sizes=auto alt=/images/middleware/rabbitmq4-4.jpeg title=/images/middleware/rabbitmq4-4.jpeg></p><p>具体流程如上图所示，生产者先将消息投递到一个死信队列中，消息在死信队列中延时，并指定 deadLetterExchange 也就是消息延时结束后重新分发到的交换器，以及 deadLetterRoutingKey，重新分发后的交换器据此将消息分发到另一个队列，消费者订阅此队列以接受消息。</p><p>交换器与队列一定是一起出现的，即使我们使用了默认交换器，在代码中无感，也要牢记它的存在。同样上图所示在延时队列中使用的两个交换器都可以为默认交换器，只要我们定义不同的绑定规则即可。</p><p>消费者接收消息示例（receive.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);   //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();  //建立信道
+</span></span><span class=line><span class=cl>        const queueName = &#39;delay-queue-consumer&#39;;
+</span></span><span class=line><span class=cl>        await ch.assertQueue(queueName, { durable: false });  //声明队列，durable：false 不对队列持久化
+</span></span><span class=line><span class=cl>        console.log(&#34; [*] Waiting for messages in queue: %s. To exit press CTRL+C&#34;, queueName);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        ch.consume(queueName, msg =&gt; {   //订阅队列接受消息
+</span></span><span class=line><span class=cl>            console.log(&#34; [x] Received %s&#34;, msg.content.toString());
+</span></span><span class=line><span class=cl>        }, { noAck: true });   // noAck：true 不进行确认接受应答
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})()
+</span></span></code></pre></td></tr></table></div></div><p>生产者投递消息示例（send.js）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const amqp = require(&#39;amqplib&#39;);
+</span></span><span class=line><span class=cl>const EventEmitter = require(&#39;events&#39;);
+</span></span><span class=line><span class=cl>class MyEmitter extends EventEmitter {}
+</span></span><span class=line><span class=cl>const myEmitter = new MyEmitter();
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>(async () =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        const conn = await amqp.connect(&#39;amqp://localhost&#39;);   //建立连接
+</span></span><span class=line><span class=cl>        const ch = await conn.createChannel();     //建立信道
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        const msg = &#39;Hello world&#39;;
+</span></span><span class=line><span class=cl>        const queueName = &#39;delay-queue-consumer&#39;;
+</span></span><span class=line><span class=cl>        await ch.assertQueue(queueName, { durable: false });  //消息延时结束后会被转发到此队列，消费者直接订阅此队列即可
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        await ch.assertQueue(&#39;delay-queue-dead-letter&#39;, {   //定义死信队列
+</span></span><span class=line><span class=cl>            durable: false,
+</span></span><span class=line><span class=cl>            deadLetterExchange: &#39;&#39;,   //直接使用默认交换器
+</span></span><span class=line><span class=cl>            deadLetterRoutingKey: &#39;delay-queue-consumer&#39;,   //默认交换器路由键就是队列名
+</span></span><span class=line><span class=cl>            messageTtl: 5000    //延时 ms
+</span></span><span class=line><span class=cl>        });
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        for (let i = 0; i &lt; 5; i++) {
+</span></span><span class=line><span class=cl>            setTimeout(() =&gt; {
+</span></span><span class=line><span class=cl>                ch.sendToQueue(&#39;delay-queue-dead-letter&#39;, new Buffer(msg+i));   //发送消息
+</span></span><span class=line><span class=cl>                console.log(&#39; [x] Sent %s&#39;, msg+i);
+</span></span><span class=line><span class=cl>                if (i == 4) {
+</span></span><span class=line><span class=cl>                    myEmitter.emit(&#39;sent done&#39;);
+</span></span><span class=line><span class=cl>                }
+</span></span><span class=line><span class=cl>            }, 5000*i)
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        myEmitter.on(&#39;sent done&#39;, async () =&gt; {
+</span></span><span class=line><span class=cl>            await ch.close();   //关闭信道
+</span></span><span class=line><span class=cl>            await conn.close();  //关闭连接
+</span></span><span class=line><span class=cl>        });
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>})()
+</span></span></code></pre></td></tr></table></div></div><p>示例就写这么多，全文完。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2023-02-23</span></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/rabbitmq/index.md target=_blank>Read Markdown</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/rabbitmq/ data-title="RabbitMQ 入门教程及示例" data-hashtags=MQ,Node.js><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/rabbitmq/ data-hashtag=MQ><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/rabbitmq/ data-title="RabbitMQ 入门教程及示例"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/rabbitmq/ data-title="RabbitMQ 入门教程及示例"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/rabbitmq/ data-title="RabbitMQ 入门教程及示例"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/mq/>MQ</a>,&nbsp;<a href=/tags/node.js/>Node.js</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/docker-guide/ class=next rel=next title="Docker 入门教程">Docker 入门教程<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

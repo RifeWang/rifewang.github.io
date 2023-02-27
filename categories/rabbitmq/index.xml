@@ -1,15 +1,1 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>RabbitMQ on 凌虚 Blog</title><link>https://rifewang.github.io/categories/rabbitmq/</link><description>Recent content in RabbitMQ on 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 27 Feb 2018 18:53:07 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/rabbitmq/index.xml" rel="self" type="application/rss+xml"/><item><title>RabbitMQ 入门教程及示例</title><link>https://rifewang.github.io/posts/middleware/rabbitmq/</link><pubDate>Tue, 27 Feb 2018 18:53:07 +0800</pubDate><guid>https://rifewang.github.io/posts/middleware/rabbitmq/</guid><description>一 Link to heading 消息中间件 MQ（也称消息队列）的基本功能是传递和转发消息，其最重要的作用是能够解耦业务及系统架构，可以说是一个系统发展壮大到一定阶段绕不开的东西。
-而 RabbitMQ 是对 AMQP（高级消息队列协议）的实现，成熟可靠并且开源，本系列文章将会讲述如何在 node 中入门这一利器。
-RabbitMQ 概述 Link to heading 先来简单的了解一下 RabbitMQ 相关的基本概念：
-Producer ：生产者，生成消息并把消息发送给 RabbitMQ 。
-Consumer ：消费者，从 RabbitMQ 中接收消息。
-Exchange ：交换器，具有路由的作用，将生产者传递的消息根据不同的路由规则传递到对应的队列中。交换器具有四种不同的类型，每种类型对应不同的路由规则。
-Queue ：队列，实际存储消息的地方，消费者通过订阅队列来获取队列中的消息。
-Binding ：绑定交换器和队列，只有绑定后消息才能被交换器分发到具体的队列中，用一个字符串来代表 Binding Key 。
-消息是如何由生产者传递到消费者：
-生产者 Producer 生成消息 msg ，并指定这条消息的路由键 Routing Key ，然后将消息传递给交换器 Exchange 。
-交换器 Exchange 接收到消息后根据 Exchange Type 也就是交换器类型以及交换器和队列的 Binding 绑定关系来判断路由规则并分发消息到具体的队列 Queue 中。
-消费者 Consumer 通过订阅具体的队列，一旦队列接收到消息便会将其传递给消费者。
-这里的 Routing Key 和 Binding 我是按照自己的理解解释的，与某些参考资料是有出入的，读者理解就好。
-当然完成上述三个步骤还缺少两个关键的东西：
-Connection ：连接，不论生产者还是消费者想要使用 RabbitMQ 都必须首先建立到 RabbitMQ 的 TCP 连接。</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>RabbitMQ - Category - 凌虚 Blog</title><link>https://rifewang.github.io/categories/rabbitmq/</link><description>RabbitMQ - Category - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Tue, 27 Feb 2018 18:53:07 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/rabbitmq/" rel="self" type="application/rss+xml"/><item><title>RabbitMQ 入门教程及示例</title><link>https://rifewang.github.io/rabbitmq/</link><pubDate>Tue, 27 Feb 2018 18:53:07 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/rabbitmq/</guid><description>一 消息中间件 MQ（也称消息队列）的基本功能是传递和转发消息，其最重要的作用是能够解耦业务及系统架构，可以说是一个系统发展壮大到一定阶段绕不开</description></item></channel></rss>

@@ -1,0 +1,925 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Elasticsearch Search Template - 凌虚 Blog</title><meta name=Description content="Elasticsearch Search Template"><meta property="og:title" content="Elasticsearch Search Template"><meta property="og:description" content="Elasticsearch Search Template"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/es-search-template/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-11-16T00:00:00+08:00"><meta property="article:modified_time" content="2023-02-15T10:53:01+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="Elasticsearch Search Template"><meta name=twitter:description content="Elasticsearch Search Template"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/es-search-template/><link rel=prev href=https://rifewang.github.io/log-analyzer-system/><link rel=next href=https://rifewang.github.io/es-distribute-search-steps/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Elasticsearch Search Template","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/es-search-template\/"},"genre":"posts","wordcount":2649,"url":"https:\/\/rifewang.github.io\/es-search-template\/","datePublished":"2020-11-16T00:00:00+08:00","dateModified":"2023-02-15T10:53:01+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"凌虚"},"description":"Elasticsearch Search Template"}</script></head><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Elasticsearch Search Template</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span>&nbsp;<span class=post-category>included in <a href=/categories/elasticsearch/><i class="far fa-folder fa-fw" aria-hidden=true></i>Elasticsearch</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2020-11-16>2020-11-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;2649 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;6 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#搜索模板-api>搜索模板 API</a><ul><li><ul><li><a href=#保存搜索模板>保存搜索模板</a></li><li><a href=#查询搜索模板>查询搜索模板</a></li><li><a href=#删除搜索模板>删除搜索模板</a></li><li><a href=#使用搜索模板>使用搜索模板</a></li><li><a href=#检验搜索模板>检验搜索模板</a></li><li><a href=#使用-explain-和-profile-参数>使用 <code>explain</code> 和 <code>profile</code> 参数</a></li></ul></li></ul></li><li><a href=#模板渲染>模板渲染</a><ul><li><ul><li><a href=#填充简单值>填充简单值</a></li><li><a href=#将参数转换为-json>将参数转换为 JSON</a></li><li><a href=#将数组-join-成字符串>将数组 join 成字符串</a></li><li><a href=#默认值>默认值</a></li><li><a href=#条件子句>条件子句</a></li><li><a href=#urls-编码>URLs 编码</a></li></ul></li></ul></li><li><a href=#mustache-基本语法>Mustache 基本语法</a><ul><li><ul><li><a href=#使用-key>使用 <code>{{key}}</code></a></li><li><a href=#使用-key-避免转义>使用 <code>{{{key}}}</code> 避免转义</a></li><li><a href=#使用-key--key-构造区块>使用 <code>{{#key}} {{/key}}</code> 构造区块</a></li><li><a href=#使用-key--key-构造反区块>使用 <code>{{^key}} {{/key}}</code> 构造反区块</a></li><li><a href=#使用---添加注释>使用 <code>{{! }}</code> 添加注释</a></li><li><a href=#使用---子模块>使用 <code>{{> }}</code> 子模块</a></li><li><a href=#使用----自定义定界符>使用 <code>{{= =}}</code> 自定义定界符</a></li></ul></li></ul></li><li><a href=#结语>结语</a></li></ul></nav></div></div><div class=content id=content><h1 id=elasticsearch-search-template>Elasticsearch Search Template</h1><p>所谓 search template 搜索模板其实就是：</p><ol><li>预先定义好查询语句 DSL 的结构并预留参数</li><li>搜索的时再传入参数值</li><li>渲染出完整的 DSL ，最后进行搜索</li></ol><p>使用搜索模板可以将 DSL 从应用程序中解耦出来，并且可以更加灵活的更改查询语句。</p><p>例如：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET _search/template
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;source&#34; : {
+</span></span><span class=line><span class=cl>    &#34;query&#34;: {
+</span></span><span class=line><span class=cl>      &#34;match&#34; : {
+</span></span><span class=line><span class=cl>        &#34;{{my_field}}&#34; : &#34;{{my_value}}&#34;
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  },
+</span></span><span class=line><span class=cl>  &#34;params&#34; : {
+</span></span><span class=line><span class=cl>    &#34;my_field&#34; : &#34;message&#34;,
+</span></span><span class=line><span class=cl>    &#34;my_value&#34; : &#34;foo&#34;
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>构造出来的 DSL 就是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;query&#34;: {
+</span></span><span class=line><span class=cl>    &#34;match&#34;: {
+</span></span><span class=line><span class=cl>      &#34;message&#34;: &#34;foo&#34;
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>在模板中通过 <code>{{ }}</code> 的方式预留参数，然后查询时再指定对应的参数值，最后填充成具体的查询语句进行搜索。</p><hr><h2 id=搜索模板-api>搜索模板 API</h2><p>为了实现搜索模板和查询分离，我们首先需要单独保存和管理搜索模板。</p><h4 id=保存搜索模板>保存搜索模板</h4><p>使用 scripts API 保存搜索模板（不存在则创建，存在则覆盖）。示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>POST _scripts/&lt;templateid&gt;
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;script&#34;: {
+</span></span><span class=line><span class=cl>    &#34;lang&#34;: &#34;mustache&#34;,
+</span></span><span class=line><span class=cl>    &#34;source&#34;: {
+</span></span><span class=line><span class=cl>      &#34;query&#34;: {
+</span></span><span class=line><span class=cl>        &#34;match&#34;: {
+</span></span><span class=line><span class=cl>          &#34;title&#34;: &#34;{{query_string}}&#34;
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><h4 id=查询搜索模板>查询搜索模板</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET _scripts/&lt;templateid&gt;
+</span></span></code></pre></td></tr></table></div></div><h4 id=删除搜索模板>删除搜索模板</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>DELETE _scripts/&lt;templateid&gt;
+</span></span></code></pre></td></tr></table></div></div><h4 id=使用搜索模板>使用搜索模板</h4><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET _search/template
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;id&#34;: &#34;&lt;templateid&gt;&#34;,
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;query_string&#34;: &#34;search words&#34;
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p><code>params</code> 中的参数与搜索模板中定义的一致，上文保存搜索模板的示例是 <code>{{query_string}}</code>，所以这里进行搜索时对应的参数就是 <code>query_string</code> 。</p><h4 id=检验搜索模板>检验搜索模板</h4><p>有时候我们想看看搜索模板输入了参数之后渲染成的 DSL 到底长啥样。</p><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET _render/template
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;source&#34;: &#34;{ \&#34;query\&#34;: { \&#34;terms\&#34;: {{#toJson}}statuses{{/toJson}} }}&#34;,
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;statuses&#34; : {
+</span></span><span class=line><span class=cl>        &#34;status&#34;: [ &#34;pending&#34;, &#34;published&#34; ]
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>返回的结果就是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;template_output&#34;: {
+</span></span><span class=line><span class=cl>    &#34;query&#34;: {
+</span></span><span class=line><span class=cl>      &#34;terms&#34;: {
+</span></span><span class=line><span class=cl>        &#34;status&#34;: [
+</span></span><span class=line><span class=cl>          &#34;pending&#34;,
+</span></span><span class=line><span class=cl>          &#34;published&#34;
+</span></span><span class=line><span class=cl>        ]
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p><code>{{#toJson}} {{/toJson}}</code> 就是转换成 json 格式。</p></br><p>已经保存的搜索模板可以通过以下方式查看渲染结果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET _render/template/&lt;template_name&gt;
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;...&#34;
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><h4 id=使用-explain-和-profile-参数>使用 <code>explain</code> 和 <code>profile</code> 参数</h4><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET _search/template
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;id&#34;: &#34;my_template&#34;,
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;status&#34;: [ &#34;pending&#34;, &#34;published&#34; ]
+</span></span><span class=line><span class=cl>  },
+</span></span><span class=line><span class=cl>  &#34;explain&#34;: true
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET _search/template
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;id&#34;: &#34;my_template&#34;,
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;status&#34;: [ &#34;pending&#34;, &#34;published&#34; ]
+</span></span><span class=line><span class=cl>  },
+</span></span><span class=line><span class=cl>  &#34;profile&#34;: true
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><h2 id=模板渲染>模板渲染</h2><h4 id=填充简单值>填充简单值</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET _search/template
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;source&#34;: {
+</span></span><span class=line><span class=cl>    &#34;query&#34;: {
+</span></span><span class=line><span class=cl>      &#34;term&#34;: {
+</span></span><span class=line><span class=cl>        &#34;message&#34;: &#34;{{query_string}}&#34;
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  },
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;query_string&#34;: &#34;search words&#34;
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>渲染出来的 DSL 就是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;query&#34;: {
+</span></span><span class=line><span class=cl>    &#34;term&#34;: {
+</span></span><span class=line><span class=cl>      &#34;message&#34;: &#34;search words&#34;
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><h4 id=将参数转换为-json>将参数转换为 JSON</h4><p>使用 <code>{{#toJson}}parameter{{/toJson}}</code> 会将参数转换为 JSON。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET _search/template
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;source&#34;: &#34;{ \&#34;query\&#34;: { \&#34;terms\&#34;: {{#toJson}}statuses{{/toJson}} }}&#34;,
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;statuses&#34; : {
+</span></span><span class=line><span class=cl>        &#34;status&#34;: [ &#34;pending&#34;, &#34;published&#34; ]
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>渲染出来的 DSL 就是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;query&#34;: {
+</span></span><span class=line><span class=cl>    &#34;terms&#34;: {
+</span></span><span class=line><span class=cl>      &#34;status&#34;: [
+</span></span><span class=line><span class=cl>        &#34;pending&#34;,
+</span></span><span class=line><span class=cl>        &#34;published&#34;
+</span></span><span class=line><span class=cl>      ]
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div></br><p>对象数组的渲染示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET _search/template
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;source&#34;: &#34;{\&#34;query\&#34;:{\&#34;bool\&#34;:{\&#34;must\&#34;: {{#toJson}}clauses{{/toJson}} }}}&#34;,
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;clauses&#34;: [
+</span></span><span class=line><span class=cl>      { &#34;term&#34;: { &#34;user&#34; : &#34;foo&#34; } },
+</span></span><span class=line><span class=cl>      { &#34;term&#34;: { &#34;user&#34; : &#34;bar&#34; } }
+</span></span><span class=line><span class=cl>    ]
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>渲染结果就是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;query&#34;: {
+</span></span><span class=line><span class=cl>    &#34;bool&#34;: {
+</span></span><span class=line><span class=cl>      &#34;must&#34;: [
+</span></span><span class=line><span class=cl>        { &#34;term&#34;: { &#34;user&#34; : &#34;foo&#34; } },
+</span></span><span class=line><span class=cl>        { &#34;term&#34;: { &#34;user&#34; : &#34;bar&#34; } }
+</span></span><span class=line><span class=cl>      ]
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><h4 id=将数组-join-成字符串>将数组 join 成字符串</h4><p>使用 <code>{{#join}}array{{/join}}</code> 可以将数组 join 成字符串。</p><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET _search/template
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;source&#34;: {
+</span></span><span class=line><span class=cl>    &#34;query&#34;: {
+</span></span><span class=line><span class=cl>      &#34;match&#34;: {
+</span></span><span class=line><span class=cl>        &#34;emails&#34;: &#34;{{#join}}emails{{/join}}&#34;
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  },
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;emails&#34;: [ &#34;aaa&#34;, &#34;bbb&#34; ]
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>渲染结果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;query&#34; : {
+</span></span><span class=line><span class=cl>    &#34;match&#34; : {
+</span></span><span class=line><span class=cl>      &#34;emails&#34; : &#34;aaa,bbb&#34;
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div></br><p>除了默认以 <code>,</code> 分隔外，还可以自定义分隔符，示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;source&#34;: {
+</span></span><span class=line><span class=cl>    &#34;query&#34;: {
+</span></span><span class=line><span class=cl>      &#34;range&#34;: {
+</span></span><span class=line><span class=cl>        &#34;born&#34;: {
+</span></span><span class=line><span class=cl>          &#34;gte&#34;: &#34;{{date.min}}&#34;,
+</span></span><span class=line><span class=cl>          &#34;lte&#34;: &#34;{{date.max}}&#34;,
+</span></span><span class=line><span class=cl>          &#34;format&#34;: &#34;{{#join delimiter=&#39;||&#39;}}date.formats{{/join delimiter=&#39;||&#39;}}&#34;
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  },
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;date&#34;: {
+</span></span><span class=line><span class=cl>      &#34;min&#34;: &#34;2016&#34;,
+</span></span><span class=line><span class=cl>      &#34;max&#34;: &#34;31/12/2017&#34;,
+</span></span><span class=line><span class=cl>      &#34;formats&#34;: [ &#34;dd/MM/yyyy&#34;, &#34;yyyy&#34; ]
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>例子中的 <code>{{#join delimiter='||'}} {{/join delimiter='||'}}</code> 意思就是进行 join 操作，分隔符设置为 <code>||</code> ，渲染结果就是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;query&#34;: {
+</span></span><span class=line><span class=cl>    &#34;range&#34;: {
+</span></span><span class=line><span class=cl>      &#34;born&#34;: {
+</span></span><span class=line><span class=cl>        &#34;gte&#34;: &#34;2016&#34;,
+</span></span><span class=line><span class=cl>        &#34;lte&#34;: &#34;31/12/2017&#34;,
+</span></span><span class=line><span class=cl>        &#34;format&#34;: &#34;dd/MM/yyyy||yyyy&#34;
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><h4 id=默认值>默认值</h4><p>使用 <code>{{var}}{{^var}}default{{/var}}</code> 的方式设置默认值。</p><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;source&#34;: {
+</span></span><span class=line><span class=cl>    &#34;query&#34;: {
+</span></span><span class=line><span class=cl>      &#34;range&#34;: {
+</span></span><span class=line><span class=cl>        &#34;line_no&#34;: {
+</span></span><span class=line><span class=cl>          &#34;gte&#34;: &#34;{{start}}&#34;,
+</span></span><span class=line><span class=cl>          &#34;lte&#34;: &#34;{{end}}{{^end}}20{{/end}}&#34;
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  },
+</span></span><span class=line><span class=cl>  &#34;params&#34;: { ... }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p><code>{{end}}{{^end}}20{{/end}}</code> 就是给 <code>end</code> 设置了默认值为 20 。</p><p>当 <code>params</code> 是 <code>{ "start": 10, "end": 15 }</code> 时，渲染结果是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;range&#34;: {
+</span></span><span class=line><span class=cl>    &#34;line_no&#34;: {
+</span></span><span class=line><span class=cl>      &#34;gte&#34;: &#34;10&#34;,
+</span></span><span class=line><span class=cl>      &#34;lte&#34;: &#34;15&#34;
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>当 <code>params</code> 是 <code>{ "start": 10 }</code> 时，end 就会使用默认值，渲染结果就是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;range&#34;: {
+</span></span><span class=line><span class=cl>    &#34;line_no&#34;: {
+</span></span><span class=line><span class=cl>      &#34;gte&#34;: &#34;10&#34;,
+</span></span><span class=line><span class=cl>      &#34;lte&#34;: &#34;20&#34;
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><h4 id=条件子句>条件子句</h4><p>有时候我们的参数是可选的，这时候就可以使用 <code>{{#key}} {{/key}}</code>的语法。</p><p>示例，假设参数 <code>line_no</code>, <code>start</code>, <code>end</code> 都是可选的，使用 <code>{{#key}} {{/key}}</code> 形如：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;query&#34;: {
+</span></span><span class=line><span class=cl>    &#34;bool&#34;: {
+</span></span><span class=line><span class=cl>      &#34;must&#34;: {
+</span></span><span class=line><span class=cl>        &#34;match&#34;: {
+</span></span><span class=line><span class=cl>          &#34;line&#34;: &#34;{{text}}&#34;
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>      },
+</span></span><span class=line><span class=cl>      &#34;filter&#34;: {
+</span></span><span class=line><span class=cl>        {{#line_no}}
+</span></span><span class=line><span class=cl>          &#34;range&#34;: {
+</span></span><span class=line><span class=cl>            &#34;line_no&#34;: {
+</span></span><span class=line><span class=cl>              {{#start}}
+</span></span><span class=line><span class=cl>                &#34;gte&#34;: &#34;{{start}}&#34;
+</span></span><span class=line><span class=cl>                {{#end}},{{/end}}
+</span></span><span class=line><span class=cl>              {{/start}}
+</span></span><span class=line><span class=cl>              {{#end}}
+</span></span><span class=line><span class=cl>                &#34;lte&#34;: &#34;{{end}}&#34;
+</span></span><span class=line><span class=cl>              {{/end}}
+</span></span><span class=line><span class=cl>            }
+</span></span><span class=line><span class=cl>          }
+</span></span><span class=line><span class=cl>        {{/line_no}}
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>1、 当参数为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;text&#34;: &#34;words to search for&#34;,
+</span></span><span class=line><span class=cl>    &#34;line_no&#34;: {
+</span></span><span class=line><span class=cl>      &#34;start&#34;: 10,
+</span></span><span class=line><span class=cl>      &#34;end&#34;: 20
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>渲染结果是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;query&#34;: {
+</span></span><span class=line><span class=cl>    &#34;bool&#34;: {
+</span></span><span class=line><span class=cl>      &#34;must&#34;: {
+</span></span><span class=line><span class=cl>        &#34;match&#34;: {
+</span></span><span class=line><span class=cl>          &#34;line&#34;: &#34;words to search for&#34;
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>      },
+</span></span><span class=line><span class=cl>      &#34;filter&#34;: {
+</span></span><span class=line><span class=cl>        &#34;range&#34;: {
+</span></span><span class=line><span class=cl>          &#34;line_no&#34;: {
+</span></span><span class=line><span class=cl>            &#34;gte&#34;: &#34;10&#34;,
+</span></span><span class=line><span class=cl>            &#34;lte&#34;: &#34;20&#34;
+</span></span><span class=line><span class=cl>          }
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>2、 当参数为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;text&#34;: &#34;words to search for&#34;
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>渲染结果为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;query&#34;: {
+</span></span><span class=line><span class=cl>    &#34;bool&#34;: {
+</span></span><span class=line><span class=cl>      &#34;must&#34;: {
+</span></span><span class=line><span class=cl>        &#34;match&#34;: {
+</span></span><span class=line><span class=cl>          &#34;line&#34;: &#34;words to search for&#34;
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>      },
+</span></span><span class=line><span class=cl>      &#34;filter&#34;: {}
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>3、当参数为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;text&#34;: &#34;words to search for&#34;,
+</span></span><span class=line><span class=cl>    &#34;line_no&#34;: {
+</span></span><span class=line><span class=cl>      &#34;start&#34;: 10
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>渲染结果为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;query&#34;: {
+</span></span><span class=line><span class=cl>    &#34;bool&#34;: {
+</span></span><span class=line><span class=cl>      &#34;must&#34;: {
+</span></span><span class=line><span class=cl>        &#34;match&#34;: {
+</span></span><span class=line><span class=cl>          &#34;line&#34;: &#34;words to search for&#34;
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>      },
+</span></span><span class=line><span class=cl>      &#34;filter&#34;: {
+</span></span><span class=line><span class=cl>        &#34;range&#34;: {
+</span></span><span class=line><span class=cl>          &#34;line_no&#34;: {
+</span></span><span class=line><span class=cl>            &#34;gte&#34;: 10
+</span></span><span class=line><span class=cl>          }
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>4、当参数为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;text&#34;: &#34;words to search for&#34;,
+</span></span><span class=line><span class=cl>    &#34;line_no&#34;: {
+</span></span><span class=line><span class=cl>      &#34;end&#34;: 20
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>渲染结果为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;query&#34;: {
+</span></span><span class=line><span class=cl>    &#34;bool&#34;: {
+</span></span><span class=line><span class=cl>      &#34;must&#34;: {
+</span></span><span class=line><span class=cl>        &#34;match&#34;: {
+</span></span><span class=line><span class=cl>          &#34;line&#34;: &#34;words to search for&#34;
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>      },
+</span></span><span class=line><span class=cl>      &#34;filter&#34;: {
+</span></span><span class=line><span class=cl>        &#34;range&#34;: {
+</span></span><span class=line><span class=cl>          &#34;line_no&#34;: {
+</span></span><span class=line><span class=cl>            &#34;lte&#34;: 20
+</span></span><span class=line><span class=cl>          }
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>需要注意的是在 JSON 对象中，</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;filter&#34;: {
+</span></span><span class=line><span class=cl>    {{#line_no}}
+</span></span><span class=line><span class=cl>    ...
+</span></span><span class=line><span class=cl>    {{/line_no}}
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>这样直接写 <code>{{#line_no}}</code> 肯定是非法的JSON格式，你必须转换为 JSON 字符串。</p><h4 id=urls-编码>URLs 编码</h4><p>使用 <code>{{#url}}value{{/url}}</code> 的方式可以进行 HTML 编码转义。</p><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GET _render/template
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;source&#34;: {
+</span></span><span class=line><span class=cl>    &#34;query&#34;: {
+</span></span><span class=line><span class=cl>      &#34;term&#34;: {
+</span></span><span class=line><span class=cl>        &#34;http_access_log&#34;: &#34;{{#url}}{{host}}/{{page}}{{/url}}&#34;
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  },
+</span></span><span class=line><span class=cl>  &#34;params&#34;: {
+</span></span><span class=line><span class=cl>    &#34;host&#34;: &#34;https://www.elastic.co/&#34;,
+</span></span><span class=line><span class=cl>    &#34;page&#34;: &#34;learn&#34;
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>渲染结果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>  &#34;template_output&#34;: {
+</span></span><span class=line><span class=cl>    &#34;query&#34;: {
+</span></span><span class=line><span class=cl>      &#34;term&#34;: {
+</span></span><span class=line><span class=cl>        &#34;http_access_log&#34;: &#34;https%3A%2F%2Fwww.elastic.co%2F%2Flearn&#34;
+</span></span><span class=line><span class=cl>      }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><hr><h2 id=mustache-基本语法>Mustache 基本语法</h2><p>上文中的 <code>{{ }}</code> 语法其实就是 <a href=https://mustache.github.io/mustache.5.html target=_blank rel="noopener noreffer">mustache language</a> ，补充介绍下基本的语法规则。</p><h4 id=使用-key>使用 <code>{{key}}</code></h4><p>模板：<code>Hello {{name}}</code></p><p>输入：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>    &#34;name&#34;: &#34;Chris&#34;
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>输出：<code>Hello Chris</code></p><h4 id=使用-key-避免转义>使用 <code>{{{key}}}</code> 避免转义</h4><p>所有变量都会默认进行 HTML 转义。</p><p>模板：<code>{{company}}</code></p><p>输入：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>    &#34;company&#34;: &#34;&lt;b&gt;GitHub&lt;/b&gt;&#34;
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>输出：<code>&amp;lt;b&amp;gt;GitHub&amp;lt;/b&amp;gt;</code></p><p>使用 <code>{{{ }}}</code> 避免转义。</p><p>模板：<code>{{{company}}}</code></p><p>输入：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>    &#34;company&#34;: &#34;&lt;b&gt;GitHub&lt;/b&gt;&#34;
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>输出：<code>&lt;b>GitHub&lt;/b></code></p><h4 id=使用-key--key-构造区块>使用 <code>{{#key}} {{/key}}</code> 构造区块</h4><p>1、 当 key 是 false 或者空列表将会忽略
+模板：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>    Shown.
+</span></span><span class=line><span class=cl>    {{#person}}
+</span></span><span class=line><span class=cl>        Never shown!
+</span></span><span class=line><span class=cl>    {{/person}}
+</span></span></code></pre></td></tr></table></div></div><p>输入：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>    &#34;person&#34;: false
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>    Shown.
+</span></span></code></pre></td></tr></table></div></div></br><p>2、 当 key 非空值则渲染填充
+模板：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>    {{#repo}}
+</span></span><span class=line><span class=cl>        &lt;b&gt;{{name}}&lt;/b&gt;
+</span></span><span class=line><span class=cl>    {{/repo}}
+</span></span></code></pre></td></tr></table></div></div><p>输入：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>    &#34;repo&#34;: [
+</span></span><span class=line><span class=cl>        { &#34;name&#34;: &#34;resque&#34; },
+</span></span><span class=line><span class=cl>        { &#34;name&#34;: &#34;hub&#34; },
+</span></span><span class=line><span class=cl>        { &#34;name&#34;: &#34;rip&#34; }
+</span></span><span class=line><span class=cl>    ]
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>    &lt;b&gt;resque&lt;/b&gt;
+</span></span><span class=line><span class=cl>    &lt;b&gt;hub&lt;/b&gt;
+</span></span><span class=line><span class=cl>    &lt;b&gt;rip&lt;/b&gt;
+</span></span></code></pre></td></tr></table></div></div></br><p>3、当 key 是函数则调用后渲染
+模板：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>    {{#wrapped}}
+</span></span><span class=line><span class=cl>        {{name}} is awesome.
+</span></span><span class=line><span class=cl>    {{/wrapped}}
+</span></span></code></pre></td></tr></table></div></div><p>输入：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>    &#34;name&#34;: &#34;Willy&#34;,
+</span></span><span class=line><span class=cl>    &#34;wrapped&#34;: function() {
+</span></span><span class=line><span class=cl>        return function(text, render) {
+</span></span><span class=line><span class=cl>            return &#34;&lt;b&gt;&#34; + render(text) + &#34;&lt;/b&gt;&#34;
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>    &lt;b&gt;Willy is awesome.&lt;/b&gt;
+</span></span></code></pre></td></tr></table></div></div></br><p>4、当 key 是非 false 且非列表
+模板：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>    {{#person?}}
+</span></span><span class=line><span class=cl>        Hi {{name}}!
+</span></span><span class=line><span class=cl>    {{/person?}}
+</span></span></code></pre></td></tr></table></div></div><p>输入：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>    &#34;person?&#34;: { &#34;name&#34;: &#34;Jon&#34; }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>    Hi Jon!
+</span></span></code></pre></td></tr></table></div></div><h4 id=使用-key--key-构造反区块>使用 <code>{{^key}} {{/key}}</code> 构造反区块</h4><p><code>{{^key}} {{/key}}</code> 的语法与 <code>{{#key}} {{/key}}</code> 类似，不同的是，当 key 不存在，或者是 false ，又或者是空列表时才渲染输出区块内容。</p><p>模板：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>    {{#repo}}
+</span></span><span class=line><span class=cl>        &lt;b&gt;{{name}}&lt;/b&gt;
+</span></span><span class=line><span class=cl>    {{/repo}}
+</span></span><span class=line><span class=cl>    {{^repo}}
+</span></span><span class=line><span class=cl>        No repos :(
+</span></span><span class=line><span class=cl>    {{/repo}}
+</span></span></code></pre></td></tr></table></div></div><p>输入：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>    &#34;repo&#34;: []
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>    No repos :(
+</span></span></code></pre></td></tr></table></div></div><h4 id=使用---添加注释>使用 <code>{{! }}</code> 添加注释</h4><p><code>{{! }}</code> 注释内容将会被忽略。</p><p>模板：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&lt;h1&gt;Today{{! ignore me }}.&lt;/h1&gt;
+</span></span></code></pre></td></tr></table></div></div><p>输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&lt;h1&gt;Today.&lt;/h1&gt;
+</span></span></code></pre></td></tr></table></div></div><h4 id=使用---子模块>使用 <code>{{> }}</code> 子模块</h4><p>模板：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>base.mustache:
+</span></span><span class=line><span class=cl>&lt;h2&gt;Names&lt;/h2&gt;
+</span></span><span class=line><span class=cl>{{#names}}
+</span></span><span class=line><span class=cl>    {{&gt; user}}
+</span></span><span class=line><span class=cl>{{/names}}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>user.mustache:
+</span></span><span class=line><span class=cl>&lt;strong&gt;{{name}}&lt;/strong&gt;
+</span></span></code></pre></td></tr></table></div></div><p>其实也就等价于：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&lt;h2&gt;Names&lt;/h2&gt;
+</span></span><span class=line><span class=cl>{{#names}}
+</span></span><span class=line><span class=cl>    &lt;strong&gt;{{name}}&lt;/strong&gt;
+</span></span><span class=line><span class=cl>{{/names}}
+</span></span></code></pre></td></tr></table></div></div><h4 id=使用----自定义定界符>使用 <code>{{= =}}</code> 自定义定界符</h4><p>有时候我们需要改变默认的定界符 <code>{{ }}</code> ，那么就可以使用 <code>{{= =}}</code> 的方式自定义定界符。</p><p>例如：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{{=&lt;% %&gt;=}}
+</span></span></code></pre></td></tr></table></div></div><p>定界符被定义为了 <code>&lt;% %></code>，这样原先 <code>{{key}}</code> 的使用方式就变成了 <code>&lt;%key%></code>。
+再使用：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&lt;%={{ }}=%&gt;
+</span></span></code></pre></td></tr></table></div></div><p>就重新把定界符改回了 <code>{{ }}</code>。</p><p>更多语法详情请查阅官方文档 <a href=https://mustache.github.io/mustache.5.html target=_blank rel="noopener noreffer">mustache language</a> 。</p><h2 id=结语>结语</h2><p>使用 search template 可以对搜索进行有效的解耦，即应用程序只需要关注搜索参数与返回结果，而不用关注具体使用的 DSL 查询语句，到底使用哪种 DSL 则由搜索模板进行单独管理。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2023-02-15</span></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/es-search-template/index.md target=_blank>Read Markdown</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/es-search-template/ data-title="Elasticsearch Search Template"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/es-search-template/><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/es-search-template/ data-title="Elasticsearch Search Template"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/es-search-template/ data-title="Elasticsearch Search Template"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/es-search-template/ data-title="Elasticsearch Search Template"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/log-analyzer-system/ class=prev rel=prev title=构造请求日志分析系统><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>构造请求日志分析系统</a>
+<a href=/es-distribute-search-steps/ class=next rel=next title="Elasticsearch 分布式搜索的运行机制">Elasticsearch 分布式搜索的运行机制<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

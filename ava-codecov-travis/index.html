@@ -1,0 +1,182 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>给你的库加上酷炫的小徽章 - 凌虚 Blog</title><meta name=Description content="给你的库加上酷炫的小徽章"><meta property="og:title" content="给你的库加上酷炫的小徽章"><meta property="og:description" content="给你的库加上酷炫的小徽章"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/ava-codecov-travis/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-12-21T13:36:00+08:00"><meta property="article:modified_time" content="2023-02-19T13:48:52+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="给你的库加上酷炫的小徽章"><meta name=twitter:description content="给你的库加上酷炫的小徽章"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/ava-codecov-travis/><link rel=prev href=https://rifewang.github.io/makefile/><link rel=next href=https://rifewang.github.io/github-actions/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"给你的库加上酷炫的小徽章","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/ava-codecov-travis\/"},"genre":"posts","keywords":"github, node.js","wordcount":1369,"url":"https:\/\/rifewang.github.io\/ava-codecov-travis\/","datePublished":"2019-12-21T13:36:00+08:00","dateModified":"2023-02-19T13:48:52+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"凌虚"},"description":"给你的库加上酷炫的小徽章"}</script></head><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">给你的库加上酷炫的小徽章</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2019-12-21>2019-12-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;1369 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;3 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#shieldsio>Shields.io</a></li><li><a href=#ava>AVA</a><ul><li><a href=#coverage>coverage</a></li></ul></li><li><a href=#codecov>Codecov</a></li><li><a href=#travis-ci>Travis-ci</a></li><li><a href=#结语>结语</a></li></ul></nav></div></div><div class=content id=content><h1 id=给库加上酷炫的小徽章--avacodecovtravis-示例>给库加上酷炫的小徽章 & ava、codecov、travis 示例</h1><p>GitHub 很多开源库都会有几个酷炫的小徽章，比如：</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://img.shields.io/npm/v/io-memcached/latest data-srcset="https://img.shields.io/npm/v/io-memcached/latest, https://img.shields.io/npm/v/io-memcached/latest 1.5x, https://img.shields.io/npm/v/io-memcached/latest 2x" data-sizes=auto alt=https://img.shields.io/npm/v/io-memcached/latest title="npm (tag)"> <img class=lazyload src=/svg/loading.min.svg data-src=https://img.shields.io/travis/com/rifewang/io-memcached data-srcset="https://img.shields.io/travis/com/rifewang/io-memcached, https://img.shields.io/travis/com/rifewang/io-memcached 1.5x, https://img.shields.io/travis/com/rifewang/io-memcached 2x" data-sizes=auto alt=https://img.shields.io/travis/com/rifewang/io-memcached title="Travis (.com)"> <img class=lazyload src=/svg/loading.min.svg data-src=https://img.shields.io/codecov/c/github/rifewang/io-memcached data-srcset="https://img.shields.io/codecov/c/github/rifewang/io-memcached, https://img.shields.io/codecov/c/github/rifewang/io-memcached 1.5x, https://img.shields.io/codecov/c/github/rifewang/io-memcached 2x" data-sizes=auto alt=https://img.shields.io/codecov/c/github/rifewang/io-memcached title=Codecov> <img class=lazyload src=/svg/loading.min.svg data-src=https://img.shields.io/npm/l/io-memcached data-srcset="https://img.shields.io/npm/l/io-memcached, https://img.shields.io/npm/l/io-memcached 1.5x, https://img.shields.io/npm/l/io-memcached 2x" data-sizes=auto alt=https://img.shields.io/npm/l/io-memcached title=NPM> <img class=lazyload src=/svg/loading.min.svg data-src=https://img.shields.io/github/last-commit/rifewang/io-memcached data-srcset="https://img.shields.io/github/last-commit/rifewang/io-memcached, https://img.shields.io/github/last-commit/rifewang/io-memcached 1.5x, https://img.shields.io/github/last-commit/rifewang/io-memcached 2x" data-sizes=auto alt=https://img.shields.io/github/last-commit/rifewang/io-memcached title="GitHub last commit"></p><p>这些是怎么加上去的呢？</p><h2 id=shieldsio>Shields.io</h2><p>首先这些徽章可以直接去 <a href=https://shields.io/ target=_blank rel="noopener noreffer">shields.io</a> 网站自动生成。</p><p>比如：</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://img.shields.io/npm/v/io-memcached/latest data-srcset="https://img.shields.io/npm/v/io-memcached/latest, https://img.shields.io/npm/v/io-memcached/latest 1.5x, https://img.shields.io/npm/v/io-memcached/latest 2x" data-sizes=auto alt=https://img.shields.io/npm/v/io-memcached/latest title="npm (tag)"></p><p>就是 <code>version</code> 这一类里的一种图标，选择 npm 一栏填入包名，然后复制成 Markdown 内容，就会得到诸如：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>![npm (tag)](https://img.shields.io/npm/v/io-memcached/latest)
+</span></span></code></pre></td></tr></table></div></div><p>直接粘贴在 .md 文件中就可以使用了，最后展现的就是这个图标。</p><p>当然还有其他很多徽章都任由你挑选，不过某些徽章是需要额外进行一些配置，比如这里的 <img class=lazyload src=/svg/loading.min.svg data-src=https://img.shields.io/travis/com/rifewang/io-memcached data-srcset="https://img.shields.io/travis/com/rifewang/io-memcached, https://img.shields.io/travis/com/rifewang/io-memcached 1.5x, https://img.shields.io/travis/com/rifewang/io-memcached 2x" data-sizes=auto alt=https://img.shields.io/travis/com/rifewang/io-memcached title="Travis (.com)"> (自动构建通过) 和 <img class=lazyload src=/svg/loading.min.svg data-src=https://img.shields.io/codecov/c/github/rifewang/io-memcached data-srcset="https://img.shields.io/codecov/c/github/rifewang/io-memcached, https://img.shields.io/codecov/c/github/rifewang/io-memcached 1.5x, https://img.shields.io/codecov/c/github/rifewang/io-memcached 2x" data-sizes=auto alt=https://img.shields.io/codecov/c/github/rifewang/io-memcached title=Codecov> (测试覆盖率)。</p><h2 id=ava>AVA</h2><p>谈到测试覆盖率必须先有单元测试，本文使用 <code>ava</code> 作为示例，<code>ava</code> 是一个 js 测试库，强烈推荐你使用它。</p><p>1、安装</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>npm init ava
+</span></span></code></pre></td></tr></table></div></div><p>2、使用示例</p><p>编写 <code>test.js</code> 文件：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>import test from &#39;ava&#39;
+</span></span><span class=line><span class=cl>import Memcached from &#39;../lib/memcached&#39;;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>test.before(t =&gt; {
+</span></span><span class=line><span class=cl>	const memcached = new Memcached([&#39;127.0.0.1:11211&#39;], {
+</span></span><span class=line><span class=cl>        pool: {
+</span></span><span class=line><span class=cl>            max: 2,
+</span></span><span class=line><span class=cl>            min: 0
+</span></span><span class=line><span class=cl>        },
+</span></span><span class=line><span class=cl>        timeout: 5000
+</span></span><span class=line><span class=cl>    });
+</span></span><span class=line><span class=cl>    t.context.memcached = memcached;
+</span></span><span class=line><span class=cl>});
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>test(&#39;memcached get/set&#39;, async t =&gt; {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        t.plan(3);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        const key = &#39;testkey&#39;;
+</span></span><span class=line><span class=cl>        const testdata = &#39;testest\r\n\stese&#39;;
+</span></span><span class=line><span class=cl>        const r = await t.context.memcached.set(key, testdata);
+</span></span><span class=line><span class=cl>        t.is(r, &#39;STORED&#39;);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        const g = await t.context.memcached.get(key, testdata);
+</span></span><span class=line><span class=cl>        t.is(g, testdata);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        const dr = await t.context.memcached.del(key);
+</span></span><span class=line><span class=cl>        t.is(dr, &#39;DELETED&#39;);
+</span></span><span class=line><span class=cl>    } catch (error) {
+</span></span><span class=line><span class=cl>        t.fail(error.message);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>});
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>test(&#39;unit test title&#39;, t =&gt; {
+</span></span><span class=line><span class=cl>    t.pass();
+</span></span><span class=line><span class=cl>});
+</span></span></code></pre></td></tr></table></div></div><p>说明：</p><ul><li><p><code>ava</code> 本身就支持很多 es6 及以上的特性，你不用另外再使用 babel 。</p></li><li><p><code>test.before</code> 就是一个钩子，你可以通过 <code>context</code> 向后传递变量并使用。</p></li><li><p><code>test('title', t => {})</code> 函数构造我们的单元测试，每项测试的名称可以自己定义，使用非常方便，多个 test 之间是并发执行的，如果你需要依次执行则使用 <code>test.serial()</code>。</p></li><li><p><code>t.plan()</code> 声明了每项测试中应该有几次断言。</p></li><li><p><code>t.is()</code> 则是进行断言判断。</p></li><li><p><code>t.fail()</code> 声明单项测试不通过。</p></li><li><p><code>t.pass()</code> 声明单项测试通过。</p></li></ul><p>当然这里只是展示了很少的几个用法，更多详细的内容看官方文档。</p><h3 id=coverage>coverage</h3><p>单元测试有了，但是还没有测试覆盖率，为此我们还需要 <code>nyc</code> 。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>npm install --save-dev nyc
+</span></span></code></pre></td></tr></table></div></div><p>修改 <code>package.json</code> 文件:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>	&#34;scripts&#34;: {
+</span></span><span class=line><span class=cl>		&#34;test&#34;: &#34;nyc ava&#34;
+</span></span><span class=line><span class=cl>	}
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>获取测试覆盖率时会生成相关的文件，我们在 <code>.gitignore</code> 中忽略它们即可:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>.nyc_output
+</span></span><span class=line><span class=cl>coverage*
+</span></span></code></pre></td></tr></table></div></div><p>当我们再执行 <code>npm test</code> 时，其就会执行单元测试，并且获取测试覆盖率，结果类似于:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ npm test
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; nyc ava
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  4 tests passed
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>--------------|----------|----------|----------|----------|-------------------|
+</span></span><span class=line><span class=cl>File          |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+</span></span><span class=line><span class=cl>--------------|----------|----------|----------|----------|-------------------|
+</span></span><span class=line><span class=cl>All files     |    72.07 |    63.37 |    79.49 |    72.07 |                   |
+</span></span><span class=line><span class=cl> memcached.js |    72.59 |    64.37 |    74.19 |    72.59 |... 13,419,428,439 |
+</span></span><span class=line><span class=cl> utils.js     |       68 |    57.14 |      100 |       68 |... 70,72,73,75,76 |
+</span></span><span class=line><span class=cl>--------------|----------|----------|----------|----------|-------------------|
+</span></span></code></pre></td></tr></table></div></div><h2 id=codecov>Codecov</h2><p>测试覆盖率也有了，但这只是本地的，我们还不能生成 <img class=lazyload src=/svg/loading.min.svg data-src=https://img.shields.io/codecov/c/github/rifewang/io-memcached data-srcset="https://img.shields.io/codecov/c/github/rifewang/io-memcached, https://img.shields.io/codecov/c/github/rifewang/io-memcached 1.5x, https://img.shields.io/codecov/c/github/rifewang/io-memcached 2x" data-sizes=auto alt=https://img.shields.io/codecov/c/github/rifewang/io-memcached title=Codecov> 这种徽章。</p><p>为此，本文选择了 <a href=https://codecov.io/ target=_blank rel="noopener noreffer">codecov</a> 平台，我们需要使用 GitHub 账号登录 <a href=https://codecov.io/ target=_blank rel="noopener noreffer">codecov</a> 并关联我们的 repository 库，同时我们需要生成一个 token 令牌以便后续使用。</p><p>安装 <code>codecov</code> :</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>npm install --save-dev codecov
+</span></span></code></pre></td></tr></table></div></div><p>在 <code>package.json</code> 文件中增加一个上报测试覆盖率的脚本:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>	&#34;scripts&#34;: {
+</span></span><span class=line><span class=cl>		&#34;report-coverage&#34;: &#34;nyc report --reporter=text-lcov &gt; coverage.lcov &amp;&amp; codecov&#34;
+</span></span><span class=line><span class=cl>	}
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>上报测试覆盖率的结果给 <a href=https://codecov.io/ target=_blank rel="noopener noreffer">codecov</a> 是需要权限的，这里的权限需要配置环境变量 <code>CODECOV_TOKEN=&lt;token></code> ，token 就是刚刚在 <a href=https://codecov.io/ target=_blank rel="noopener noreffer">codecov</a> 平台上设置的令牌，然后执行 <code>npm run report-coverage</code> 才会成功。</p><h2 id=travis-ci>Travis-ci</h2><p>本文使用 <a href=https://travis-ci.com/ target=_blank rel="noopener noreffer">travis-ci</a> 来做持续集成，同样的你需要使用 GitHub 账号登录 <a href=https://travis-ci.com/ target=_blank rel="noopener noreffer">travis-ci</a> 并关联我们的 repository 库。</p><p>编写 <code>.travis.yml</code> 配置文件:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>language: node_js
+</span></span><span class=line><span class=cl>node_js:
+</span></span><span class=line><span class=cl>  - &#34;12&#34;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>sudo: required
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>before_install: sudo apt-get install libevent-dev -y
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>install:
+</span></span><span class=line><span class=cl>  - wget -O memcached.tar.gz http://memcached.org/files/memcached-1.5.20.tar.gz
+</span></span><span class=line><span class=cl>  - tar -zxvf memcached.tar.gz
+</span></span><span class=line><span class=cl>  - cd memcached-1.5.20
+</span></span><span class=line><span class=cl>  - ./configure &amp;&amp; make &amp;&amp; sudo make install
+</span></span><span class=line><span class=cl>  - memcached -d
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>script:
+</span></span><span class=line><span class=cl>    - npm ci &amp;&amp; npm test &amp;&amp; npm run report-coverage
+</span></span></code></pre></td></tr></table></div></div><ul><li><code>language</code> : 声明语言环境，这里的 <code>node_js</code> 还声明了版本。</li><li><code>sudo</code> : 声明在 CI 的虚拟环境中是否需要管理员权限。</li><li><code>before_install</code> : 安装额外的系统依赖。</li><li><code>install</code> : 示例中另外安装了 memcached 并在后台启动，因为本文的测试需要。</li><li><code>script</code> : 声明 CI 执行的脚本命令。</li></ul><p>由于我们在 <a href=https://travis-ci.com/ target=_blank rel="noopener noreffer">travis-ci</a> 上执行 <code>npm run report-coverage</code> 向 <a href=https://codecov.io/ target=_blank rel="noopener noreffer">codecov</a> 上报测试覆盖率时需要其权限，因此还需要在 <a href=https://travis-ci.com/ target=_blank rel="noopener noreffer">travis-ci</a> 的 <code>Settings</code> 中设置环境变量 <code>CODECOV_TOKEN</code> 。</p><p>最后，当我们向 GitHub 库中提交了新的内容后，就会触发 CI 流程，虚拟化环境、安装依赖、执行命令等等，CI 通过后就可以得到 <img class=lazyload src=/svg/loading.min.svg data-src=https://img.shields.io/travis/com/rifewang/io-memcached data-srcset="https://img.shields.io/travis/com/rifewang/io-memcached, https://img.shields.io/travis/com/rifewang/io-memcached 1.5x, https://img.shields.io/travis/com/rifewang/io-memcached 2x" data-sizes=auto alt=https://img.shields.io/travis/com/rifewang/io-memcached title="Travis (.com)"> 徽章了。</p><h2 id=结语>结语</h2><p><a href=https://shields.io/ target=_blank rel="noopener noreffer">shields.io</a> 徽章有多种，根据你的需要进行相应的配置即可，本文使用了 <a href=https://codecov.io/ target=_blank rel="noopener noreffer">codecov</a> 和 <a href=https://travis-ci.com/ target=_blank rel="noopener noreffer">travis-ci</a> 作为示例，但是还有很多其他的平台任由你选。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2023-02-19</span></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/ava-codecov-travis/index.md target=_blank>Read Markdown</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/ava-codecov-travis/ data-title=给你的库加上酷炫的小徽章 data-hashtags=github,node.js><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/ava-codecov-travis/ data-hashtag=github><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/ava-codecov-travis/ data-title=给你的库加上酷炫的小徽章><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/ava-codecov-travis/ data-title=给你的库加上酷炫的小徽章><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/ava-codecov-travis/ data-title=给你的库加上酷炫的小徽章><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/github/>github</a>,&nbsp;<a href=/tags/node.js/>Node.js</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/makefile/ class=prev rel=prev title="使用 Makefile 构建指令集"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>使用 Makefile 构建指令集</a>
+<a href=/github-actions/ class=next rel=next title="GitHub Actions 指南">GitHub Actions 指南<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

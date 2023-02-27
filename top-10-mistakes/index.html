@@ -1,0 +1,426 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Go 开发十种常犯错误【译】 - 凌虚 Blog</title><meta name=Description content="Go 开发十种常犯错误【译】"><meta property="og:title" content="Go 开发十种常犯错误【译】"><meta property="og:description" content="Go 开发十种常犯错误【译】"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/top-10-mistakes/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-07-29T00:11:03+08:00"><meta property="article:modified_time" content="2023-02-25T22:35:23+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="Go 开发十种常犯错误【译】"><meta name=twitter:description content="Go 开发十种常犯错误【译】"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/top-10-mistakes/><link rel=prev href=https://rifewang.github.io/dockerfile-best-practice/><link rel=next href=https://rifewang.github.io/why-use-go-module-proxy/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Go 开发十种常犯错误【译】","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/top-10-mistakes\/"},"genre":"posts","wordcount":3594,"url":"https:\/\/rifewang.github.io\/top-10-mistakes\/","datePublished":"2019-07-29T00:11:03+08:00","dateModified":"2023-02-25T22:35:23+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"凌虚"},"description":"Go 开发十种常犯错误【译】"}</script></head><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Go 开发十种常犯错误【译】</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span>&nbsp;<span class=post-category>included in <a href=/categories/golang/><i class="far fa-folder fa-fw" aria-hidden=true></i>Golang</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2019-07-29>2019-07-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;3594 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;8 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#1未知的枚举值>1、未知的枚举值</a></li><li><a href=#2基准测试>2、基准测试</a></li><li><a href=#3指针>3、指针</a></li><li><a href=#4从-forswitch-或-forselect-中-break>4、从 for/switch 或 for/select 中 break</a></li><li><a href=#5errors-管理>5、errors 管理</a></li><li><a href=#6slice-初始化>6、slice 初始化</a></li><li><a href=#7context-管理>7、context 管理</a></li><li><a href=#8未使用--race>8、未使用 -race</a></li><li><a href=#9使用文件名作为输入>9、使用文件名作为输入</a></li><li><a href=#10goroutines-和-loop-循环变量>10、Goroutines 和 Loop 循环变量</a></li></ul></nav></div></div><div class=content id=content><p><em>文本翻译自:
+<a href=https://itnext.io/the-top-10-most-common-mistakes-ive-seen-in-go-projects-4b79d4f6cd65 target=_blank rel="noopener noreffer">https://itnext.io/the-top-10-most-common-mistakes-ive-seen-in-go-projects-4b79d4f6cd65</a></em></p><hr><p>本文将会介绍 Go 开发中十种最常犯的错误，内容不算少，请耐心观看。</p><h2 id=1未知的枚举值>1、未知的枚举值</h2><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>Status</span> <span class=kt>uint32</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>const</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>  <span class=nx>StatusOpen</span> <span class=nx>Status</span> <span class=p>=</span> <span class=kc>iota</span>
+</span></span><span class=line><span class=cl>  <span class=nx>StatusClosed</span>
+</span></span><span class=line><span class=cl>  <span class=nx>StatusUnknown</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>示例中使用了 iota 创建了枚举值，其结果就是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>StatusOpen</span> <span class=p>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl><span class=nx>StatusClosed</span> <span class=p>=</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl><span class=nx>StatusUnknown</span> <span class=p>=</span> <span class=mi>2</span>
+</span></span></code></pre></td></tr></table></div></div><p>现在假设上述 Status 类型将会作为 JSON request 的一部分：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>Request</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>ID</span>        <span class=kt>int</span>    <span class=s>`json:&#34;Id&#34;`</span>
+</span></span><span class=line><span class=cl>  <span class=nx>Timestamp</span> <span class=kt>int</span>    <span class=s>`json:&#34;Timestamp&#34;`</span>
+</span></span><span class=line><span class=cl>  <span class=nx>Status</span>    <span class=nx>Status</span> <span class=s>`json:&#34;Status&#34;`</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>然后你收到的数据可能是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;Id&#34;</span><span class=p>:</span> <span class=mi>1234</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;Timestamp&#34;</span><span class=p>:</span> <span class=mi>1563362390</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;Status&#34;</span><span class=p>:</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>这看起来似乎没有任何问题，status 将会被解码为 StatusOpen 。</p><p>但是如果另一个请求的数据是这样：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;Id&#34;</span><span class=p>:</span> <span class=mi>1235</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;Timestamp&#34;</span><span class=p>:</span> <span class=mi>1563362390</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>这时 status 即使没有传值（也就是 unknown 未知状态），但由于默认零值，其将会被解码为 StatusOpen ，显然不符合业务语义上的 StatusUnknown 。</p><p>最佳实践是将未知的枚举值设置为 0 ：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>Status</span> <span class=kt>uint32</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>const</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>  <span class=nx>StatusUnknown</span> <span class=nx>Status</span> <span class=p>=</span> <span class=kc>iota</span>
+</span></span><span class=line><span class=cl>  <span class=nx>StatusOpen</span>
+</span></span><span class=line><span class=cl>  <span class=nx>StatusClosed</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=2基准测试>2、基准测试</h2><p>基准测试受到多方面的影响，因此想得到正确的结果比较困难。</p><p>最常见的一种错误情况就是被编译器优化了，例如：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>clear</span><span class=p>(</span><span class=nx>n</span> <span class=kt>uint64</span><span class=p>,</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>j</span> <span class=kt>uint8</span><span class=p>)</span> <span class=kt>uint64</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=p>(</span><span class=nx>math</span><span class=p>.</span><span class=nx>MaxUint64</span><span class=o>&lt;&lt;</span><span class=nx>j</span> <span class=p>|</span> <span class=p>((</span><span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=nx>i</span><span class=p>)</span> <span class=o>-</span> <span class=mi>1</span><span class=p>))</span> <span class=o>&amp;</span> <span class=nx>n</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>这个函数的作用是清除指定范围的 bit 位，基准测试可能会这样写：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>BenchmarkWrong</span><span class=p>(</span><span class=nx>b</span> <span class=o>*</span><span class=nx>testing</span><span class=p>.</span><span class=nx>B</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>b</span><span class=p>.</span><span class=nx>N</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>clear</span><span class=p>(</span><span class=mi>1221892080809121</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>63</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>在这个基准测试中，编译器将会注意到这个 clear 是一个 leaf 函数（没有调用其它函数）因此会将其 inline 。一旦这个函数被 inline 了，编译器也会注意到它没有 side-effects（副作用）。因此 clear 函数的调用将会被简单的移除从而导致不准确的结果。</p><p>解决这个问题的一种方式是将函数的返回结果设置给一个全局变量：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>var</span> <span class=nx>result</span> <span class=kt>uint64</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>BenchmarkCorrect</span><span class=p>(</span><span class=nx>b</span> <span class=o>*</span><span class=nx>testing</span><span class=p>.</span><span class=nx>B</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kd>var</span> <span class=nx>r</span> <span class=kt>uint64</span>
+</span></span><span class=line><span class=cl>  <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>b</span><span class=p>.</span><span class=nx>N</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>r</span> <span class=p>=</span> <span class=nf>clear</span><span class=p>(</span><span class=mi>1221892080809121</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>63</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=nx>result</span> <span class=p>=</span> <span class=nx>r</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>此时，编译器不知道这个函数的调用是否会产生 side-effect ，因此基准测试的结果将会是准确的。</p><h2 id=3指针>3、指针</h2><p>按值传递变量将会创建此变量的副本（简称“值拷贝”），而通过指针传递则只会复制变量的内存地址。</p><p>因此，指针传递总是更快吗？显然不是，尤其是对于小数据而言，值拷贝更快性能更好。</p><p>原因与 Go 中的内存管理有关。让我们简单的解释一下。</p><p>变量可以被分配到 heap 或者 stack 中：</p><p>stack 包含了指定 goroutine 中的将会被用到的变量。一旦函数返回，变量将会从 stack 中 pop 移除。
+heap 包含了需要共享的变量（例如全局变量等）。</p><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>getFooValue</span><span class=p>()</span> <span class=nx>foo</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kd>var</span> <span class=nx>result</span> <span class=nx>foo</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// Do something
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=k>return</span> <span class=nx>result</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里，result 变量由当前的 goroutine 创建，并且将会被 push 到当前的 stack 中。一旦这个函数返回了，调用者将会收到 result 变量的值拷贝副本，而这个 result 变量本身将会被从 stack 中 pop 移除掉。它仍存在于内存中，直到它被另一个变量擦除，但是它无法被访问到。</p><p>现在看下指针的示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>getFooPointer</span><span class=p>()</span> <span class=o>*</span><span class=nx>foo</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kd>var</span> <span class=nx>result</span> <span class=nx>foo</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// Do something
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=k>return</span> <span class=o>&amp;</span><span class=nx>result</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>result 变量仍然由当前 goroutine 创建，但是函数的调用者将会接受的是一个指针（result 变量内存地址的副本）。如果 result 变量被从 stack 中 pop 移除，那么函数调用者显然无法再访问它。</p><p>在这种情况下，为了正常使用 result 变量，Go 编译器将会把 result 变量 escape（转移）到一个可以共享变量的位置，也就是 heap 中。</p><p>传递指针也会有另一种情况，例如：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span>  <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>p</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>foo</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>  <span class=nf>f</span><span class=p>(</span><span class=nx>p</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>由于我们在相同的 goroutine（main 函数）中调用 f 函数，这里的 p 变量无需被 escape 到 heap 中，它只会被推送到 stack 中，并且 sub-function 也就是这里的 f 函数是可以直接访问到 p 变量的。</p><p>stack 为什么更快？主要有两个原因：</p><ul><li>stack 几乎没有垃圾回收。正如上文所述，一个变量创建后 push 到 stack 中，其函数返回后则从 stack 中 pop 掉。对于未使用的变量无需复杂的过程来回收它们。</li><li>stack 从属于一个 goroutine ，与 heap 相比，stack 中的变量不需要同步，这也导致了 stack 性能上的优势。</li></ul><p>总之，当我们创建一个函数时，我们的默认行为应该是使用值而不是指针，只有当我们想用共享变量时才应该使用指针。</p><p>如果我们遇到性能问题，一种可能的优化就是检查指针在某些特定情况下是否有帮助。如果你想要知道编译器何时将变量 escape 到 heap ，可以使用以下命令：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>go build -gcflags &#34;-m -m&#34;
+</span></span></code></pre></td></tr></table></div></div><h2 id=4从-forswitch-或-forselect-中-break>4、从 for/switch 或 for/select 中 break</h2><p>例如：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>switch</span> <span class=nf>f</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>case</span> <span class=kc>true</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=k>break</span>
+</span></span><span class=line><span class=cl>  <span class=k>case</span> <span class=kc>false</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// Do something
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>select</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>case</span> <span class=o>&lt;-</span><span class=nx>ch</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// Do something
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=k>case</span> <span class=o>&lt;-</span><span class=nx>ctx</span><span class=p>.</span><span class=nf>Done</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>break</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>注意，break 将会跳出 switch 或 select ，但不会跳出 for 循环。</p><p>为了跳出 for 循环，一种解决方式是使用带标签的 break ：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>loop</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>select</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>case</span> <span class=o>&lt;-</span><span class=nx>ch</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// Do something
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>case</span> <span class=o>&lt;-</span><span class=nx>ctx</span><span class=p>.</span><span class=nf>Done</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>      <span class=k>break</span> <span class=nx>loop</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=5errors-管理>5、errors 管理</h2><p>Go 中的错误处理一直以来颇具争议。</p><p>推荐使用 <a href=https://github.com/pkg/errors target=_blank rel="noopener noreffer">https://github.com/pkg/errors</a> 库，这个库遵循如下规则：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>An error should be handled only once. Logging an error is handling an error. So an error should either be logged or propagated.
+</span></span></code></pre></td></tr></table></div></div><p>而当前的标准库（只有一个 New 函数）却很难去遵循这一点，因为我们可能希望为错误添加一些上下文并具有某种形式的层次结构。</p><p>假设我们在调用某个 REST 请求操作数据库时会碰到以下问题：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>unable to server HTTP POST request for customer 1234
+</span></span><span class=line><span class=cl> |_ unable to insert customer contract abcd
+</span></span><span class=line><span class=cl>     |_ unable to commit transaction
+</span></span></code></pre></td></tr></table></div></div><p>通过上述 pkg/errors 库，我们可以处理如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>postHandler</span><span class=p>(</span><span class=nx>customer</span> <span class=nx>Customer</span><span class=p>)</span> <span class=nx>Status</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>err</span> <span class=o>:=</span> <span class=nf>insert</span><span class=p>(</span><span class=nx>customer</span><span class=p>.</span><span class=nx>Contract</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>log</span><span class=p>.</span><span class=nf>WithError</span><span class=p>(</span><span class=nx>err</span><span class=p>).</span><span class=nf>Errorf</span><span class=p>(</span><span class=s>&#34;unable to server HTTP POST request for customer %s&#34;</span><span class=p>,</span> <span class=nx>customer</span><span class=p>.</span><span class=nx>ID</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>Status</span><span class=p>{</span><span class=nx>ok</span><span class=p>:</span> <span class=kc>false</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=nx>Status</span><span class=p>{</span><span class=nx>ok</span><span class=p>:</span> <span class=kc>true</span><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>insert</span><span class=p>(</span><span class=nx>contract</span> <span class=nx>Contract</span><span class=p>)</span> <span class=kt>error</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>err</span> <span class=o>:=</span> <span class=nf>dbQuery</span><span class=p>(</span><span class=nx>contract</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>errors</span><span class=p>.</span><span class=nf>Wrapf</span><span class=p>(</span><span class=nx>err</span><span class=p>,</span> <span class=s>&#34;unable to insert customer contract %s&#34;</span><span class=p>,</span> <span class=nx>contract</span><span class=p>.</span><span class=nx>ID</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>dbQuery</span><span class=p>(</span><span class=nx>contract</span> <span class=nx>Contract</span><span class=p>)</span> <span class=kt>error</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// Do something then fail
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=k>return</span> <span class=nx>errors</span><span class=p>.</span><span class=nf>New</span><span class=p>(</span><span class=s>&#34;unable to commit transaction&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>最底层通过 errors.New 初始化一个 error ，中间层 insert 函数向其添加更多上下文信息来包装此 error ，然后父级调用者通过记录日志来处理错误，每一层都对错误进行了返回或者处理。</p><p>我们可能还想检查错误原因以进行重试。例如我们有一个外部库 db 处理数据库访问，其可能会返回一个 db.DBError 的错误，为了实现重试，我们必须检查具体的错误原因：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>postHandler</span><span class=p>(</span><span class=nx>customer</span> <span class=nx>Customer</span><span class=p>)</span> <span class=nx>Status</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>err</span> <span class=o>:=</span> <span class=nf>insert</span><span class=p>(</span><span class=nx>customer</span><span class=p>.</span><span class=nx>Contract</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>switch</span> <span class=nx>errors</span><span class=p>.</span><span class=nf>Cause</span><span class=p>(</span><span class=nx>err</span><span class=p>).(</span><span class=kd>type</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>default</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>      <span class=nx>log</span><span class=p>.</span><span class=nf>WithError</span><span class=p>(</span><span class=nx>err</span><span class=p>).</span><span class=nf>Errorf</span><span class=p>(</span><span class=s>&#34;unable to server HTTP POST request for customer %s&#34;</span><span class=p>,</span> <span class=nx>customer</span><span class=p>.</span><span class=nx>ID</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>      <span class=k>return</span> <span class=nx>Status</span><span class=p>{</span><span class=nx>ok</span><span class=p>:</span> <span class=kc>false</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>case</span> <span class=o>*</span><span class=nx>db</span><span class=p>.</span><span class=nx>DBError</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>      <span class=k>return</span> <span class=nf>retry</span><span class=p>(</span><span class=nx>customer</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=nx>Status</span><span class=p>{</span><span class=nx>ok</span><span class=p>:</span> <span class=kc>true</span><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>insert</span><span class=p>(</span><span class=nx>contract</span> <span class=nx>Contract</span><span class=p>)</span> <span class=kt>error</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>err</span> <span class=o>:=</span> <span class=nx>db</span><span class=p>.</span><span class=nf>dbQuery</span><span class=p>(</span><span class=nx>contract</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>errors</span><span class=p>.</span><span class=nf>Wrapf</span><span class=p>(</span><span class=nx>err</span><span class=p>,</span> <span class=s>&#34;unable to insert customer contract %s&#34;</span><span class=p>,</span> <span class=nx>contract</span><span class=p>.</span><span class=nx>ID</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>如上所示，通过 pkg/errors 库的 errors.Cause 即可轻松实现。</p><p>一种经常会犯的错误是只部分使用 pkg/errors 库，例如：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=k>switch</span> <span class=nx>err</span><span class=p>.(</span><span class=kd>type</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl><span class=k>default</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>log</span><span class=p>.</span><span class=nf>WithError</span><span class=p>(</span><span class=nx>err</span><span class=p>).</span><span class=nf>Errorf</span><span class=p>(</span><span class=s>&#34;unable to server HTTP POST request for customer %s&#34;</span><span class=p>,</span> <span class=nx>customer</span><span class=p>.</span><span class=nx>ID</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=nx>Status</span><span class=p>{</span><span class=nx>ok</span><span class=p>:</span> <span class=kc>false</span><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>case</span> <span class=o>*</span><span class=nx>db</span><span class=p>.</span><span class=nx>DBError</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=nf>retry</span><span class=p>(</span><span class=nx>customer</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里直接使用 err.(type) 是无法捕获到 db.DBError 然后进行重试的。</p><h2 id=6slice-初始化>6、slice 初始化</h2><p>有时候我们明确的知道一个 slice 切片的最终长度。例如我们想要将一个 Foo 切片 convert 为 Bar 切片，这意味着两个 slice 切片的长度是相同的。</p><p>然而有些人却经常初始化 slice 切片如：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>var</span> <span class=nx>bars</span> <span class=p>[]</span><span class=nx>Bar</span>
+</span></span><span class=line><span class=cl><span class=nx>bars</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>([]</span><span class=nx>Bar</span><span class=p>,</span> <span class=mi>0</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>slice 切片并不是一个神奇的结构，当没有更多可用空间时，它会进行扩容，也就是其将会自动创建一个具有更大容量的新数组并复制所有的元素。</p><p>现在，让我们想象一下如果切片需要多次扩容，即使时间复杂度保持为 O(1) ，但在实践中，它也会对性能造成影响。尽可能避免这种情况。</p><h2 id=7context-管理>7、context 管理</h2><p>context.Context 经常被开发者误解。官方文档的描述是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>A Context carries a deadline, a cancelation signal, and other values across API boundaries.
+</span></span></code></pre></td></tr></table></div></div><p>这个描述很宽泛，以致于一些人对为什么以及如何使用它感到困惑。</p><p>让我们试着详细说明下，一个 context 可以包含：</p><ul><li>一个 deadline 。其可以是持续时间（例如 250 毫秒）或者具体某个时间点（例如 2019-01-08 01:00:00），一旦达到 deadline 则所有正在进行的活动都会取消（比如 I/O 请求，等待某个 channel 输入等等）。</li><li>一个取消 signal 信号（基本上是 &lt;-chan struct{} ）。这里的行为是类似的，一旦收到取消信号则必须停止正在进行中的活动。</li><li>一组 key/value（基于 interface{} 类型）。</li></ul><p>需要说明的是，一个 context 是可组合的，例如既包含一个 deadline 又包含一组 key/value 。此外，多个 goroutine 可以共享同一个 context ，因此取消信号可能会导致多个 goroutine 中的活动被停止。</p><p>例如由同一个 context 引发的连环取消，我们要注意使用父子形式的 context ，以此来区分管理，避免相互影响。</p><h2 id=8未使用--race>8、未使用 -race</h2><p>测试时未使用 -race 选项也是常见的，它是有价值的工具，我们应该在测试时始终启动它。</p><h2 id=9使用文件名作为输入>9、使用文件名作为输入</h2><p>假设我们要实现一个函数去统计文件中的空行数，我们可能这样做：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>count</span><span class=p>(</span><span class=nx>filename</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>file</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Open</span><span class=p>(</span><span class=nx>filename</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>,</span> <span class=nx>errors</span><span class=p>.</span><span class=nf>Wrapf</span><span class=p>(</span><span class=nx>err</span><span class=p>,</span> <span class=s>&#34;unable to open %s&#34;</span><span class=p>,</span> <span class=nx>filename</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>defer</span> <span class=nx>file</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=nx>scanner</span> <span class=o>:=</span> <span class=nx>bufio</span><span class=p>.</span><span class=nf>NewScanner</span><span class=p>(</span><span class=nx>file</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=nx>count</span> <span class=o>:=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>  <span class=k>for</span> <span class=nx>scanner</span><span class=p>.</span><span class=nf>Scan</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>scanner</span><span class=p>.</span><span class=nf>Text</span><span class=p>()</span> <span class=o>==</span> <span class=s>&#34;&#34;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nx>count</span><span class=o>++</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=nx>count</span><span class=p>,</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>这看起来很自然，filename 文件名作为输入，在函数内部打开文件。</p><p>然而，如果我们想要对此函数进行单元测试，输入可能是普通文件，或者空文件，或者其它不同编码类型的文件等等，此时则很容易变得难以管理。另外，如果我们想对某个 HTTP body 实现相同的逻辑，那么我们不得不创建一个另外的函数。</p><p>Go 提供了两个很棒的抽象：io.Reader 和 io.Writer 。我们可以传递 io.Reader 抽象数据源而不是 filename 。这样不管是文件也好，HTTP body 也好，byte buffer 也好，我们都只需要使用 Read 方法即可。</p><p>上述例子中，我们甚至可以缓冲输入以逐行读取，因此我们可以使用 bufio.Reader 和它的 ReadLine 方法：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>count</span><span class=p>(</span><span class=nx>reader</span> <span class=o>*</span><span class=nx>bufio</span><span class=p>.</span><span class=nx>Reader</span><span class=p>)</span> <span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>count</span> <span class=o>:=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>  <span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>line</span><span class=p>,</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>reader</span><span class=p>.</span><span class=nf>ReadLine</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=k>switch</span> <span class=nx>err</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=k>default</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=mi>0</span><span class=p>,</span> <span class=nx>errors</span><span class=p>.</span><span class=nf>Wrapf</span><span class=p>(</span><span class=nx>err</span><span class=p>,</span> <span class=s>&#34;unable to read&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>      <span class=k>case</span> <span class=nx>io</span><span class=p>.</span><span class=nx>EOF</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=nx>count</span><span class=p>,</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl>      <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=nx>line</span><span class=p>)</span> <span class=o>==</span> <span class=mi>0</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nx>count</span><span class=o>++</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>而打开文件的操作则交由 count 的调用者去完成：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>file</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Open</span><span class=p>(</span><span class=nx>filename</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=nx>errors</span><span class=p>.</span><span class=nf>Wrapf</span><span class=p>(</span><span class=nx>err</span><span class=p>,</span> <span class=s>&#34;unable to open %s&#34;</span><span class=p>,</span> <span class=nx>filename</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>defer</span> <span class=nx>file</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=nx>count</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nf>count</span><span class=p>(</span><span class=nx>bufio</span><span class=p>.</span><span class=nf>NewReader</span><span class=p>(</span><span class=nx>file</span><span class=p>))</span>
+</span></span></code></pre></td></tr></table></div></div><p>这样，无论数据源如何我们都可以调用 count 函数，同时这有有利于我们进行单元测试，因为我们可以简单的从字符串中创建一个 bufio.Reader :</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>count</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nf>count</span><span class=p>(</span><span class=nx>bufio</span><span class=p>.</span><span class=nf>NewReader</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nf>NewReader</span><span class=p>(</span><span class=s>&#34;input&#34;</span><span class=p>)))</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=10goroutines-和-loop-循环变量>10、Goroutines 和 Loop 循环变量</h2><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>ints</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>int</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>i</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>ints</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%v\n&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=p>}()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>输出将会是什么？1 2 3 吗？当然不是。</p><p>上例中，每个 goroutine 共享同一个变量实例，因此将会输出 3 3 3（最有可能）。</p><p>这个问题有两种解决方式。第一种是将 i 变量传递给 closure 闭包（ inner function ）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>ints</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>int</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>i</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>ints</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>go</span> <span class=kd>func</span><span class=p>(</span><span class=nx>i</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%v\n&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=p>}(</span><span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>第二种方式是在 for 循环范围内创建另一个变量：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>ints</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>int</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>i</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>ints</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>i</span> <span class=o>:=</span> <span class=nx>i</span>
+</span></span><span class=line><span class=cl>  <span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%v\n&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=p>}()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><hr><p>以上就是全部内容，相关问题更多深入内容可参考：</p><ul><li><em><a href=https://dave.cheney.net/high-performance-go-workshop/dotgo-paris.html?#watch_out_for_compiler_optimisations target=_blank rel="noopener noreffer">https://dave.cheney.net/high-performance-go-workshop/dotgo-paris.html?#watch_out_for_compiler_optimisations</a></em></li><li><em><a href=https://www.ardanlabs.com/blog/2017/05/language-mechanics-on-stacks-and-pointers.html target=_blank rel="noopener noreffer">https://www.ardanlabs.com/blog/2017/05/language-mechanics-on-stacks-and-pointers.html</a></em></li><li><em><a href="https://www.youtube.com/watch?v=ZMZpH4yT7M0&feature=youtu.be" target=_blank rel="noopener noreffer">https://www.youtube.com/watch?v=ZMZpH4yT7M0&feature=youtu.be</a></em></li><li><em><a href=https://dave.cheney.net/2016/04/27/dont-just-check-errors-handle-them-gracefully target=_blank rel="noopener noreffer">https://dave.cheney.net/2016/04/27/dont-just-check-errors-handle-them-gracefully</a></em></li><li><em><a href=http://p.agnihotry.com/post/understanding_the_context_package_in_golang/index.html target=_blank rel="noopener noreffer">http://p.agnihotry.com/post/understanding_the_context_package_in_golang/index.html</a></em></li><li><em><a href=https://medium.com/@val_deleplace/does-the-race-detector-catch-all-data-races-1afed51d57fb target=_blank rel="noopener noreffer">https://medium.com/@val_deleplace/does-the-race-detector-catch-all-data-races-1afed51d57fb</a></em></li><li><em><a href=https://github.com/golang/go/wiki/CommonMistakes target=_blank rel="noopener noreffer">https://github.com/golang/go/wiki/CommonMistakes</a></em></li></ul></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2023-02-25</span></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/top-10-mistakes/index.md target=_blank>Read Markdown</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/top-10-mistakes/ data-title="Go 开发十种常犯错误【译】"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/top-10-mistakes/><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/top-10-mistakes/ data-title="Go 开发十种常犯错误【译】"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/top-10-mistakes/ data-title="Go 开发十种常犯错误【译】"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/top-10-mistakes/ data-title="Go 开发十种常犯错误【译】"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/dockerfile-best-practice/ class=prev rel=prev title="Dockerfile 最佳实践"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Dockerfile 最佳实践</a>
+<a href=/why-use-go-module-proxy/ class=next rel=next title="为什么你应该使用 Go module proxy">为什么你应该使用 Go module proxy<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

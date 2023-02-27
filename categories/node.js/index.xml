@@ -1,16 +1,1 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Node.js on 凌虚 Blog</title><link>https://rifewang.github.io/categories/node.js/</link><description>Recent content in Node.js on 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 18 Sep 2019 19:15:57 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/node.js/index.xml" rel="self" type="application/rss+xml"/><item><title>从 V8 优化看高效 JavaScript【译】</title><link>https://rifewang.github.io/posts/uncate/efficient-js-from-v8-optimization/</link><pubDate>Wed, 18 Sep 2019 19:15:57 +0800</pubDate><guid>https://rifewang.github.io/posts/uncate/efficient-js-from-v8-optimization/</guid><description>文本翻译自: https://blog.logrocket.com/how-javascript-works-optimizing-the-v8-compiler-for-efficiency
-理解 JavaScript 是如何工作的对于编写高效的 JS 大有帮助。
-V8 执行 JS 分为三个阶段：
-源代码转换为 AST 抽象语法树。 语法树转换为字节码：这个过程由 V8 的 Ignition 完成，2017年之前是没有的。 字节码编译成机器码：由 V8 的编译器 TurboFan 来完成。 第一个阶段并不是文本的讨论范围，第二三阶段对于编写优化 JS 有直接影响。
-实际上第二三阶段是紧耦合的，它们都在 just-in-time（ JIT ）内运作。为了理解 JIT ，我们先回顾下源代码转换为机器码的两种方法：
-1、解释器 解释器逐行转换和执行代码，其优点是易于实现和理解、及时反馈、更宽泛的编程环境，缺点也非常明显，那就是速度慢，慢的原因在于（1）反复解释的开销和（2）无法优化程序的各个部分。
-换句话说，解释器在处理不同的代码段时无法识别重复的工作量。如果你通过解释器运行相同的代码 100 次，那么解释器将会翻译并执行相同的代码 100 次，其中不必要的重新翻译了 99 次。
-解释器很简单、启动快速，但执行速度慢。
-2、编译器 编译器在执行之前翻译所有的源代码。编译器更加复杂，但是可以进行全局优化（例如，共享重复代码），其执行速度也更快。
-编译器更复杂、启动慢，但执行速度更快。
-JIT 的作用就是尽可能结合解释器和编译器的优点，以使翻译代码和执行都能快速。
-基本思想是尽可能避免重新翻译。首先，探测器通过解释器运行代码，在执行期间，探测器会追踪代码段并将其会被划分为 warm（运行少数几次） 和 hot（运行重复多次）。
-JIT 把 warm 代码段直接丢给基准编译器，尽可能重用已编译的代码。
-JIT 把 hot 代码段丢给优化编译器，其根据解释器收集来的信息（1）作出假设，（2）基于假设（比如，对象属性始终以特定顺序出现）进行优化。 然而，一旦假设不成立，优化编译器就会进行 deoptimization 去优化，就是丢弃优化的代码。
-优化和去优化的周期是昂贵的。由于需要存储优化过的机器码和探测器的信息，JIT 引入了额外的内存成本。这种成本激发了 V8 的解释器 Ignition 。
-Ignition 将 AST 转换为字节码，字节码序列被执行，其反馈信息被 inline caches 内联高速缓存。 反馈信息被用于（1）Ignition 随后的解释，和（2）TurboFan 推测性优化。 TurboFan 基于反馈推测性的优化将字节码转换为机器码。</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Node.js - Category - 凌虚 Blog</title><link>https://rifewang.github.io/categories/node.js/</link><description>Node.js - Category - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Wed, 18 Sep 2019 19:15:57 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/node.js/" rel="self" type="application/rss+xml"/><item><title>从 V8 优化看高效 JavaScript【译】</title><link>https://rifewang.github.io/efficient-js-from-v8-optimization/</link><pubDate>Wed, 18 Sep 2019 19:15:57 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/efficient-js-from-v8-optimization/</guid><description>文本翻译自: https://blog.logrocket.com/how-javascript-works-optimizing-the-v8-compiler-for-efficiency 理解 JavaScript 是如何工作的对于编写高效的 JS 大有帮助。 V8 执行 JS 分为三个阶段： 源代码转换为 AST 抽象语法树。 语法树转换为字节码：这个过程由 V8 的</description></item></channel></rss>

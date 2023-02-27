@@ -1,0 +1,138 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>时序数据库 InfluxDB（六） - 凌虚 Blog</title><meta name=Description content="时序数据库 InfluxDB（六）"><meta property="og:title" content="时序数据库 InfluxDB（六）"><meta property="og:description" content="时序数据库 InfluxDB（六）"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/6/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-11-06T13:36:39+08:00"><meta property="article:modified_time" content="2023-02-20T13:53:45+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="时序数据库 InfluxDB（六）"><meta name=twitter:description content="时序数据库 InfluxDB（六）"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/6/><link rel=prev href=https://rifewang.github.io/5/><link rel=next href=https://rifewang.github.io/7/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"时序数据库 InfluxDB（六）","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/6\/"},"genre":"posts","wordcount":2618,"url":"https:\/\/rifewang.github.io\/6\/","datePublished":"2019-11-06T13:36:39+08:00","dateModified":"2023-02-20T13:53:45+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"凌虚"},"description":"时序数据库 InfluxDB（六）"}</script></head><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">时序数据库 InfluxDB（六）</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span>&nbsp;<span class=post-category>included in <a href=/categories/influxdb/><i class="far fa-folder fa-fw" aria-hidden=true></i>InfluxDB</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2019-11-06>2019-11-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;2618 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;6 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><ul><li><ul><li><a href=#一->一 、</a></li><li><a href=#二>二、</a><ul><li><a href=#1cq-在何时执行>1、CQ 在何时执行？</a></li><li><a href=#2cq-执行的数据范围>2、CQ 执行的数据范围？</a></li><li><a href=#3cq-的执行结果>3、CQ 的执行结果？</a></li></ul></li><li><a href=#三>三、</a></li></ul></li></ul></li></ul><ul><li><ul><li><ul><li><a href=#1resample--every>1、RESAMPLE EVERY</a></li><li><a href=#2resample--for>2、RESAMPLE FOR</a></li><li><a href=#3every--for>3、EVERY &mldr; FOR</a></li></ul></li></ul></li></ul></nav></div></div><div class=content id=content><hr><h1 id=cq-连续查询>CQ 连续查询</h1><hr><p>连续查询 Continuous Queries（ CQ ）是 InfluxDB 很重要的一项功能，它的作用是在 InfluxDB 数据库内部自动定期的执行查询，然后将查询结果存储到指定的 measurement 里。</p><p>配置文件中的相关配置：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[continuous_queries]
+</span></span><span class=line><span class=cl>  enabled = true
+</span></span><span class=line><span class=cl>  log-enabled = true
+</span></span><span class=line><span class=cl>  query-stats-enabled = false
+</span></span><span class=line><span class=cl>  run-interval = &#34;1s&#34;
+</span></span></code></pre></td></tr></table></div></div><ul><li>enabled = true ：开启CQ</li><li>log-enabled = true ：输出 CQ 日志</li><li>query-stats-enabled = false ：关闭 CQ 执行相关的监控，不会将统计数据写入默认的监控数据库 _internal</li><li>run-interval = &ldquo;1s&rdquo; ：InfluxDB 每隔 1s 检查是否有 CQ 需要执行</li></ul><hr><h1 id=基本语法>基本语法</h1><hr><h4 id=一->一 、</h4><p>基本语法：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>CREATE CONTINUOUS QUERY &lt;cq_name&gt; ON &lt;database_name&gt;
+</span></span><span class=line><span class=cl>BEGIN
+</span></span><span class=line><span class=cl>  &lt;cq_query&gt;
+</span></span><span class=line><span class=cl>END
+</span></span></code></pre></td></tr></table></div></div><p>在某个数据库上创建一个 CQ ，而查询的具体内容 cq_query 的语法为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>SELECT &lt;function[s]&gt;
+</span></span><span class=line><span class=cl>  INTO &lt;destination_measurement&gt;
+</span></span><span class=line><span class=cl>  FROM &lt;measurement&gt;
+</span></span><span class=line><span class=cl>  [WHERE &lt;stuff&gt;]
+</span></span><span class=line><span class=cl>  GROUP BY time(&lt;interval&gt;)[,&lt;tag_key[s]&gt;]
+</span></span></code></pre></td></tr></table></div></div><ul><li>SELECT function[s] : 连续查询并不只是简单的查询原始数据，而是基于原始数据进行聚合、特选、转换、预测等处理，所以 CQ 必须要有一个或多个数据处理函数。</li><li>INTO &lt;destination_measurement> : 将 CQ 的结果存储到指定的 measurement 中。</li><li>FROM <measurement>: 原始数据的来源 measurement 。</li><li>[WHERE <stuff>] : 可选项，原始数据的筛选条件。</li><li>GROUP BY time(<interval>)[,&lt;tag_key[s]>] : 连续查询不是查一次就完了，而是每次查询指定时间范围内的数据，不断周期性的执行下去。</li></ul><p>定位一个 measurement 的完整格式是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&lt;database&gt;.&lt;RP&gt;.&lt;measurement&gt;
+</span></span></code></pre></td></tr></table></div></div><p>使用当前数据库和默认 RP 的情况就只需要 measurement 。</p><p>InfluxDB 支持的时长单位：</p><ul><li>ns : 纳秒</li><li>u / µ : 微秒</li><li>ms : 毫秒</li><li>s : 秒</li><li>m : 分钟</li><li>h : 小时</li><li>d : 天</li><li>w : 周</li></ul><h4 id=二>二、</h4><h5 id=1cq-在何时执行>1、CQ 在何时执行？</h5><p>CQ 在何时执行取决于 CQ 创建完成的时间点、GROUP BY time() 设置的时间间隔、以及 InfluxDB 数据库预设的时间边界（这个预设的时间边界其实就是 1970.01.01 00:00:00 UTC 时间，对应 Unix timestamp 的 0 值）。</p><p>假设我在 2019.11.05（北京时间）创建好了一个 GROUP BY time(30d) 的 CQ（也就是时间间隔为 30 天），那么这个 CQ 会在什么时间点执行？</p><p>首先，2019.11.05 号转换为 timestamp 是 1572883200 秒；
+再算1572883200 距离 0 值隔了多少个 30 天（一天是 86400 秒），1572883200/86400/30 = 606.8 ；
+那么下一个 30 天就是 606.8 向上取整 607 ，607<em>86400</em>30 = 1573344000 ，转换为对应的日期就是 2019.11.10 号，这也就是第一次执行 CQ 的时间，之后每次执行就是往后推 30 天。</p><p>如果每次都这样算就很麻烦，但其实我们更常使用的时间间隔没有那么长，通常都是秒、分钟、小时单位，这种情况下直接从 0 速算就可以了，比如：</p><ul><li>在时间点 16:09:35 创建了 CQ ，GROUP BY time(30s) ，那么 CQ 的执行时间就是 16:10:00、16:10:30、16:11:00 以此类推（从 0s 开始速算）。</li><li>在时间点 16:16:08 创建了 CQ ，GROUP BY time(5m) ，那么 CQ 的执行时间就是 16:20:00、16:25:00、16:30:00 以此类推（从 0m 开始速算）。</li><li>在时间点 16:38:27 创建了 CQ ，GROUP BY time(2h) ，那么 CQ 的执行时间就是 18:00:00 、20:00:00 、22:00:00 以此类推（从 0h 开始速算）。</li></ul><h5 id=2cq-执行的数据范围>2、CQ 执行的数据范围？</h5><p>连续查询会根据 GROUP BY time() 的时间间隔确定作用的数据，每次执行所针对的数据的时间范围是 [ now() - GROUP BY time() ，now() ) 。</p><p>例如，GROUP BY time(1h) ：</p><ul><li>在 8:00 执行时，数据是时间大于等于 7:00，小于 8:00，即 [ 7:00 , 8:00 ) 范围内的数据。</li><li>在 9:00 执行时，数据是时间大于等于 8:00，小于 9:00，即 [ 8:00 , 9:00 ) 范围内的数据。</li></ul><p>你可以使用 WHERE 去过滤数据，但是 WHERE 里指定的时间范围会被忽略掉。</p><h5 id=3cq-的执行结果>3、CQ 的执行结果？</h5><p>CQ 会将执行结果存储到指定的 measurement ，但是存储的具体字段有哪些呢？首先 time 是必不可少的，time 写入的是 CQ 执行时数据范围的开始时间点；其次就是 function 的处理结果，如果只有单一字段，那么 field key 就是 function 的名称，如果有多个字段，那么 field key 就是 function 名称_作用字段。</p><p>例如，GROUP BY time(30m) ，UTC 7:30 执行：
+单一字段：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>SELECT mean(&#34;field&#34;)
+</span></span><span class=line><span class=cl>  INTO &#34;result_measurement&#34;
+</span></span><span class=line><span class=cl>  FROM &#34;source_measurement&#34;
+</span></span><span class=line><span class=cl>  GROUP BY time(30m)
+</span></span></code></pre></td></tr></table></div></div><p>CQ 结果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>time                      mean
+</span></span><span class=line><span class=cl>2019-11-05T07:00:00Z      7
+</span></span></code></pre></td></tr></table></div></div><p>多字段：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>SELECT mean(&#34;*&#34;)
+</span></span><span class=line><span class=cl>  INTO &#34;result_measurement&#34;
+</span></span><span class=line><span class=cl>  FROM &#34;source_measurement&#34;
+</span></span><span class=line><span class=cl>  GROUP BY time(30m)
+</span></span></code></pre></td></tr></table></div></div><p>CQ 结果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>time                      mean_field1    mean_field2
+</span></span><span class=line><span class=cl>2019-11-05T07:00:00Z      7              6.5
+</span></span></code></pre></td></tr></table></div></div><p>这里的 mean 对应的是 function 里的平均值函数。</p><h4 id=三>三、</h4><p>GROUP BY time() 的完整格式是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>GROUP BY time(&lt;interval&gt;[,&lt;offset_interval&gt;])
+</span></span></code></pre></td></tr></table></div></div><p>第二个参数 offset_interval 偏移量是可选的，这个偏移量会对 CQ 的执行时间和数据范围产生影响。</p><p>如果 GROUP BY time(1h) ，在 8:00 执行，数据范围是 [ 7:00 , 8:00 ) 。
+那么 GROUP BY time(1h, 15m) 会使 CQ 的执行时间向后推迟 15m ，即在 8:15 执行，数据范围也就变成了 [ 7:15 , 8:15 ) 。</p><hr><h1 id=高级语法>高级语法</h1><hr><p>高级语法：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>CREATE CONTINUOUS QUERY &lt;cq_name&gt; ON &lt;database_name&gt;
+</span></span><span class=line><span class=cl>RESAMPLE EVERY &lt;interval&gt; FOR &lt;interval&gt;
+</span></span><span class=line><span class=cl>BEGIN
+</span></span><span class=line><span class=cl>  &lt;cq_query&gt;
+</span></span><span class=line><span class=cl>END
+</span></span></code></pre></td></tr></table></div></div><p>与基本语法不同的是，高级语法多了</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>RESAMPLE EVERY &lt;interval&gt; FOR &lt;interval&gt;
+</span></span></code></pre></td></tr></table></div></div><h4 id=1resample--every>1、RESAMPLE EVERY</h4><p>EVERY 定义了 CQ 执行的间隔：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>RESAMPLE EVERY 30m
+</span></span></code></pre></td></tr></table></div></div><p>意思就是每隔 30m 执行一次 CQ 。</p><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>CREATE CONTINUOUS QUERY &#34;cq_every&#34; ON &#34;db&#34;
+</span></span><span class=line><span class=cl>RESAMPLE EVERY 30m
+</span></span><span class=line><span class=cl>BEGIN
+</span></span><span class=line><span class=cl>  SELECT mean(&#34;field&#34;)
+</span></span><span class=line><span class=cl>    INTO &#34;result_measurement&#34;
+</span></span><span class=line><span class=cl>    FROM &#34;source_measurement&#34;
+</span></span><span class=line><span class=cl>    GROUP BY time(1h)
+</span></span><span class=line><span class=cl>END
+</span></span></code></pre></td></tr></table></div></div><p>如果没有 RESAMPLE EVERY 30m ，只有 GROUP BY time(1h) 将会：</p><ul><li>在 8:00 执行 CQ ，数据范围是 [ 7:00 , 8:00 )</li><li>在 9:00 执行 CQ ，数据范围是 [ 8:00 , 9:00 )</li></ul><p>增加了 RESAMPLE EVERY 30m 之后，每 30m 执行一次 CQ ：</p><ul><li>在 8:00 执行 CQ ，数据范围是 [ 7:00 , 8:00 )</li><li>在 8:30 执行 CQ ，数据范围是 [ 8:00 , 9:00 )</li><li>在 9:00 执行 CQ ，数据范围是 [ 8:00 , 9:00 ) ，由于执行结果的 time 字段是 8:00 与上一次 CQ 一致，因此会覆盖上一次 CQ 的结果。</li></ul><p>当 EVERY 的时间间隔小于 GROUP BY time() 时，会增加 CQ 的执行频率（如上述示例）。</p><p>当 EVERY 与 GROUP BY time() 的时间间隔一致时，无影响。</p><p>当 EVERY 的时间间隔大于 GROUP BY time() 时，CQ 执行时间和数据范围完全由 EVERY 控制，例如 EVERY 30m ，GROUP BY time(10m) ：</p><ul><li>在 8:00 执行 CQ ，数据范围是 [ 7:30 , 8:00 )</li><li>在 8:30 执行 CQ ，数据范围是 [ 8:00 , 8:30 )</li></ul><h4 id=2resample--for>2、RESAMPLE FOR</h4><p>FOR 定义了数据的时间范围：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>RESAMPLE FOR 1h
+</span></span></code></pre></td></tr></table></div></div><p>意思就是每次 CQ 的数据的时间范围是 1h 。</p><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>CREATE CONTINUOUS QUERY &#34;cq_for&#34; ON &#34;db&#34;
+</span></span><span class=line><span class=cl>RESAMPLE FOR 1h
+</span></span><span class=line><span class=cl>BEGIN
+</span></span><span class=line><span class=cl>  SELECT mean(&#34;field&#34;)
+</span></span><span class=line><span class=cl>    INTO &#34;result_measurement&#34;
+</span></span><span class=line><span class=cl>    FROM &#34;source_measurement&#34;
+</span></span><span class=line><span class=cl>    GROUP BY time(30m)
+</span></span><span class=line><span class=cl>END
+</span></span></code></pre></td></tr></table></div></div><p>如果没有 RESAMPLE FOR 1h ，只有 GROUP BY time(30m) 将会：</p><ul><li>在 8:00 执行 CQ ，数据范围是 [ 7:30 , 8:00 )</li><li>在 8:30 执行 CQ ，数据范围是 [ 8:00 , 8:30 )</li></ul><p>增加了 RESAMPLE FOR 1h 之后，每次 CQ 的时间范围是 1h ，但是因为 GROUP BY time(30m) ，每次 CQ 将会按照 30m 写入两点数据：</p><ul><li>在 8:00 执行 CQ ，数据总范围是 [ 7:00 , 8:00 ) ，实际会拆分成两点 [ 7:00 , 7:30 ) 和 [ 7:30 , 8:00 )</li><li>在 8:30 执行 CQ ，数据总范围是 [ 7:30 , 8:30 ) ，实际会拆分成两点 [ 7:30 , 8:00 ) 和 [ 8:00 , 8:30 )</li></ul><p>当 FOR 的时间间隔大于 GROUP BY time() 时，每次 CQ 的时间范围被扩大，但是每一个点仍然按照 GROUP BY time() 的时间间隔，因此每次 CQ 会写入多个点（如上述示例）。</p><p>当 FOR 与 GROUP BY time() 的时间间隔一致时，无影响。</p><p>当 FOR 的时间间隔小于 GROUP BY time() 时，创建 CQ 时报错，不允许这种情况。</p><h4 id=3every--for>3、EVERY &mldr; FOR</h4><p>EVERY 和 FOR 可以一起使用。</p><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>CREATE CONTINUOUS QUERY &#34;cq_every_for&#34; ON &#34;db&#34;
+</span></span><span class=line><span class=cl>RESAMPLE EVERY 1h FOR 90m
+</span></span><span class=line><span class=cl>BEGIN
+</span></span><span class=line><span class=cl>  SELECT mean(&#34;field&#34;)
+</span></span><span class=line><span class=cl>    INTO &#34;result_measurement&#34;
+</span></span><span class=line><span class=cl>    FROM &#34;source_measurement&#34;
+</span></span><span class=line><span class=cl>    GROUP BY time(30m)
+</span></span><span class=line><span class=cl>END
+</span></span></code></pre></td></tr></table></div></div><p>EVERY 1h 大于 GROUP BY time(30m)，因此 CQ 每隔 1h 执行一次；FOR 90m ，每次 CQ 执行的时间范围是 90m，按照 30m 拆分成三个点：</p><ul><li>在 8:00 执行 CQ ，数据总范围 [ 6:30 , 8:00 ) ，实际会拆分为三个点 [ 6:30 , 7:00 )、 [ 7:00 , 7:30 )、 [ 7:30 , 8:00 )</li><li>在 9:00 执行 CQ ，数据总范围 [ 7:30 , 9:00 ) ，实际会拆分为三个点 [ 7:30 , 8:00 )、 [ 8:00 , 8:30 )、 [ 8:30 , 9:00 )</li></ul><p>最后，CQ 只能创建和删除，无法修改。</p><hr><p>相关文章：</p><ul><li><a href=/posts/influxdb/1/ rel>时序数据库 InfluxDB（一）</a></li><li><a href=/posts/influxdb/2/ rel>时序数据库 InfluxDB（二）</a></li><li><a href=/posts/influxdb/3/ rel>时序数据库 InfluxDB（三）</a></li><li><a href=/posts/influxdb/4/ rel>时序数据库 InfluxDB（四）</a></li><li><a href=/posts/influxdb/5/ rel>时序数据库 InfluxDB（五）</a></li><li><a href=/posts/influxdb/6/ rel>时序数据库 InfluxDB（六）</a></li><li><a href=/posts/influxdb/7/ rel>时序数据库 InfluxDB（七）</a></li></ul></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2023-02-20</span></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/6/index.md target=_blank>Read Markdown</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/6/ data-title="时序数据库 InfluxDB（六）"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/6/><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/6/ data-title="时序数据库 InfluxDB（六）"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/6/ data-title="时序数据库 InfluxDB（六）"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/6/ data-title="时序数据库 InfluxDB（六）"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/5/ class=prev rel=prev title="时序数据库 InfluxDB（五）"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>时序数据库 InfluxDB（五）</a>
+<a href=/7/ class=next rel=next title="时序数据库 InfluxDB（七）">时序数据库 InfluxDB（七）<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>
