@@ -482,11 +482,11 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
     #  页面 SEO 配置
     [params.page.seo]
       # 图片 URL
-      images = []
+      images = ["/images/avatar.png"]
       # 出版者信息
       [params.page.seo.publisher]
-        name = ""
-        logoUrl = ""
+        name = "凌虚"
+        logoUrl = "/images/avatar.png"
 
   #  TypeIt 配置
   [params.typeit]
