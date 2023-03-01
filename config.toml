@@ -18,7 +18,7 @@ paginate = 1000
 # 谷歌分析代号 [UA-XXXXXXXX-X]
 googleAnalytics = ""
 # 版权描述，仅仅用于 SEO
-copyright = ""
+copyright = "Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)"
 
 # 是否使用 robots.txt
 enableRobotsTXT = true
