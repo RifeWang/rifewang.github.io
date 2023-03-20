@@ -21,9 +21,8 @@ draft: false
 
 - 💻 &#160; ![Node.js](https://img.shields.io/badge/-Node.js-333333?style=flat&logo=node.js)    ![Go](https://img.shields.io/badge/-Go-333333?style=flat&logo=Go)
 - 🔧 &#160; ![Git](https://img.shields.io/badge/-Git-333333?style=flat&logo=git)    ![GitHub](https://img.shields.io/badge/-GitHub-333333?style=flat&logo=github)
-- ☁️ &#160; ![Alibaba Cloud](https://img.shields.io/badge/AlibabaCloud-%23FF6701.svg?style=for-the-badge&logo=alibabacloud&logoColor=white)   ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
 - 🌐 &#160; ![Linux](https://img.shields.io/badge/-Linux-333333?style=flat&logo=Linux)  ![Docker](https://img.shields.io/badge/-Docker-333333?style=flat&logo=Docker)  ![Kubernetes](https://img.shields.io/badge/-Kubernetes-333333?style=flat&logo=Kubernetes)
-- 🛢 &#160; ![MySQL](https://img.shields.io/badge/-MySQL-333333?style=flat&logo=mysql)  ![Redis](https://img.shields.io/badge/-Redis-333333?style=flat&logo=redis)  ![Elasticsearch](https://img.shields.io/badge/-Elasticsearch-333333?style=flat&logo=Elasticsearch)  ![ClickHouse](https://img.shields.io/badge/-ClickHouse-333333?style=flat&logo=ClickHouse)   ![Kafka](https://img.shields.io/badge/Apache%20Kafka-000?style=for-the-badge&logo=apachekafka)
+- 🛢 &#160; ![MySQL](https://img.shields.io/badge/-MySQL-333333?style=flat&logo=mysql)  ![Redis](https://img.shields.io/badge/-Redis-333333?style=flat&logo=redis)  ![Elasticsearch](https://img.shields.io/badge/-Elasticsearch-333333?style=flat&logo=Elasticsearch)  ![ClickHouse](https://img.shields.io/badge/-ClickHouse-333333?style=flat&logo=ClickHouse)
 
 
 ---
