@@ -1,0 +1,246 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Kubernetes snapshots 快照是什么以及如何使用快照？ - 凌虚 Blog</title><meta name=Description content="Kubernetes snapshots 快照是什么以及如何使用快照？"><meta property="og:title" content="Kubernetes snapshots 快照是什么以及如何使用快照？"><meta property="og:description" content="Kubernetes snapshots 快照是什么以及如何使用快照？"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/k8s-snapshots-usage/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-03-20T11:09:26+08:00"><meta property="article:modified_time" content="2023-03-20T12:05:37+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="Kubernetes snapshots 快照是什么以及如何使用快照？"><meta name=twitter:description content="Kubernetes snapshots 快照是什么以及如何使用快照？"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/k8s-snapshots-usage/><link rel=prev href=https://rifewang.github.io/k8s-secret-management/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Kubernetes snapshots 快照是什么以及如何使用快照？","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/k8s-snapshots-usage\/"},"image":["https:\/\/rifewang.github.io\/images\/avatar.png"],"genre":"posts","keywords":"Kubernetes","wordcount":2056,"url":"https:\/\/rifewang.github.io\/k8s-snapshots-usage\/","datePublished":"2023-03-20T11:09:26+08:00","dateModified":"2023-03-20T12:05:37+08:00","license":"Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)","publisher":{"@type":"Organization","name":"凌虚","logo":"https:\/\/rifewang.github.io\/images\/avatar.png"},"author":{"@type":"Person","name":"凌虚"},"description":"Kubernetes snapshots 快照是什么以及如何使用快照？"}</script></head><script async src="https://www.googletagmanager.com/gtag/js?id=G-VRMQFEVL7J"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-VRMQFEVL7J")</script><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Kubernetes snapshots 快照是什么以及如何使用快照？</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span>&nbsp;<span class=post-category>included in <a href=/categories/kubernetes/><i class="far fa-folder fa-fw" aria-hidden=true></i>Kubernetes</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2023-03-20>2023-03-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;2056 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;5 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#介绍>介绍</a></li><li><a href=#快照在-kubernetes-中是如何工作的>快照在 Kubernetes 中是如何工作的？</a></li><li><a href=#配置>配置</a></li><li><a href=#案例一pvc-templates>案例一：PVC templates</a></li><li><a href=#案例二用于测试的快照>案例二：用于测试的快照</a></li><li><a href=#案例三使用快照做一致性备份>案例三：使用快照做一致性备份</a></li><li><a href=#结论>结论</a></li></ul></nav></div></div><div class=content id=content><hr><p><em>文本翻译自: <a href=https://blog.palark.com/kubernetes-snaphots-usage/ target=_blank rel="noopener noreffer">https://blog.palark.com/kubernetes-snaphots-usage/</a></em></p><hr><p>随着 Kubernetes 中快照控制器的引入，现在可以为支持此功能的 CSI 驱动程序和云提供商创建快照。</p><p>API 是通用的且独立于供应商，这对于 Kubernetes 来说是典型的，因此我们可以探索它而无需深入了解特定实现的细节。让我们仔细看看快照，看看它们如何使 Kubernetes 用户受益。</p><h2 id=介绍>介绍</h2><p>首先，让我们澄清什么是快照。快照是文件系统在特定时间点的状态。您可以保存它并在以后使用它来恢复该特定状态。创建快照的过程几乎是瞬时的。创建快照后，对原始文件系统的所有更改都将写入不同的块。</p><p>由于快照数据与原始数据存储在同一位置，因此快照不能替代备份。同时，基于快照而不是实时数据的备份更加一致。这是因为在创建快照时保证所有数据都是最新的。</p><p>必须安装 <a href=https://github.com/kubernetes-csi/external-snapshotter target=_blank rel="noopener noreffer">snapshot-controller</a> （所有 CSI driver 的通用组件），并且必须在 Kubernetes 集群中定义以下 CRD 才能使用快照功能：</p><ul><li><code>VolumeSnapshotClass</code> – 相当于快照的 <code>StorageClass</code>；</li><li><code>VolumeSnapshotContent</code> – 相当于快照的 <code>PV</code>；</li><li><code>VolumeSnapshot</code> – 相当于快照的 <code>PVC</code>。</li></ul><p>最重要的是，CSI 驱动程序必须支持快照创建并具有相关的 <code>csi-snapshotter</code> controller。</p><h2 id=快照在-kubernetes-中是如何工作的>快照在 Kubernetes 中是如何工作的？</h2><p>他们运作背后的逻辑很简单。有几个实体；<code>VolumeSnapshotClass</code> 描述快照创建的参数，例如 CSI driver。您还可以在那里指定其他设置，例如，快照是否应该是增量的以及它们应该存储在哪里。</p><p>创建 <code>VolumeSnapshot</code> 时，您必须指定将为其创建快照的 <code>PersistentVolumeClaim</code>。</p><p>拍摄快照时，CSI 驱动程序会在集群中创建一个 <code>VolumeSnapshotContent</code> 资源并设置其参数（通常是资源 ID）。</p><p>接下来，快照控制器绑定 <code>VolumeSnapshot</code> 到 <code>VolumeSnapshotContent</code>（就像 PV 和 PVC 一样）。</p><p>创建新的 <code>PersistentVolume</code> 时，您可以将先前创建的 <code>VolumeSnapshot</code> 设置为 <code>dataSource</code> 以使用其数据。</p><h2 id=配置>配置</h2><p><code>VolumeSnapshotClass</code> 允许您指定各种 <code>VolumeSnapshot</code> 属性，例如 CSI 驱动程序名称和其他云提供商/数据存储相关参数。下面提供了几个 <code>VolumeSnapshotClass</code> 资源定义示例的链接 ：</p><ul><li><a href=https://github.com/openshift/openstack-cinder-csi-driver-operator/blob/master/assets/volumesnapshotclass.yaml target=_blank rel="noopener noreffer">OpenStack</a></li><li><a href=https://docs.vmware.com/en/VMware-vSphere-Container-Storage-Plug-in/2.0/vmware-vsphere-csp-getting-started/GUID-E0B41C69-7EEB-450F-A73D-5FD2FF39E891.html target=_blank rel="noopener noreffer">vSphere</a></li><li><a href=https://aws.amazon.com/ru/blogs/containers/using-ebs-snapshots-for-persistent-storage-with-your-eks-cluster/ target=_blank rel="noopener noreffer">AWS</a></li><li><a href=https://github.com/kubernetes-sigs/azuredisk-csi-driver/blob/master/deploy/example/snapshot/storageclass-azuredisk-snapshot.yaml target=_blank rel="noopener noreffer">Azure</a></li><li><a href=https://github.com/piraeusdatastore/piraeus-operator/blob/master/doc/optional-components.md#using-snapshots target=_blank rel="noopener noreffer">LINSTOR</a></li><li><a href=https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/volume-snapshots#create-snapshotclass target=_blank rel="noopener noreffer">GCP</a></li><li><a href=https://github.com/ceph/ceph-csi/blob/devel/examples/cephfs/snapshotclass.yaml target=_blank rel="noopener noreffer">CephFS</a></li><li><a href=https://github.com/ceph/ceph-csi/blob/devel/examples/rbd/snapshotclass.yaml target=_blank rel="noopener noreffer">Ceph RBD</a></li></ul><p>创建 <code>VolumeSnapshotClass</code> 后 ，您就可以开始拍摄快照了。让我们来看看一些典型的用例。</p><h2 id=案例一pvc-templates>案例一：PVC templates</h2><p><a href=https://asciinema.org/a/yQG1fxy7KSSScoSAC2PunzxYU target=_blank rel="noopener noreffer"><img class=lazyload src=/svg/loading.min.svg data-src=https://asciinema.org/a/yQG1fxy7KSSScoSAC2PunzxYU.svg data-srcset="https://asciinema.org/a/yQG1fxy7KSSScoSAC2PunzxYU.svg, https://asciinema.org/a/yQG1fxy7KSSScoSAC2PunzxYU.svg 1.5x, https://asciinema.org/a/yQG1fxy7KSSScoSAC2PunzxYU.svg 2x" data-sizes=auto alt=https://asciinema.org/a/yQG1fxy7KSSScoSAC2PunzxYU.svg title=asciiccast></a></p><p>假设我们想要一些包含数据的 PVC 模板，并在需要时克隆它。在以下情况下这可能会派上用场：</p><ul><li>使用数据快速创建开发环境；</li><li>在不同节点上使用多个 Pod 同时处理数据。</li></ul><p>这背后的魔力是创建一个标准 PVC，用你想要的数据填充它，然后创建另一个 PVC 以原始集作为其源：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>PersistentVolumeClaim</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>pvc-worker1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>storageClassName</span><span class=p>:</span><span class=w> </span><span class=l>linstor-ssd-lvmthin-r2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>dataSource</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>pvc-template</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>PersistentVolumeClaim</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>accessModes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=l>ReadWriteOnce</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>resources</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>requests</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>storage</span><span class=p>:</span><span class=w> </span><span class=l>10Gi</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>您将获得包含所有数据的原始 PVC 的完整克隆，您可以立即使用。快照机制在这里是完全透明的，所以我们甚至不必使用上述任何资源。</p><h2 id=案例二用于测试的快照>案例二：用于测试的快照</h2><p><a href=https://asciinema.org/a/MY8gBYhdAO22HguUX7gMIzDBO target=_blank rel="noopener noreffer"><img class=lazyload src=/svg/loading.min.svg data-src=https://asciinema.org/a/MY8gBYhdAO22HguUX7gMIzDBO.svg data-srcset="https://asciinema.org/a/MY8gBYhdAO22HguUX7gMIzDBO.svg, https://asciinema.org/a/MY8gBYhdAO22HguUX7gMIzDBO.svg 1.5x, https://asciinema.org/a/MY8gBYhdAO22HguUX7gMIzDBO.svg 2x" data-sizes=auto alt=https://asciinema.org/a/MY8gBYhdAO22HguUX7gMIzDBO.svg title=asciiccast></a></p><p>此案例展示了如何在不干扰生产的情况下安全地对实时数据进行数据库迁移建模。</p><p>我们必须克隆我们的应用程序使用的现有 PVC（就像在上面的示例中一样）以及具有克隆 PVC 的新应用程序版本来测试升级。如果遇到问题，您可以创建一个新的克隆并重试。</p><p>测试完成后，可以将新版本的应用程序部署到生产环境中。但首先，创建一个 <code>mypvc-before-upgrade</code> 快照，这样您就可以随时恢复到升级前的状态。快照是使用 <code>VolumeSnapshots</code> 资源创建的。在其中指定创建快照的目标 PVC：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>snapshot.storage.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VolumeSnapshot</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>mypvc-before-upgrade</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>volumeSnapshotClassName</span><span class=p>:</span><span class=w> </span><span class=l>linstor</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>source</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>persistentVolumeClaimName</span><span class=p>:</span><span class=w> </span><span class=l>mypvc</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p><code>mypvc-before-upgrade</code> 切换到新版本后，您始终可以通过将快照指定为 PVC 源来恢复到升级前的状态：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>PersistentVolumeClaim</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>mypvc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>storageClassName</span><span class=p>:</span><span class=w> </span><span class=l>linstor-ssd-lvmthin-r2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>dataSource</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>mypvc-before-upgrade</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VolumeSnapshot</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>apiGroup</span><span class=p>:</span><span class=w> </span><span class=l>snapshot.storage.k8s.io</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>accessModes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=l>ReadWriteOnce</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>resources</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>requests</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>storage</span><span class=p>:</span><span class=w> </span><span class=l>10Gi</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><h2 id=案例三使用快照做一致性备份>案例三：使用快照做一致性备份</h2><p><a href=https://asciinema.org/a/AOgMG6UdmIrHzj2aWhgXwxQJe target=_blank rel="noopener noreffer"><img class=lazyload src=/svg/loading.min.svg data-src=https://asciinema.org/a/AOgMG6UdmIrHzj2aWhgXwxQJe.svg data-srcset="https://asciinema.org/a/AOgMG6UdmIrHzj2aWhgXwxQJe.svg, https://asciinema.org/a/AOgMG6UdmIrHzj2aWhgXwxQJe.svg 1.5x, https://asciinema.org/a/AOgMG6UdmIrHzj2aWhgXwxQJe.svg 2x" data-sizes=auto alt=https://asciinema.org/a/AOgMG6UdmIrHzj2aWhgXwxQJe.svg title=asciiccast></a></p><p>快照对于在运行环境中创建一致的备份是不可或缺的。没有它们，就没有办法在不先暂停应用程序的情况下进行 PVC 备份。</p><p>如果您尝试在应用程序运行时复制整个卷，则很可能会覆盖其中的某些部分。为避免这种情况，您可以拍摄快照并将其用于备份。</p><p>有多种工具可用于在 Kubernetes 中进行备份，这些工具尊重应用程序的逻辑且/或使用快照机制。其中一个工具 <a href=https://velero.io/ target=_blank rel="noopener noreffer">Velero</a> 允许您自动使用快照，安排额外的挂钩将数据重置到磁盘，并暂停/恢复应用程序以获得更好的备份一致性。</p><p>同时，一些供应商提供了内置的备份功能。例如，<a href=https://linbit.com/linstor/ target=_blank rel="noopener noreffer">LINSTOR</a> 允许您自动将快照上传到远程 S3 服务器，并支持完整和增量备份。</p><p>为了从此功能中受益，您需要创建一个专用的 <code>VolumeSnapshotClass</code> 包含访问远程 S3 服务器所需的所有参数：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VolumeSnapshotClass</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>snapshot.storage.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>linstor-minio</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>driver</span><span class=p>:</span><span class=w> </span><span class=l>linstor.csi.linbit.com</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>deletionPolicy</span><span class=p>:</span><span class=w> </span><span class=l>Retain</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>parameters</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>snap.linstor.csi.linbit.com/type</span><span class=p>:</span><span class=w> </span><span class=l>S3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>snap.linstor.csi.linbit.com/remote-name</span><span class=p>:</span><span class=w> </span><span class=l>minio</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>snap.linstor.csi.linbit.com/allow-incremental</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;false&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>snap.linstor.csi.linbit.com/s3-bucket</span><span class=p>:</span><span class=w> </span><span class=l>foo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>snap.linstor.csi.linbit.com/s3-endpoint</span><span class=p>:</span><span class=w> </span><span class=l>XX.XXX.XX.XXX.nip.io</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>snap.linstor.csi.linbit.com/s3-signing-region</span><span class=p>:</span><span class=w> </span><span class=l>minio</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>snap.linstor.csi.linbit.com/s3-use-path-style</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;true&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>csi.storage.k8s.io/snapshotter-secret-name</span><span class=p>:</span><span class=w> </span><span class=l>linstor-minio</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>csi.storage.k8s.io/snapshotter-secret-namespace</span><span class=p>:</span><span class=w> </span><span class=l>minio</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Secret</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>linstor-minio</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>minio</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>immutable</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>linstor.csi.linbit.com/s3-credentials.v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>stringData</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>access-key</span><span class=p>:</span><span class=w> </span><span class=l>minio</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>secret-key</span><span class=p>:</span><span class=w> </span><span class=l>minio123</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>新创建的快照现在将被推送到远程 S3 服务器：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>snapshot.storage.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VolumeSnapshot</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>mydb-backup1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>volumeSnapshotClassName</span><span class=p>:</span><span class=w> </span><span class=l>linstor-minio</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>source</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>persistentVolumeClaimName</span><span class=p>:</span><span class=w> </span><span class=l>db-data</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>有趣的是，您可以在不同的 Kubernetes 集群中使用它们。为此，除了 <code>VolumeSnapshotClass</code> 之外，您还必须定义 <code>VolumeSnapshotContent</code> 和 <code>VolumeSnapshot</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>snapshot.storage.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VolumeSnapshotContent</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>example-backup-from-s3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>deletionPolicy</span><span class=p>:</span><span class=w> </span><span class=l>Delete</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>driver</span><span class=p>:</span><span class=w> </span><span class=l>linstor.csi.linbit.com</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>source</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>snapshotHandle</span><span class=p>:</span><span class=w> </span><span class=l>snapshot-0a829b3f-9e4a-4c4e-849b-2a22c4a3449a</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>volumeSnapshotClassName</span><span class=p>:</span><span class=w> </span><span class=l>linstor-minio</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>volumeSnapshotRef</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>snapshot.storage.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VolumeSnapshot</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>example-backup-from-s3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>new-cluster</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>snapshot.storage.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VolumeSnapshot</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>example-backup-from-s3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>source</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>volumeSnapshotContentName</span><span class=p>:</span><span class=w> </span><span class=l>example-backup-from-s3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>volumeSnapshotClassName</span><span class=p>:</span><span class=w> </span><span class=l>linstor-minio</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>请注意，您必须在 <code>VolumeSnapshotContent</code> 中通过 <code>snapshotHandle</code> 参数指定存储系统的快照 ID。</p><p>现在您可以使用备份快照作为数据源来创建新的 PVC：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>PersistentVolumeClaim</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>restored-data</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>new-cluster</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>storageClassName</span><span class=p>:</span><span class=w> </span><span class=l>linstor-ssd-lvmthin-r2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>dataSource</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>example-backup-from-s3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VolumeSnapshot</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>apiGroup</span><span class=p>:</span><span class=w> </span><span class=l>snapshot.storage.k8s.io</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>accessModes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=l>ReadWriteOnce</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>resources</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>requests</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>storage</span><span class=p>:</span><span class=w> </span><span class=l>10Gi</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><h2 id=结论>结论</h2><p>借助快照，您可以通过创建一致的备份和克隆卷来更有效地利用您的存储解决方案。它们还允许您避免在不必要时复制数据。这是快照，让您的生活更轻松、更美好！</p><hr><p>相关文章：</p><ul><li><a href=https://blog.palark.com/to-rook-or-not-to-rook-thats-kubernetes/ target=_blank rel="noopener noreffer">To Rook, or not to Rook, that’s Kubernetes</a></li><li><a href=https://blog.palark.com/manual-recovery-of-a-rook-cluster-in-kubernetes/ target=_blank rel="noopener noreffer">Manual recovery of a Rook cluster in Kubernetes</a></li><li><a href=https://blog.palark.com/best-practices-for-deploying-highly-available-apps-in-kubernetes-part-1/ target=_blank rel="noopener noreffer">Best practices for deploying highly available apps in Kubernetes. Part 1</a></li></ul></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2023-03-20</span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/k8s-snapshots-usage/ data-title="Kubernetes snapshots 快照是什么以及如何使用快照？" data-hashtags=Kubernetes><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/k8s-snapshots-usage/ data-hashtag=Kubernetes><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/k8s-snapshots-usage/ data-title="Kubernetes snapshots 快照是什么以及如何使用快照？"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/k8s-snapshots-usage/ data-title="Kubernetes snapshots 快照是什么以及如何使用快照？"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/k8s-snapshots-usage/ data-title="Kubernetes snapshots 快照是什么以及如何使用快照？"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/kubernetes/>Kubernetes</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/k8s-secret-management/ class=prev rel=prev title="Kubernetes 的 secret  并不是真正的 secret"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Kubernetes 的 secret 并不是真正的 secret</a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>
