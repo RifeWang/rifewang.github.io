@@ -252,12 +252,3 @@ spec:
 ## 结论
 
 借助快照，您可以通过创建一致的备份和克隆卷来更有效地利用您的存储解决方案。它们还允许您避免在不必要时复制数据。这是快照，让您的生活更轻松、更美好！
-
----
-
-相关文章：
-
-- [To Rook, or not to Rook, that’s Kubernetes](https://blog.palark.com/to-rook-or-not-to-rook-thats-kubernetes/)
-- [Manual recovery of a Rook cluster in Kubernetes](https://blog.palark.com/manual-recovery-of-a-rook-cluster-in-kubernetes/)
-- [Best practices for deploying highly available apps in Kubernetes. Part 1](https://blog.palark.com/best-practices-for-deploying-highly-available-apps-in-kubernetes-part-1/)
-
