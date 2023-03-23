@@ -17,7 +17,7 @@ disableComments = true
 
 ---
 
-![](https://miro.medium.com/v2/resize:fit:700/0*Th5qU5L4AOg9QC5Q.png)
+![](/images/k8s/0_Th5qU5L4AOg9QC5Q.png)
 
 Kubernetes 公开了一个强大的 API，可让您控制集群的各个方面。
 
@@ -33,13 +33,13 @@ Kubernetes 公开了一个强大的 API，可让您控制集群的各个方面�
 - 在文件上生成 YAML（例如`kubectl run`）。
 - 构造运行时对象。
 
-![Client side validation in kubectl](https://miro.medium.com/v2/resize:fit:700/0*v3ORz4nWAv-w5rKC.png)
+![Client side validation in kubectl](/images/k8s/0_v3ORz4nWAv-w5rKC.png)
 
 此时，kubectl 还没有向集群发出任何请求。
 
 下一步，它查询当前的 API 服务器并发现所有可用的 API 端点。
 
-![OpenAPI descovery in kubectl](https://miro.medium.com/v2/resize:fit:700/0*wrHSiajOlLUZ9xX_.png)
+![OpenAPI descovery in kubectl](/images/k8s/0_wrHSiajOlLUZ9xX_.png)
 
 **最后，kubectl 使用运行时对象和端点来协商正确的 API 调用。**
 
@@ -47,13 +47,13 @@ Kubernetes 公开了一个强大的 API，可让您控制集群的各个方面�
 
 然后它发送请求。
 
-![API negotiation in kubectl](https://miro.medium.com/v2/resize:fit:700/0*doUoRiRC9UzsJOse.png)
+![API negotiation in kubectl](/images/k8s/0_doUoRiRC9UzsJOse.png)
 
 **理解在 Kubernetes 中 API 是分组的这很重要的。**
 
 为了进一步隔离多个版本，资源被版本化。
 
-![Kubernetes API groups, versions and resources](https://miro.medium.com/v2/resize:fit:700/0*SZ2rP9HcCRWGKuoS.png)
+![Kubernetes API groups, versions and resources](/images/k8s/0_SZ2rP9HcCRWGKuoS.png)
 
 现在您已经掌握了基础知识，让我们来看一个示例。
 
@@ -61,7 +61,7 @@ Kubernetes 公开了一个强大的 API，可让您控制集群的各个方面�
 
 *但是如何检索所有 deployments 呢？*
 
-![Proxy to kubernetes API](https://miro.medium.com/v2/resize:fit:700/0*G-MtvhjbKRni6t58.png)
+![Proxy to kubernetes API](/images/k8s/0_G-MtvhjbKRni6t58.png)
 
 Deployments 属于 `apps` 组并且有一个 `v1` 版本。
 
@@ -71,7 +71,7 @@ Deployments 属于 `apps` 组并且有一个 `v1` 版本。
 curl localhost:8001/apis/apps/v1/namespaces/{namespace}/deployments
 ```
 
-![List deployments](https://miro.medium.com/v2/resize:fit:700/0*7SatHg1pCYATIash.png)
+![List deployments](/images/k8s/0_7SatHg1pCYATIash.png)
 
 *列出所有正在运行的 pod 怎么样？*
 
@@ -83,7 +83,7 @@ Pod 属于 `""`（空）组并且有一个 `v1` 版本。
 curl localhost:8001/api/v1/namespaces/{namespace}/pods
 ```
 
-![List pods](https://miro.medium.com/v2/resize:fit:700/0*s8LRlXObi7rHM2x6.png)
+![List pods](/images/k8s/0_s8LRlXObi7rHM2x6.png)
 
 *group 为空看起来有点奇怪——还有更多例外吗？*
 
@@ -101,7 +101,7 @@ curl localhost:8001/api/v1/namespaces/{namespace}/pods
 GET /api/v1/watch/namespaces/{namespace}/pods/{name}
 ```
 
-![Watch pods](https://miro.medium.com/v2/resize:fit:700/0*lveeFi04s0mJEhMv.png)
+![Watch pods](/images/k8s/0_lveeFi04s0mJEhMv.png)
 
 *太好了，但这一切有什么意义呢？*
 
@@ -113,7 +113,7 @@ GET /api/v1/watch/namespaces/{namespace}/pods/{name}
 
 [这是一个约 130 行 Javascript 的小型 kubernetes 仪表板。](https://github.com/learnk8s/k8bit)
 
-![](https://miro.medium.com/v2/resize:fit:700/0*6BJSpJC5oha9iK__.gif)
+![](/images/k8s/0_6BJSpJC5oha9iK__.gif)
 
 它调用了 2 个 API:
 
@@ -138,13 +138,13 @@ Javascript/Typescript API 有一个很好的 [shared informer](https://github.co
 PATCH /apis/apps/v1/namespaces/{namespace}/deployments/{name}
 ```
 
-![使用 curl 修补 Kubernetes 部署](https://miro.medium.com/v2/resize:fit:700/0*hSWjviRpVrHk8fJF.png)
+![使用 curl 修补 Kubernetes 部署](/images/k8s/0_hSWjviRpVrHk8fJF.png)
 
 为了进行实验，我建造了一些非常规的东西。
 
 [xlskubectl 是我尝试使用 Excel/Google 表格控制 kubernetes 集群。](https://github.com/learnk8s/xlskubectl)
 
-![Sheetops — 使用电子表格控制 Kubernetes](https://miro.medium.com/v2/resize:fit:700/0*GZDAo6pMhT8Ru5wX.gif)
+![Sheetops — 使用电子表格控制 Kubernetes](/images/k8s/0_GZDAo6pMhT8Ru5wX.gif)
 
 该代码与上述 Javascript 代码非常相似：
 

@@ -18,7 +18,7 @@ disableComments = true
 
 ---
 
-![](https://miro.medium.com/v2/resize:fit:700/0*5ASKzTbKkuNTFjOn.png)
+![](https://miro.medium.com/v2/0*5ASKzTbKkuNTFjOn.png)
 
 运行 EKS 集群时，你可能会遇到两个问题：
 
@@ -35,7 +35,7 @@ disableComments = true
 2. 将容器连接到 CNI 的网络。
 3. 将卷安装到 CSI。
 
-![kubelet 将任务委托给 CRI、CNI 和 CSI](https://miro.medium.com/v2/resize:fit:700/0*eJxeBijeBd5Y_zht.png)
+![kubelet 将任务委托给 CRI、CNI 和 CSI](https://miro.medium.com/v2/0*eJxeBijeBd5Y_zht.png)
 
 *让我们关注 CNI 部分。*
 
@@ -43,7 +43,7 @@ disableComments = true
 
 CNI 负责创建网桥、分配 IP 并将 veth0 连接到 cni0。
 
-![大多数情况下，一个节点上的所有容器都连接到一个网桥上](https://miro.medium.com/v2/resize:fit:700/0*VCpGPOkWGAAqxcuh.png)
+![大多数情况下，一个节点上的所有容器都连接到一个网桥上](https://miro.medium.com/v2/0*VCpGPOkWGAAqxcuh.png)
 
 这通常会发生，但不同的 CNI 可能会使用其他方式将容器连接到网络。
 
@@ -51,7 +51,7 @@ CNI 负责创建网桥、分配 IP 并将 veth0 连接到 cni0。
 
 AWS-CNI 是此类 CNI 的一个示例。
 
-![并非所有 CNI 都使用网桥连接同一节点上的容器](https://miro.medium.com/v2/resize:fit:700/0*PnhSgM-9PNPcHoTa.png)
+![并非所有 CNI 都使用网桥连接同一节点上的容器](https://miro.medium.com/v2/0*PnhSgM-9PNPcHoTa.png)
 
 在 AWS 中，每个 EC2 实例都可以有多个网络接口 (ENI)。
 
@@ -63,7 +63,7 @@ AWS-CNI 是此类 CNI 的一个示例。
 
 剩下的你可以不用管。
 
-![弹性网络接口和 IP 地址](https://miro.medium.com/v2/resize:fit:700/0*vZ-nFSgNOQQ9wDyq.png)
+![弹性网络接口和 IP 地址](https://miro.medium.com/v2/0*vZ-nFSgNOQQ9wDyq.png)
 
 **以前，你可以使用额外的 IP 并将它们分配给 Pod。**
 
@@ -79,7 +79,7 @@ AWS-CNI 是此类 CNI 的一个示例。
 
 *这不是很多。*
 
-![你最多可以在 m5.large 中拥有 27 个 pod](https://miro.medium.com/v2/resize:fit:700/0*7_6qmTgfy27SVaLg.png)
+![你最多可以在 m5.large 中拥有 27 个 pod](https://miro.medium.com/v2/0*7_6qmTgfy27SVaLg.png)
 
 **但是 AWS 发布了对 EC2 的更改，允许将“地址前缀”分配给网络接口。**
 
@@ -99,7 +99,7 @@ AWS-CNI 是此类 CNI 的一个示例。
 
 *让我们看一个例子。*
 
-![EC2 中的地址前后对比](https://miro.medium.com/v2/resize:fit:700/0*_roqQcLfflfPaKPn.png)
+![EC2 中的地址前后对比](https://miro.medium.com/v2/0*_roqQcLfflfPaKPn.png)
 
 使用 `m5.large` 实例，你有 3 个 ENI，每个有 10 个插槽（或 IP）。
 
@@ -111,7 +111,7 @@ AWS-CNI 是此类 CNI 的一个示例。
 
 **你现在最多可以拥有 432 个 Pod（之前是 27 个）。**
 
-![你最多可以在 m5.large 中拥有 432 个 pod](https://miro.medium.com/v2/resize:fit:700/0*rpcU1W03eKQtbC_Z.png)
+![你最多可以在 m5.large 中拥有 432 个 pod](https://miro.medium.com/v2/0*rpcU1W03eKQtbC_Z.png)
 
 AWS-CNI 支持插槽并将 Pod 的最大数量限制为 110 或 250，因此你最多可以在 m5.large 中拥有 432 个 pod 。
 
@@ -126,7 +126,7 @@ AWS-CNI 支持插槽并将 Pod 的最大数量限制为 110 或 250，因此你�
 
 *让我们回顾一下。*
 
-![EC2 和 EKS 中的前缀问题](https://miro.medium.com/v2/resize:fit:700/0*Ya4QHmsFonBglalW.png)
+![EC2 和 EKS 中的前缀问题](https://miro.medium.com/v2/0*Ya4QHmsFonBglalW.png)
 
 一个 pod 被调度到一个节点。
 
@@ -136,7 +136,7 @@ AWS-CNI 分配 1 个 slot（16 个 IP），pod 使用一个。
 
 *会发生什么？*
 
-![](https://miro.medium.com/v2/resize:fit:700/0*sO3OokcIZQ42Bycl.png)
+![](https://miro.medium.com/v2/0*sO3OokcIZQ42Bycl.png)
 
 **Kubernetes 调度程序更喜欢将 pod 分布在整个集群中。**
 
@@ -144,7 +144,7 @@ AWS-CNI 分配 1 个 slot（16 个 IP），pod 使用一个。
 
 你从你的网络分配了 `5*15=75` 个 IP，但仅使用了 5 个。
 
-![使用 AWS CNI 分配 IP](https://miro.medium.com/v2/resize:fit:700/0*9M39EbGj42jB_XF3.png)
+![使用 AWS CNI 分配 IP](https://miro.medium.com/v2/0*9M39EbGj42jB_XF3.png)
 
 *但还有更多。*
 
@@ -152,7 +152,7 @@ AWS-CNI 分配 1 个 slot（16 个 IP），pod 使用一个。
 
 如果分配了一个新 IP（例如创建了一个节点），你可能会遇到碎片问题。
 
-![](https://miro.medium.com/v2/resize:fit:700/0*9nDFF_RXoMlqgpcx.png)
+![](https://miro.medium.com/v2/0*9nDFF_RXoMlqgpcx.png)
 
 *怎么解决这些问题呢？*
 
