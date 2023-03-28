@@ -1,0 +1,484 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>提速 30 倍！OCI 容器启动优化的历程 - 凌虚 Blog</title><meta name=Description content="提速 30 倍！OCI 容器启动优化的历程"><meta property="og:title" content="提速 30 倍！OCI 容器启动优化的历程"><meta property="og:description" content="提速 30 倍！OCI 容器启动优化的历程"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/the-journey-to-speed-up-oci-containers/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-03-28T16:16:36+08:00"><meta property="article:modified_time" content="2023-03-28T17:45:15+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="提速 30 倍！OCI 容器启动优化的历程"><meta name=twitter:description content="提速 30 倍！OCI 容器启动优化的历程"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/the-journey-to-speed-up-oci-containers/><link rel=prev href=https://rifewang.github.io/gracefully-shut-down/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"提速 30 倍！OCI 容器启动优化的历程","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/the-journey-to-speed-up-oci-containers\/"},"image":["https:\/\/rifewang.github.io\/images\/avatar.png"],"genre":"posts","keywords":"Kubernetes","wordcount":3369,"url":"https:\/\/rifewang.github.io\/the-journey-to-speed-up-oci-containers\/","datePublished":"2023-03-28T16:16:36+08:00","dateModified":"2023-03-28T17:45:15+08:00","license":"Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)","publisher":{"@type":"Organization","name":"凌虚","logo":"https:\/\/rifewang.github.io\/images\/avatar.png"},"author":{"@type":"Person","name":"凌虚"},"description":"提速 30 倍！OCI 容器启动优化的历程"}</script></head><script async src="https://www.googletagmanager.com/gtag/js?id=G-VRMQFEVL7J"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-VRMQFEVL7J")</script><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">提速 30 倍！OCI 容器启动优化的历程</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span>&nbsp;<span class=post-category>included in <a href=/categories/kubernetes/><i class="far fa-folder fa-fw" aria-hidden=true></i>Kubernetes</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2023-03-28>2023-03-28</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;3369 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;7 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#2017年的情况如何>2017年的情况如何</a></li><li><a href=#系统时间>系统时间</a><ul><li><a href=#创建和销毁-network-命名空间>创建和销毁 network 命名空间</a></li><li><a href=#挂载-mqueue>挂载 mqueue</a></li><li><a href=#创建和销毁-ipc-命名空间>创建和销毁 IPC 命名空间</a></li></ul></li><li><a href=#用户时间>用户时间</a></li><li><a href=#bpf-过滤器编译>BPF 过滤器编译</a></li><li><a href=#结论>结论</a></li></ul></nav></div></div><div class=content id=content><hr><p><em>文本翻译自: <a href=https://www.scrivano.org/posts/2022-10-21-the-journey-to-speed-up-oci-containers/ target=_blank rel="noopener noreffer">https://www.scrivano.org/posts/2022-10-21-the-journey-to-speed-up-oci-containers/</a></em></p><hr><blockquote><p>原文作者是 Red Hat 工程师 <a href=https://github.com/giuseppe/ target=_blank rel="noopener noreffer">Giuseppe Scrivano</a> ，其回顾了将 OCI 容器启动的时间提速 30 倍的历程。</p></blockquote><p>当我开始研究 crun (<a href=https://github.com/containers/crun target=_blank rel="noopener noreffer">https://github.com/containers/crun</a>) 时，我正在寻找一种通过改进 OCI 运行时来更快地启动和停止容器的方法，OCI 运行时是 OCI 堆栈中负责最终与内核交互并设置容器所在环境的组件。</p><p>OCI 运行时的运行时间非常有限，它的工作主要是执行一系列直接映射到 OCI 配置文件的系统调用。</p><p>我很惊讶地发现，如此琐碎的任务可能需要花费这么长时间。</p><p><em><strong>免责声明</strong></em>：对于我的测试，我使用了 Fedora 安装中可用的默认内核以及所有库。除了这篇博文中描述的修复之外，这些年来可能还有其他可能影响整体性能的修复。</p><p>以下所有用于测试的 crun 版本都是相同的。</p><p>对于所有测试，我都使用 <a href=https://github.com/sharkdp/hyperfine target=_blank rel="noopener noreffer">hyperfine</a>，它是通过 cargo 安装的。</p><h2 id=2017年的情况如何>2017年的情况如何</h2><p>要对比我们与过去相差多大，我们需要回到 2017 年，或者只安装一个旧的 Fedora 映像。对于下面的测试，我使用了基于 Linux 内核 4.5.5 的 Fedora 24。</p><p>在新安装的 Fedora 24 上，运行从主分支构建：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=c1># hyperfine &#39;crun run foo&#39;</span>
+</span></span><span class=line><span class=cl>Benchmark 1: <span class=s1>&#39;crun run foo&#39;</span>
+</span></span><span class=line><span class=cl>  Time <span class=o>(</span>mean ± σ<span class=o>)</span>:     159.2 ms ±  21.8 ms    <span class=o>[</span>User: 43.0 ms, System: 16.3 ms<span class=o>]</span>
+</span></span><span class=line><span class=cl>  Range <span class=o>(</span>min … max<span class=o>)</span>:    73.9 ms … 194.9 ms    <span class=m>39</span> runs
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>用户时间和系统时间指的是进程分别在用户态和内核态的耗时。</p></blockquote><p>160 毫秒很多，据我所知，这与我五年前观察到的情况相似。</p><p>对 OCI 运行时的分析立即表明，大部分用户时间都花在了 libseccomp 上来编译 seccomp 过滤器。</p><p>为了验证这一点，让我们尝试运行一个具有相同配置但没有 seccomp 配置文件的容器：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=c1># hyperfine &#39;crun run foo&#39;</span>
+</span></span><span class=line><span class=cl>Benchmark 1: <span class=s1>&#39;crun run foo&#39;</span>
+</span></span><span class=line><span class=cl>  Time <span class=o>(</span>mean ± σ<span class=o>)</span>:     139.6 ms ±  20.8 ms    <span class=o>[</span>User: 4.1 ms, System: 22.0 ms<span class=o>]</span>
+</span></span><span class=line><span class=cl>  Range <span class=o>(</span>min … max<span class=o>)</span>:    61.8 ms … 177.0 ms    <span class=m>47</span> runs
+</span></span></code></pre></td></tr></table></div></div><p>我们使用了之前所需用户时间的 1/10（43 ms -> 4.1 ms），整体时间也有所改善！</p><p>所以主要有两个不同的问题：1) 系统时间相当长，2) 用户时间由 libseccomp 控制。我们需要同时解决这两个问题。</p><p>现在让我们专注于系统时间，稍后我们将回到 seccomp。</p><h2 id=系统时间>系统时间</h2><h3 id=创建和销毁-network-命名空间>创建和销毁 network 命名空间</h3><p>创建和销毁网络命名空间曾经非常昂贵，只需使用该 <code>unshare</code> 工具即可重现该问题，在 Fedora 24 上我得到：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=c1># hyperfine &#39;unshare -n true&#39;</span>
+</span></span><span class=line><span class=cl>Benchmark 1: <span class=s1>&#39;unshare -n true&#39;</span>
+</span></span><span class=line><span class=cl>  Time <span class=o>(</span>mean ± σ<span class=o>)</span>:      47.7 ms ±  51.4 ms    <span class=o>[</span>User: 0.6 ms, System: 3.2 ms<span class=o>]</span>
+</span></span><span class=line><span class=cl>  Range <span class=o>(</span>min … max<span class=o>)</span>:     0.0 ms … 190.5 ms    <span class=m>365</span> runs
+</span></span></code></pre></td></tr></table></div></div><p>这算是很长的耗时！</p><p>我试图在内核中修复它并提出了一个 <a href=https://www.spinics.net/lists/netfilter-devel/msg50394.html target=_blank rel="noopener noreffer">patch 补丁</a>。Florian Westphal 以更好的方式将其进行了重写，并合并到了 Linux 内核中：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>commit 8c873e2199700c2de7dbd5eedb9d90d5f109462b
+</span></span><span class=line><span class=cl>Author: Florian Westphal
+</span></span><span class=line><span class=cl>Date:   Fri Dec 1 00:21:04 2017 +0100
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    netfilter: core: free hooks with call_rcu
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    Giuseppe Scrivano says:
+</span></span><span class=line><span class=cl>      &#34;SELinux, if enabled, registers for each new network namespace 6
+</span></span><span class=line><span class=cl>        netfilter hooks.&#34;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    Cost for this is high.  With synchronize_net() removed:
+</span></span><span class=line><span class=cl>       &#34;The net benefit on an SMP machine with two cores is that creating a
+</span></span><span class=line><span class=cl>       new network namespace takes -40% of the original time.&#34;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    This patch replaces synchronize_net+kvfree with call_rcu().
+</span></span><span class=line><span class=cl>    We store rcu_head at the tail of a structure that has no fixed layout,
+</span></span><span class=line><span class=cl>    i.e. we cannot use offsetof() to compute the start of the original
+</span></span><span class=line><span class=cl>    allocation.  Thus store this information right after the rcu head.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    We could simplify this by just placing the rcu_head at the start
+</span></span><span class=line><span class=cl>    of struct nf_hook_entries.  However, this structure is used in
+</span></span><span class=line><span class=cl>    packet processing hotpath, so only place what is needed for that
+</span></span><span class=line><span class=cl>    at the beginning of the struct.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    Reported-by: Giuseppe Scrivano
+</span></span><span class=line><span class=cl>    Signed-off-by: Florian Westphal
+</span></span><span class=line><span class=cl>    Signed-off-by: Pablo Neira Ayuso
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>commit 26888dfd7e7454686b8d3ea9ba5045d5f236e4d7
+</span></span><span class=line><span class=cl>Author: Florian Westphal
+</span></span><span class=line><span class=cl>Date:   Fri Dec 1 00:21:03 2017 +0100
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    netfilter: core: remove synchronize_net call if nfqueue is used
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    since commit 960632ece6949b (&#34;netfilter: convert hook list to an array&#34;)
+</span></span><span class=line><span class=cl>    nfqueue no longer stores a pointer to the hook that caused the packet
+</span></span><span class=line><span class=cl>    to be queued.  Therefore no extra synchronize_net() call is needed after
+</span></span><span class=line><span class=cl>    dropping the packets enqueued by the old rule blob.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    Signed-off-by: Florian Westphal
+</span></span><span class=line><span class=cl>    Signed-off-by: Pablo Neira Ayuso
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>commit 4e645b47c4f000a503b9c90163ad905786b9bc1d
+</span></span><span class=line><span class=cl>Author: Florian Westphal
+</span></span><span class=line><span class=cl>Date:   Fri Dec 1 00:21:02 2017 +0100
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    netfilter: core: make nf_unregister_net_hooks simple wrapper again
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    This reverts commit d3ad2c17b4047
+</span></span><span class=line><span class=cl>    (&#34;netfilter: core: batch nf_unregister_net_hooks synchronize_net calls&#34;).
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    Nothing wrong with it.  However, followup patch will delay freeing of hooks
+</span></span><span class=line><span class=cl>    with call_rcu, so all synchronize_net() calls become obsolete and there
+</span></span><span class=line><span class=cl>    is no need anymore for this batching.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    This revert causes a temporary performance degradation when destroying
+</span></span><span class=line><span class=cl>    network namespace, but its resolved with the upcoming call_rcu conversion.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    Signed-off-by: Florian Westphal
+</span></span><span class=line><span class=cl>    Signed-off-by: Pablo Neira Ayuso
+</span></span></code></pre></td></tr></table></div></div><p>这些补丁产生了巨大的差异，现在创建和销毁网络命名空间的时间已经下降到了一个难以置信的地步，以下是一个现代 5.19.15 内核的数据：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=c1># hyperfine &#39;unshare -n true&#39;</span>
+</span></span><span class=line><span class=cl>Benchmark 1: <span class=s1>&#39;unshare -n true&#39;</span>
+</span></span><span class=line><span class=cl>  Time <span class=o>(</span>mean ± σ<span class=o>)</span>:       1.5 ms ±   0.5 ms    <span class=o>[</span>User: 0.3 ms, System: 1.3 ms<span class=o>]</span>
+</span></span><span class=line><span class=cl>  Range <span class=o>(</span>min … max<span class=o>)</span>:     0.8 ms …   6.7 ms    <span class=m>1907</span> runs
+</span></span></code></pre></td></tr></table></div></div><h3 id=挂载-mqueue>挂载 mqueue</h3><p>挂载 mqueue 也是一个相对昂贵的操作。</p><p>在 Fedora 24 上，它曾经是这样的：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=c1># mkdir /tmp/mqueue; hyperfine &#39;unshare --propagation=private -m mount -t mqueue mqueue /tmp/mqueue&#39;; rmdir /tmp/mqueue</span>
+</span></span><span class=line><span class=cl>Benchmark 1: <span class=s1>&#39;unshare --propagation=private -m mount -t mqueue mqueue /tmp/mqueue&#39;</span>
+</span></span><span class=line><span class=cl>  Time <span class=o>(</span>mean ± σ<span class=o>)</span>:      16.8 ms ±   3.1 ms    <span class=o>[</span>User: 2.6 ms, System: 5.0 ms<span class=o>]</span>
+</span></span><span class=line><span class=cl>  Range <span class=o>(</span>min … max<span class=o>)</span>:     9.3 ms …  26.8 ms    <span class=m>261</span> runs
+</span></span></code></pre></td></tr></table></div></div><p>在这种情况下，我也尝试修复它并提出一个 <a href=https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1545810.html target=_blank rel="noopener noreffer">补丁</a>。它没有被接受，但 Al Viro 想出了一个更好的版本来解决这个问题：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>commit 36735a6a2b5e042db1af956ce4bcc13f3ff99e21
+</span></span><span class=line><span class=cl>Author: Al Viro
+</span></span><span class=line><span class=cl>Date:   Mon Dec 25 19:43:35 2017 -0500
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    mqueue: switch to on-demand creation of internal mount
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    Instead of doing that upon each ipcns creation, we do that the first
+</span></span><span class=line><span class=cl>    time mq_open(2) or mqueue mount is done in an ipcns.  What&#39;s more,
+</span></span><span class=line><span class=cl>    doing that allows to get rid of mount_ns() use - we can go with
+</span></span><span class=line><span class=cl>    considerably cheaper mount_nodev(), avoiding the loop over all
+</span></span><span class=line><span class=cl>    mqueue superblock instances; ipcns-&gt;mq_mnt is used to locate preexisting
+</span></span><span class=line><span class=cl>    instance in O(1) time instead of O(instances) mount_ns() would&#39;ve
+</span></span><span class=line><span class=cl>    cost us.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    Based upon the version by Giuseppe Scrivano ; I&#39;ve
+</span></span><span class=line><span class=cl>    added handling of userland mqueue mounts (original had been broken in
+</span></span><span class=line><span class=cl>    that area) and added a switch to mount_nodev().
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    Signed-off-by: Al Viro
+</span></span></code></pre></td></tr></table></div></div><p>在这个补丁之后，创建 mqueue 挂载的成本也下降了：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=c1># mkdir /tmp/mqueue; hyperfine &#39;unshare --propagation=private -m mount -t mqueue mqueue /tmp/mqueue&#39;; rmdir /tmp/mqueue</span>
+</span></span><span class=line><span class=cl>Benchmark 1: <span class=s1>&#39;unshare --propagation=private -m mount -t mqueue mqueue /tmp/mqueue&#39;</span>
+</span></span><span class=line><span class=cl>  Time <span class=o>(</span>mean ± σ<span class=o>)</span>:       0.7 ms ±   0.5 ms    <span class=o>[</span>User: 0.5 ms, System: 0.6 ms<span class=o>]</span>
+</span></span><span class=line><span class=cl>  Range <span class=o>(</span>min … max<span class=o>)</span>:     0.0 ms …   3.1 ms    <span class=m>772</span> runs
+</span></span></code></pre></td></tr></table></div></div><h3 id=创建和销毁-ipc-命名空间>创建和销毁 IPC 命名空间</h3><p>我将加速容器启动时间的事推迟了几年，并在 2020 年初重新开始。我意识到的另一个问题是创建和销毁 IPC 命名空间的时间。</p><p>与网络命名空间一样，仅使用以下 <code>unshare</code> 工具即可重现该问题：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=c1># hyperfine &#39;unshare -i true&#39;</span>
+</span></span><span class=line><span class=cl>Benchmark 1: <span class=s1>&#39;unshare -i true&#39;</span>
+</span></span><span class=line><span class=cl>  Time <span class=o>(</span>mean ± σ<span class=o>)</span>:      10.9 ms ±   2.1 ms    <span class=o>[</span>User: 0.5 ms, System: 1.0 ms<span class=o>]</span>
+</span></span><span class=line><span class=cl>  Range <span class=o>(</span>min … max<span class=o>)</span>:     4.2 ms …  17.2 ms    <span class=m>310</span> runs
+</span></span></code></pre></td></tr></table></div></div><p>与前两次尝试不同，这次我发送的补丁被上游接受了：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>commit e1eb26fa62d04ec0955432be1aa8722a97cb52e7
+</span></span><span class=line><span class=cl>Author: Giuseppe Scrivano
+</span></span><span class=line><span class=cl>Date:   Sun Jun 7 21:40:10 2020 -0700
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    ipc/namespace.c: use a work queue to free_ipc
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    the reason is to avoid a delay caused by the synchronize_rcu() call in
+</span></span><span class=line><span class=cl>    kern_umount() when the mqueue mount is freed.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    the code:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        #define _GNU_SOURCE
+</span></span><span class=line><span class=cl>        #include
+</span></span><span class=line><span class=cl>        #include
+</span></span><span class=line><span class=cl>        #include
+</span></span><span class=line><span class=cl>        #include
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        int main()
+</span></span><span class=line><span class=cl>        {
+</span></span><span class=line><span class=cl>            int i;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            for (i = 0; i &lt; 1000; i++)
+</span></span><span class=line><span class=cl>                if (unshare(CLONE_NEWIPC) &lt; 0)
+</span></span><span class=line><span class=cl>                    error(EXIT_FAILURE, errno, &#34;unshare&#34;);
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    goes from
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            Command being timed: &#34;./ipc-namespace&#34;
+</span></span><span class=line><span class=cl>            User time (seconds): 0.00
+</span></span><span class=line><span class=cl>            System time (seconds): 0.06
+</span></span><span class=line><span class=cl>            Percent of CPU this job got: 0%
+</span></span><span class=line><span class=cl>            Elapsed (wall clock) time (h:mm:ss or m:ss): 0:08.05
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    to
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            Command being timed: &#34;./ipc-namespace&#34;
+</span></span><span class=line><span class=cl>            User time (seconds): 0.00
+</span></span><span class=line><span class=cl>            System time (seconds): 0.02
+</span></span><span class=line><span class=cl>            Percent of CPU this job got: 96%
+</span></span><span class=line><span class=cl>            Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.03
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    Signed-off-by: Giuseppe Scrivano
+</span></span><span class=line><span class=cl>    Signed-off-by: Andrew Morton
+</span></span><span class=line><span class=cl>    Reviewed-by: Paul E. McKenney
+</span></span><span class=line><span class=cl>    Reviewed-by: Waiman Long
+</span></span><span class=line><span class=cl>    Cc: Davidlohr Bueso
+</span></span><span class=line><span class=cl>    Cc: Manfred Spraul
+</span></span><span class=line><span class=cl>    Link: http://lkml.kernel.org/r/20200225145419.527994-1-gscrivan@redhat.com
+</span></span><span class=line><span class=cl>    Signed-off-by: Linus Torvalds
+</span></span></code></pre></td></tr></table></div></div><p>有了这个补丁，创建和销毁 IPC 的时间也大大减少了，正如提交消息中所概述的那样，在我现在得到的现代 5.19.15 内核上：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=c1># hyperfine &#39;unshare -i true&#39;</span>
+</span></span><span class=line><span class=cl>Benchmark 1: <span class=s1>&#39;unshare -i true&#39;</span>
+</span></span><span class=line><span class=cl>  Time <span class=o>(</span>mean ± σ<span class=o>)</span>:       0.1 ms ±   0.2 ms    <span class=o>[</span>User: 0.2 ms, System: 0.4 ms<span class=o>]</span>
+</span></span><span class=line><span class=cl>  Range <span class=o>(</span>min … max<span class=o>)</span>:     0.0 ms …   1.5 ms    <span class=m>1966</span> runs
+</span></span></code></pre></td></tr></table></div></div><h2 id=用户时间>用户时间</h2><p>内核态时间现在似乎已得到控制。我们可以做些什么来减少用户时间？</p><p>正如我们之前已经发现的，libseccomp 是这里的罪魁祸首，因此我们需要首先解决它，这发生在内核中对 IPC 的修复之后。</p><p>libseccomp 的大部分成本都是由系统调用查找代码引起的。OCI 配置文件包含一个按名称列出系统调用的列表，每个系统调用通过 <code>seccomp_syscall_resolve_name</code> 函数调用进行查找，该函数返回给定系统调用名称的系统调用编号。</p><p>libseccomp 用于通过系统调用表对每个系统调用名称执行线性搜索，例如，对于 x86_64，它看起来像这样：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=cm>/* NOTE: based on Linux v5.4-rc4 */</span>
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=k>struct</span> <span class=n>arch_syscall_def</span> <span class=n>x86_64_syscall_table</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span> \
+</span></span><span class=line><span class=cl>	<span class=p>{</span> <span class=s>&#34;_llseek&#34;</span><span class=p>,</span> <span class=n>__PNR__llseek</span> <span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>{</span> <span class=s>&#34;_newselect&#34;</span><span class=p>,</span> <span class=n>__PNR__newselect</span> <span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>{</span> <span class=s>&#34;_sysctl&#34;</span><span class=p>,</span> <span class=mi>156</span> <span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>{</span> <span class=s>&#34;accept&#34;</span><span class=p>,</span> <span class=mi>43</span> <span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>{</span> <span class=s>&#34;accept4&#34;</span><span class=p>,</span> <span class=mi>288</span> <span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>{</span> <span class=s>&#34;access&#34;</span><span class=p>,</span> <span class=mi>21</span> <span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>{</span> <span class=s>&#34;acct&#34;</span><span class=p>,</span> <span class=mi>163</span> <span class=p>},</span>
+</span></span><span class=line><span class=cl><span class=p>.....</span>
+</span></span><span class=line><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>x86_64_syscall_resolve_name</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>name</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>iter</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>	<span class=k>const</span> <span class=k>struct</span> <span class=n>arch_syscall_def</span> <span class=o>*</span><span class=n>table</span> <span class=o>=</span> <span class=n>x86_64_syscall_table</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=cm>/* XXX - plenty of room for future improvement here */</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=p>(</span><span class=n>iter</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>table</span><span class=p>[</span><span class=n>iter</span><span class=p>].</span><span class=n>name</span> <span class=o>!=</span> <span class=nb>NULL</span><span class=p>;</span> <span class=n>iter</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>if</span> <span class=p>(</span><span class=nf>strcmp</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>table</span><span class=p>[</span><span class=n>iter</span><span class=p>].</span><span class=n>name</span><span class=p>)</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=k>return</span> <span class=n>table</span><span class=p>[</span><span class=n>iter</span><span class=p>].</span><span class=n>num</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>__NR_SCMP_ERROR</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>通过 libseccomp 构建 seccomp 配置文件的复杂度为 <code>O(n*m)</code>，其中 <code>n</code> 是配置文件中的系统调用数量，<code>m</code> 是 libseccomp 已知的系统调用数量。</p><p>我遵循了代码注释中的建议，并花了一些时间尝试修复它。2020 年 1 月，我为 libseccomp 开发了一个 <a href=https://github.com/seccomp/libseccomp/pull/204 target=_blank rel="noopener noreffer">补丁</a>，以使用完美的哈希函数查找系统调用名称来解决这个问题。</p><p>libseccomp 的补丁是这个：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>commit 9b129c41ac1f43d373742697aa2faf6040b9dfab
+</span></span><span class=line><span class=cl>Author: Giuseppe Scrivano
+</span></span><span class=line><span class=cl>Date:   Thu Jan 23 17:01:39 2020 +0100
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    arch: use gperf to generate a perfact hash to lookup syscall names
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    This patch significantly improves the performance of
+</span></span><span class=line><span class=cl>    seccomp_syscall_resolve_name since it replaces the expensive strcmp
+</span></span><span class=line><span class=cl>    for each syscall in the database, with a lookup table.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    The complexity for syscall_resolve_num is not changed and it
+</span></span><span class=line><span class=cl>    uses the linear search, that is anyway less expensive than
+</span></span><span class=line><span class=cl>    seccomp_syscall_resolve_name as it uses an index for comparison
+</span></span><span class=line><span class=cl>    instead of doing a string comparison.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    On my machine, calling 1000 seccomp_syscall_resolve_name_arch and
+</span></span><span class=line><span class=cl>    seccomp_syscall_resolve_num_arch over the entire syscalls DB passed
+</span></span><span class=line><span class=cl>    from ~0.45 sec to ~0.06s.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    PM: After talking with Giuseppe I made a number of additional
+</span></span><span class=line><span class=cl>    changes, some substantial, the highlights include:
+</span></span><span class=line><span class=cl>    * various style tweaks
+</span></span><span class=line><span class=cl>    * .gitignore fixes
+</span></span><span class=line><span class=cl>    * fixed subject line, tweaked the description
+</span></span><span class=line><span class=cl>    * dropped the arch-syscall-validate changes as they were masking
+</span></span><span class=line><span class=cl>      other problems
+</span></span><span class=line><span class=cl>    * extracted the syscalls.csv and file deletions to other patches
+</span></span><span class=line><span class=cl>      to keep this one more focused
+</span></span><span class=line><span class=cl>    * fixed the x86, x32, arm, all the MIPS ABIs, s390, and s390x ABIs as
+</span></span><span class=line><span class=cl>      the syscall offsets were not properly incorporated into this change
+</span></span><span class=line><span class=cl>    * cleaned up the ABI specific headers
+</span></span><span class=line><span class=cl>    * cleaned up generate_syscalls_perf.sh and renamed to
+</span></span><span class=line><span class=cl>      arch-gperf-generate
+</span></span><span class=line><span class=cl>    * fixed problems with automake&#39;s file packaging
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    Signed-off-by: Giuseppe Scrivano
+</span></span><span class=line><span class=cl>    Reviewed-by: Tom Hromatka
+</span></span><span class=line><span class=cl>    [PM: see notes in the &#34;PM&#34; section above]
+</span></span><span class=line><span class=cl>    Signed-off-by: Paul Moore
+</span></span></code></pre></td></tr></table></div></div><p>该补丁已合并并发布，现在构建 seccomp 配置文件的复杂度为 <code>O(n)</code>，其中 n 是配置文件中系统调用的数量。</p><p>改进是显着的，在足够新的 libseccomp 下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=c1># hyperfine &#39;crun run foo&#39;</span>
+</span></span><span class=line><span class=cl>Benchmark 1: <span class=s1>&#39;crun run foo&#39;</span>
+</span></span><span class=line><span class=cl>  Time <span class=o>(</span>mean ± σ<span class=o>)</span>:      28.9 ms ±   5.9 ms    <span class=o>[</span>User: 16.7 ms, System: 4.5 ms<span class=o>]</span>
+</span></span><span class=line><span class=cl>  Range <span class=o>(</span>min … max<span class=o>)</span>:    19.1 ms …  41.6 ms    <span class=m>73</span> runs
+</span></span></code></pre></td></tr></table></div></div><p>用户时间仅为 16.7ms。以前是 40ms 以上，完全不用 seccomp 的时候是 4ms 左右。</p><p>所以使用 4.1ms 作为没有 seccomp 的用户时间成本，我们有：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=nv>time_used_by_seccomp_before</span> <span class=o>=</span> 43.0ms - 4.1ms <span class=o>=</span> 38.9ms
+</span></span><span class=line><span class=cl><span class=nv>time_used_by_seccomp_after</span> <span class=o>=</span> 16.7ms - 4.1ms <span class=o>=</span> 12.6ms
+</span></span></code></pre></td></tr></table></div></div><p>快 3 倍以上！系统调用查找只是 libseccomp 所做工作的一部分，另外相当多的时间用于编译 BPF 过滤器。</p><h2 id=bpf-过滤器编译>BPF 过滤器编译</h2><p>我们还能做得更好吗？</p><p>BPF 过滤器编译由 <code>seccomp_export_bpf</code> 函数完成，它仍然相当昂贵。</p><p>一个简单的观察是，大多数容器一遍又一遍地重复使用相同的 seccomp 配置文件，很少进行自定义。</p><p>因此缓存编译结果并在可能的情况下重用它是有意义的。</p><p>有一个<a href=https://github.com/containers/crun/pull/1035 target=_blank rel="noopener noreffer">新的运行特性</a> 来缓存 BPF 过滤器编译的结果。在撰写本文时，该补丁尚未合并，尽管它快要完成了。</p><p>有了这个，只有当生成的 BPF 过滤器不在缓存中时，编译 seccomp 配置文件的成本才会被支付，这就是我们现在所拥有的：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=c1># hyperfine &#39;crun-from-the-future run foo&#39;</span>
+</span></span><span class=line><span class=cl>Benchmark 1: <span class=s1>&#39;crun-from-the-future run foo&#39;</span>
+</span></span><span class=line><span class=cl>  Time <span class=o>(</span>mean ± σ<span class=o>)</span>:       5.6 ms ±   3.0 ms    <span class=o>[</span>User: 1.0 ms, System: 4.5 ms<span class=o>]</span>
+</span></span><span class=line><span class=cl>  Range <span class=o>(</span>min … max<span class=o>)</span>:     4.2 ms …  26.8 ms    <span class=m>101</span> runs
+</span></span></code></pre></td></tr></table></div></div><h2 id=结论>结论</h2><p>五年多来，创建和销毁 OCI 容器所需的总时间已从将近 160 毫秒加速到略多于 5 毫秒。</p><p>这几乎是 30 倍的改进！</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2023-03-28</span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/the-journey-to-speed-up-oci-containers/ data-title="提速 30 倍！OCI 容器启动优化的历程" data-hashtags=Kubernetes><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/the-journey-to-speed-up-oci-containers/ data-hashtag=Kubernetes><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/the-journey-to-speed-up-oci-containers/ data-title="提速 30 倍！OCI 容器启动优化的历程"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/the-journey-to-speed-up-oci-containers/ data-title="提速 30 倍！OCI 容器启动优化的历程"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/the-journey-to-speed-up-oci-containers/ data-title="提速 30 倍！OCI 容器启动优化的历程"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/kubernetes/>Kubernetes</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/gracefully-shut-down/ class=prev rel=prev title="Kubernetes 优雅终止 pod"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Kubernetes 优雅终止 pod</a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>
