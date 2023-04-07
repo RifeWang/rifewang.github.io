@@ -1,0 +1,446 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>什么？修改 JSON 内容居然还有个 JSON PATCH 标准 - 凌虚 Blog</title><meta name=Description content="什么？修改 JSON 内容居然还有个 JSON PATCH 标准"><meta property="og:title" content="什么？修改 JSON 内容居然还有个 JSON PATCH 标准"><meta property="og:description" content="什么？修改 JSON 内容居然还有个 JSON PATCH 标准"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/rfc6902-json-patch/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-04-07T11:27:16+08:00"><meta property="article:modified_time" content="2023-04-07T15:20:51+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="什么？修改 JSON 内容居然还有个 JSON PATCH 标准"><meta name=twitter:description content="什么？修改 JSON 内容居然还有个 JSON PATCH 标准"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/rfc6902-json-patch/><link rel=prev href=https://rifewang.github.io/why-cilium-for-k8s/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"什么？修改 JSON 内容居然还有个 JSON PATCH 标准","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/rfc6902-json-patch\/"},"image":["https:\/\/rifewang.github.io\/images\/avatar.png"],"genre":"posts","keywords":"RFC 标准","wordcount":2633,"url":"https:\/\/rifewang.github.io\/rfc6902-json-patch\/","datePublished":"2023-04-07T11:27:16+08:00","dateModified":"2023-04-07T15:20:51+08:00","license":"Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)","publisher":{"@type":"Organization","name":"凌虚","logo":"https:\/\/rifewang.github.io\/images\/avatar.png"},"author":{"@type":"Person","name":"凌虚"},"description":"什么？修改 JSON 内容居然还有个 JSON PATCH 标准"}</script></head><script async src="https://www.googletagmanager.com/gtag/js?id=G-VRMQFEVL7J"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-VRMQFEVL7J")</script><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">什么？修改 JSON 内容居然还有个 JSON PATCH 标准</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span>&nbsp;<span class=post-category>included in <a href=/categories/uncate/><i class="far fa-folder fa-fw" aria-hidden=true></i>Uncate</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2023-04-07>2023-04-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;2633 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;6 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#引言>引言</a></li><li><a href=#json-patch>JSON PATCH</a><ul><li><a href=#op>op</a><ul><li><a href=#add>add</a></li><li><a href=#remove>remove</a></li><li><a href=#replace>replace</a></li><li><a href=#move>move</a></li><li><a href=#copy>copy</a></li><li><a href=#test>test</a></li></ul></li></ul></li><li><a href=#结语>结语</a></li></ul></nav></div></div><div class=content id=content><h2 id=引言>引言</h2><p>你一定知道 JSON 吧，那专门用于修改 JSON 内容的 JSON PATCH 标准你是否知道呢？</p><p><a href=https://www.rfc-editor.org/rfc/rfc6902 target=_blank rel="noopener noreffer">RFC 6902</a> 就定义了这么一种 JSON PATCH 标准，本文将对其进行介绍。</p><h2 id=json-patch>JSON PATCH</h2><p>JSON Patch 本身也是一种 JSON 文档结构，用于表示要应用于 JSON 文档的操作序列；它适用于 HTTP <code>PATCH</code> 方法，其 MIME 媒体类型为 <code>"application/json-patch+json"</code>。</p><p>这句话也许不太好理解，我们先看一个例子：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>PATCH /my/data HTTP/1.1
+</span></span><span class=line><span class=cl>Host: example.org
+</span></span><span class=line><span class=cl>Content-Length: 326
+</span></span><span class=line><span class=cl>Content-Type: application/json-patch+json
+</span></span><span class=line><span class=cl>If-Match: &#34;abc123&#34;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[
+</span></span><span class=line><span class=cl>    { &#34;op&#34;: &#34;test&#34;, &#34;path&#34;: &#34;/a/b/c&#34;, &#34;value&#34;: &#34;foo&#34; },
+</span></span><span class=line><span class=cl>    { &#34;op&#34;: &#34;remove&#34;, &#34;path&#34;: &#34;/a/b/c&#34; },
+</span></span><span class=line><span class=cl>    { &#34;op&#34;: &#34;add&#34;, &#34;path&#34;: &#34;/a/b/c&#34;, &#34;value&#34;: [ &#34;foo&#34;, &#34;bar&#34; ] },
+</span></span><span class=line><span class=cl>    { &#34;op&#34;: &#34;replace&#34;, &#34;path&#34;: &#34;/a/b/c&#34;, &#34;value&#34;: 42 },
+</span></span><span class=line><span class=cl>    { &#34;op&#34;: &#34;move&#34;, &#34;from&#34;: &#34;/a/b/c&#34;, &#34;path&#34;: &#34;/a/b/d&#34; },
+</span></span><span class=line><span class=cl>    { &#34;op&#34;: &#34;copy&#34;, &#34;from&#34;: &#34;/a/b/d&#34;, &#34;path&#34;: &#34;/a/b/e&#34; }
+</span></span><span class=line><span class=cl>]
+</span></span></code></pre></td></tr></table></div></div><p>这个 HTTP 请求的 body 也是 JSON 格式（JSON PATCH 本身也是一种 JSON 结构），但是这个 JSON 格式是有具体规范的（只能按照标准去定义要应用于 JSON 文档的操作序列）。</p><p>具体而言，JSON Patch 的数据结构就是一个 JSON 对象数组，其中每个对象必须声明 <code>op</code> 去定义将要执行的操作，根据 <code>op</code> 操作的不同，需要对应另外声明 <code>path</code>、<code>value</code> 或 <code>from</code> 字段。</p><p>再例如，</p><p>原始 JSON ：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;a&#34;</span><span class=p>:</span> <span class=s2>&#34;aaa&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;b&#34;</span><span class=p>:</span> <span class=s2>&#34;bbb&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>应用如下 JSON PATCH ：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span> <span class=nt>&#34;op&#34;</span><span class=p>:</span> <span class=s2>&#34;replace&#34;</span><span class=p>,</span> <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;/a&#34;</span><span class=p>,</span> <span class=nt>&#34;value&#34;</span><span class=p>:</span> <span class=s2>&#34;111&#34;</span> <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span> <span class=nt>&#34;op&#34;</span><span class=p>:</span> <span class=s2>&#34;remove&#34;</span><span class=p>,</span> <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;/b&#34;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>得到的结果为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;a&#34;</span><span class=p>:</span> <span class=s2>&#34;111&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>需要注意的是：</p><ul><li>patch 对象中的属性没有顺序要求，比如 <code>{ "op": "remove", "path": "/b" }</code> 与 <code>{ "path": "/b", "op": "remove" }</code> 是完全等价的。</li><li>patch 对象的执行是按照数组顺序执行的，比如上例中先执行了 replace，然后再执行 remove。</li><li>patch 操作是原子的，即使我们声明了多个操作，但最终的结果是要么全部成功，要么保持原数据不变，不存在局部变更。也就是说如果多个操作中的某个操作异常失败了，那么原数据就不变。</li></ul><h3 id=op>op</h3><p><code>op</code> 只能是以下操作之一：</p><ul><li><code>add</code></li><li><code>remove</code></li><li><code>replace</code></li><li><code>move</code></li><li><code>copy</code></li><li><code>test</code></li></ul><p>这些操作我相信不用做任何说明你就能理解其具体的含义，唯一要说明的可能就是 <code>test</code>，<code>test</code> 操作其实就是检查 <code>path</code> 位置的值与 <code>value</code> 的值“相等”。</p><h4 id=add>add</h4><p><code>add</code> 操作会根据 <code>path</code> 定义去执行不同的操作：</p><ul><li>如果 <code>path</code> 是一个数组 index ，那么新的 <code>value</code> 值会被插入到执行位置。</li><li>如果 <code>path</code> 是一个不存在的对象成员，那么新的对象成员会被添加到该对象中。</li><li>如果 <code>path</code> 是一个已经存在的对象成员，那么该对象成员的值会被 <code>value</code> 所替换。</li></ul><p><code>add</code> 操作必须另外声明 <code>path</code> 和 <code>value</code>。</p><p><code>path</code> 目标位置必须是以下之一：</p><ul><li>目标文档的根 - 如果 <code>path</code> 指向的是根，那么 <code>value</code> 值就将是整个文档的内容。</li><li>一个已存在对象的成员 - 应用后 <code>value</code> 将会被添加到指定位置，如果成员已存在则其值会被替换。</li><li>一个已存在数组的元素 - 应用后 <code>value</code> 值会被添加到数组中的指定位置，任何在指定索引位置或之上的元素都会向右移动一个位置。指定的索引不能大于数组中元素的数量。可以使用 <code>-</code> 字符来索引数组的末尾。</li></ul><p>由于此操作旨在添加到现有对象和数组中，因此其目标位置通常不存在。尽管指针的错误处理算法将被调用，但本规范定义了 add 指针的错误处理行为，以忽略该错误并按照指定方式添加值。</p><p>然而，对象本身或包含它的数组确实需要存在，并且如果不是这种情况，则仍然会出错。</p><p>例如，对数据 <code>{ "a": { "foo": 1 } }</code> 执行 add 操作，path 为 &ldquo;/a/b&rdquo; 时不是错误。但如果对数据 <code>{ "q": { "bar": 2 } }</code> 执行同样的操作则是一种错误，因为 &ldquo;a&rdquo; 不存在。</p><hr><p>示例：</p><ol><li><p><code>add</code> 一个对象成员</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;foo&#34;: </span><span class=s2>&#34;bar&#34;</span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;add&#34;, &#34;path&#34;: &#34;/baz&#34;, &#34;value&#34;: </span><span class=s2>&#34;qux&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># 结果：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;baz&#34;: </span><span class=s2>&#34;qux&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;foo&#34;: </span><span class=s2>&#34;bar&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li><li><p><code>add</code> 一个数组元素</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;foo&#34;: </span><span class=p>[</span><span class=w> </span><span class=s2>&#34;bar&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;baz&#34;</span><span class=w> </span><span class=p>]</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;add&#34;, &#34;path&#34;: &#34;/foo/1&#34;, &#34;value&#34;: </span><span class=s2>&#34;qux&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># 结果：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;foo&#34;: </span><span class=p>[</span><span class=w> </span><span class=s2>&#34;bar&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;qux&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;baz&#34;</span><span class=w> </span><span class=p>]</span><span class=w> </span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li><li><p><code>add</code> 一个嵌套成员对象</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;foo&#34;: </span><span class=s2>&#34;bar&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;add&#34;, &#34;path&#34;: &#34;/child&#34;, &#34;value&#34;: { &#34;grandchild&#34;: </span>{<span class=w> </span>}<span class=w> </span>}<span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># 结果：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;foo&#34;: </span><span class=s2>&#34;bar&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;child&#34;: </span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>&#34;grandchild&#34;: </span>{}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li><li><p>忽略未识别的元素</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;foo&#34;: </span><span class=s2>&#34;bar&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;add&#34;, &#34;path&#34;: &#34;/baz&#34;, &#34;value&#34;: &#34;qux&#34;, &#34;xyz&#34;: </span><span class=m>123</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># 结果：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;foo&#34;: </span><span class=s2>&#34;bar&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;baz&#34;: </span><span class=s2>&#34;qux&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li><li><p><code>add</code> 到一个不存在的目标失败</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;foo&#34;: </span><span class=s2>&#34;bar&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;add&#34;, &#34;path&#34;: &#34;/baz/bat&#34;, &#34;value&#34;: </span><span class=s2>&#34;qux&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># 失败，因为操作的目标位置既不引用文档根，也不引用现有对象的成员，也不引用现有数组的成员。</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li><li><p><code>add</code> 一个数组</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;foo&#34;: </span><span class=p>[</span><span class=s2>&#34;bar&#34;</span><span class=p>]</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;add&#34;, &#34;path&#34;: &#34;/foo/-&#34;, &#34;value&#34;: </span><span class=p>[</span><span class=s2>&#34;abc&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;def&#34;</span><span class=p>]</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># 结果：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;foo&#34;: </span><span class=p>[</span><span class=s2>&#34;bar&#34;</span><span class=p>,</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;abc&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;def&#34;</span><span class=p>]]</span><span class=w> </span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li></ol><h4 id=remove>remove</h4><p><code>remove</code> 将会删除 path 目标位置上的值，如果 path 指向的是一个数组 index ，那么右侧其余值都将左移。</p><p>示例：</p><ol><li><p><code>remove</code> 一个对象成员</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;baz&#34;: </span><span class=s2>&#34;qux&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;foo&#34;: </span><span class=s2>&#34;bar&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;remove&#34;, &#34;path&#34;: </span><span class=s2>&#34;/baz&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># 结果：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;foo&#34;: </span><span class=s2>&#34;bar&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li><li><p><code>remove</code> 一个数组元素</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;foo&#34;: </span><span class=p>[</span><span class=w> </span><span class=s2>&#34;bar&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;qux&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;baz&#34;</span><span class=w> </span><span class=p>]</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;remove&#34;, &#34;path&#34;: </span><span class=s2>&#34;/foo/1&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># 结果：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;foo&#34;: </span><span class=p>[</span><span class=w> </span><span class=s2>&#34;bar&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;baz&#34;</span><span class=w> </span><span class=p>]</span><span class=w> </span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li></ol><h4 id=replace>replace</h4><p><code>replace</code> 操作会将 <code>path</code> 目标位置上的值替换为 <code>value</code>。此操作与 <code>remove</code> 后 <code>add</code> 同样的 <code>path</code> 在功能上是相同的。</p><p>示例：</p><ol><li><code>replace</code> 某个值<div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;baz&#34;: </span><span class=s2>&#34;qux&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;foo&#34;: </span><span class=s2>&#34;bar&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;replace&#34;, &#34;path&#34;: &#34;/baz&#34;, &#34;value&#34;: </span><span class=s2>&#34;boo&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># 结果：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;baz&#34;: </span><span class=s2>&#34;boo&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;foo&#34;: </span><span class=s2>&#34;bar&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li></ol><h4 id=move>move</h4><p><code>move</code> 操作将 <code>from</code> 位置的值移动到 <code>path</code> 位置。<code>from</code> 位置不能是 <code>path</code> 位置的前缀，也就是说，一个位置不能被移动到它的子级中。</p><p>示例：</p><ol><li><p><code>move</code> 某个值</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;foo&#34;: </span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>&#34;bar&#34;: </span><span class=s2>&#34;baz&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>&#34;waldo&#34;: </span><span class=s2>&#34;fred&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>}<span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;qux&#34;: </span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>&#34;corge&#34;: </span><span class=s2>&#34;grault&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;move&#34;, &#34;from&#34;: &#34;/foo/waldo&#34;, &#34;path&#34;: </span><span class=s2>&#34;/qux/thud&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># 结果：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;foo&#34;: </span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>&#34;bar&#34;: </span><span class=s2>&#34;baz&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>}<span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;qux&#34;: </span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>&#34;corge&#34;: </span><span class=s2>&#34;grault&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>&#34;thud&#34;: </span><span class=s2>&#34;fred&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li><li><p><code>move</code> 一个数组元素</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;foo&#34;: </span><span class=p>[</span><span class=w> </span><span class=s2>&#34;all&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;grass&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;cows&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;eat&#34;</span><span class=w> </span><span class=p>]</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;move&#34;, &#34;from&#34;: &#34;/foo/1&#34;, &#34;path&#34;: </span><span class=s2>&#34;/foo/3&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># 结果：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;foo&#34;: </span><span class=p>[</span><span class=w> </span><span class=s2>&#34;all&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;cows&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;eat&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;grass&#34;</span><span class=w> </span><span class=p>]</span><span class=w> </span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li></ol><h4 id=copy>copy</h4><p><code>copy</code> 操作将 <code>from</code> 位置的值复制到 <code>path</code> 位置。</p><h4 id=test>test</h4><p><code>test</code> 操作会检查 <code>path</code> 位置的值是否与 <code>value</code> “相等”。</p><p>这里，“相等”意味着 <code>path</code> 位置的值和 <code>value</code> 的值是相同的JSON类型，并且它们遵循以下规则：</p><ul><li>字符串：如果它们包含相同数量的 Unicode 字符并且它们的码点是逐字节相等，则被视为相等。</li><li>数字：如果它们的值在数值上是相等的，则被视为相等。</li><li>数组：如果它们包含相同数量的值，并且每个值可以使用此类型特定规则将其视为与另一个数组中对应位置处的值相等，则被视为相等。</li><li>对象：如果它们包含相同数量​​的成员，并且每个成员可以通过比较其键（作为字符串）和其值（使用此类型特定规则）来认为与其他对象中的成员相等，则被视为相等 。</li><li>文本（false，true 和 null）：如果它们完全一样，则被视为相等。</li></ul><p>请注意，所进行的比较是逻辑比较；例如，数组成员之间的空格不重要。</p><p>示例：</p><ol><li><p><code>test</code> 某个值成功</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;baz&#34;: </span><span class=s2>&#34;qux&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;foo&#34;: </span><span class=p>[</span><span class=w> </span><span class=s2>&#34;a&#34;</span><span class=p>,</span><span class=w> </span><span class=m>2</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;c&#34;</span><span class=w> </span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;test&#34;, &#34;path&#34;: &#34;/baz&#34;, &#34;value&#34;: </span><span class=s2>&#34;qux&#34;</span><span class=w> </span>}<span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;test&#34;, &#34;path&#34;: &#34;/foo/1&#34;, &#34;value&#34;: </span><span class=m>2</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li><li><p><code>test</code> 某个值错误</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w> </span><span class=nt>&#34;baz&#34;: </span><span class=s2>&#34;qux&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w> </span><span class=nt>&#34;op&#34;: &#34;test&#34;, &#34;path&#34;: &#34;/baz&#34;, &#34;value&#34;: </span><span class=s2>&#34;bar&#34;</span><span class=w> </span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li><li><p><code>~</code> 符号转义</p><p><code>~</code> 字符是 JSON 指针中的关键字。因此，我们需要将其编码为 <code>〜0</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;/&#34;: </span><span class=m>9</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;~1&#34;: </span><span class=m>10</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=nt>&#34;op&#34;: &#34;test&#34;, &#34;path&#34;: &#34;/~01&#34;, &#34;value&#34;: </span><span class=m>10</span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># 结果：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;/&#34;: </span><span class=m>9</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;~1&#34;: </span><span class=m>10</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li><li><p>比较字符串和数字</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c># 源数据：</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;/&#34;: </span><span class=m>9</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>&#34;~1&#34;: </span><span class=m>10</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># JSON Patch:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=nt>&#34;op&#34;: &#34;test&#34;, &#34;path&#34;: &#34;/~01&#34;, &#34;value&#34;: </span><span class=s2>&#34;10&#34;</span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># 失败，因为不遵循上述相等的规则。</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></li></ol><h2 id=结语>结语</h2><p>使用 JSON PATCH 的原因之一其实是为了避免在只需要修改某一部分内容的时候重新发送整个文档。JSON PATCH 也早已应用在了 Kubernetes 等许多项目中。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2023-04-07</span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/rfc6902-json-patch/ data-title="什么？修改 JSON 内容居然还有个 JSON PATCH 标准" data-hashtags="RFC 标准"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/rfc6902-json-patch/ data-hashtag="RFC 标准"><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/rfc6902-json-patch/ data-title="什么？修改 JSON 内容居然还有个 JSON PATCH 标准"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/rfc6902-json-patch/ data-title="什么？修改 JSON 内容居然还有个 JSON PATCH 标准"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/rfc6902-json-patch/ data-title="什么？修改 JSON 内容居然还有个 JSON PATCH 标准"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/rfc-%E6%A0%87%E5%87%86/>RFC 标准</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/why-cilium-for-k8s/ class=prev rel=prev title="我们为何选择 Cilium 作为 Kubernetes 的网络接口"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>我们为何选择 Cilium 作为 Kubernetes 的网络接口</a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>
