@@ -1,0 +1,293 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Kubernetes Admission Controller 简介 - 注入 sidacar 示例 - 凌虚 Blog</title><meta name=Description content="Kubernetes Admission Controller 简介 - 注入 sidacar 示例"><meta property="og:title" content="Kubernetes Admission Controller 简介 - 注入 sidacar 示例"><meta property="og:description" content="Kubernetes Admission Controller 简介 - 注入 sidacar 示例"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/k8s-admission-controller-sidacar-example/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-04-16T14:22:36+08:00"><meta property="article:modified_time" content="2023-04-16T20:17:35+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="Kubernetes Admission Controller 简介 - 注入 sidacar 示例"><meta name=twitter:description content="Kubernetes Admission Controller 简介 - 注入 sidacar 示例"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/k8s-admission-controller-sidacar-example/><link rel=prev href=https://rifewang.github.io/rfc6902-json-patch/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Kubernetes Admission Controller 简介 - 注入 sidacar 示例","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/k8s-admission-controller-sidacar-example\/"},"image":["https:\/\/rifewang.github.io\/images\/avatar.png"],"genre":"posts","keywords":"Kubernetes","wordcount":2330,"url":"https:\/\/rifewang.github.io\/k8s-admission-controller-sidacar-example\/","datePublished":"2023-04-16T14:22:36+08:00","dateModified":"2023-04-16T20:17:35+08:00","license":"Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)","publisher":{"@type":"Organization","name":"凌虚","logo":"https:\/\/rifewang.github.io\/images\/avatar.png"},"author":{"@type":"Person","name":"凌虚"},"description":"Kubernetes Admission Controller 简介 - 注入 sidacar 示例"}</script></head><script async src="https://www.googletagmanager.com/gtag/js?id=G-VRMQFEVL7J"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-VRMQFEVL7J")</script><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Kubernetes Admission Controller 简介 - 注入 sidacar 示例</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span>&nbsp;<span class=post-category>included in <a href=/categories/kubernetes/><i class="far fa-folder fa-fw" aria-hidden=true></i>Kubernetes</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2023-04-16>2023-04-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;2330 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;5 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#admission-controller>Admission Controller</a></li><li><a href=#注入-sidacar-示例>注入 sidacar 示例</a><ul><li><a href=#1-确保-k8s-的-api-server-开启-admission-plugins>1. 确保 k8s 的 api-server 开启 admission plugins</a></li><li><a href=#2-准备-tlsssl-证书>2. 准备 TLS/SSL 证书</a></li><li><a href=#3-构建自己的-https-server>3. 构建自己的 HTTPS Server</a></li><li><a href=#4-配置-mutatingwebhookconfiguration>4. 配置 MutatingWebhookConfiguration</a></li></ul></li><li><a href=#结语>结语</a></li></ul></nav></div></div><div class=content id=content><h2 id=admission-controller>Admission Controller</h2><p>Kubernetes Admission Controller（准入控制器）是什么？</p><p>如下图所示：</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://d33wubrfki0l68.cloudfront.net/af21ecd38ec67b3d81c1b762221b4ac777fcf02d/7c60e/images/blog/2019-03-21-a-guide-to-kubernetes-admission-controllers/admission-controller-phases.png data-srcset="https://d33wubrfki0l68.cloudfront.net/af21ecd38ec67b3d81c1b762221b4ac777fcf02d/7c60e/images/blog/2019-03-21-a-guide-to-kubernetes-admission-controllers/admission-controller-phases.png, https://d33wubrfki0l68.cloudfront.net/af21ecd38ec67b3d81c1b762221b4ac777fcf02d/7c60e/images/blog/2019-03-21-a-guide-to-kubernetes-admission-controllers/admission-controller-phases.png 1.5x, https://d33wubrfki0l68.cloudfront.net/af21ecd38ec67b3d81c1b762221b4ac777fcf02d/7c60e/images/blog/2019-03-21-a-guide-to-kubernetes-admission-controllers/admission-controller-phases.png 2x" data-sizes=auto alt=https://d33wubrfki0l68.cloudfront.net/af21ecd38ec67b3d81c1b762221b4ac777fcf02d/7c60e/images/blog/2019-03-21-a-guide-to-kubernetes-admission-controllers/admission-controller-phases.png title="Admission Controller Phases"></p><p>当我们向 k8s api-server 提交了请求之后，需要经过认证鉴权、mutation admission、validation 校验等一系列过程，最后才会将资源对象持久化到 etcd 中（其它组件诸如 controller 或 scheduler 等操作的也是持久化之后的对象）。而所谓的 Kubernetes Admission Controller 其实就是在这个过程中所提供的 webhook 机制，让用户能够在资源对象被持久化之前任意地修改资源对象并进行自定义的校验。</p><p>使用 Kubernetes Admission Controller ，你可以：</p><ul><li>安全性：强制实施整个命名空间或集群范围内的安全规范。例如，禁止容器以root身份运行或确保容器的根文件系统始终以只读方式挂载；只允许从企业已知的特定注册中心拉取镜像，拒绝未知的镜像源；拒绝不符合安全标准的部署。</li><li>治理：强制遵守某些实践，例如具有良好的标签、注释、资源限制或其他设置。一些常见的场景包括：在不同的对象上强制执行标签验证，以确保各种对象使用适当的标签，例如将每个对象分配给团队或项目，或指定应用程序标签的每个部署；自动向对象添加注释。</li><li>配置管理：验证集群中对象的配置，并防止任何明显的错误配置影响到您的集群。准入控制器可以用于检测和修复部署了没有语义标签的镜像，例如：自动添加资源限制或验证资源限制；确保向Pod添加合理的标签；确保在生产部署的镜像不使用 latest tag 或带有 -dev 后缀的 tag。</li></ul><p>Admission Controller（准入控制器）提供了两种 webhook：</p><ul><li><code>Mutation admission webhook</code>：修改资源对象</li><li><code>Validation admission webhook</code>：校验资源对象</li></ul><p>所谓的 webhook 其实就是你需要部署一个 HTTPS Server ，然后 k8s 会将 admission 的请求发送给你的 server，当然你的 server 需要按照约定格式返回响应。</p><p>使用 Kubernetes Admission Controller，你需要：</p><ul><li>确保 k8s 的 api-server 开启 <code>admission plugins</code>。</li><li>准备好 TLS/SSL 证书，用于 HTTPS，可以是自签的。</li><li>构建自己的 HTTPS server，实现处理逻辑。</li><li>配置 <code>MutatingWebhookConfiguration</code> 或者 <code>ValidatingWebhookConfiguration</code>，你得告诉 k8s 怎么跟你的 server 通信。</li></ul><h2 id=注入-sidacar-示例>注入 sidacar 示例</h2><p>接下来，我们来实现一个最简单的为 pod 注入 sidacar 的示例。</p><h3 id=1-确保-k8s-的-api-server-开启-admission-plugins>1. 确保 k8s 的 api-server 开启 admission plugins</h3><p>首先需要确认你的 k8s 集群支持 admission controller 。</p><p>执行 <code>kubectl api-resources | grep admission</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>mutatingwebhookconfigurations       admissionregistration.k8s.io/v1     false   MutatingWebhookConfiguration
+</span></span><span class=line><span class=cl>validatingwebhookconfigurations     admissionregistration.k8s.io/v1     false   ValidatingWebhookConfiguration
+</span></span></code></pre></td></tr></table></div></div><p>得到以上结果就说明你的 k8s 集群支持 admission controller。</p><p>然后需要确认 api-server 开启 admission plugins，根据你的 api-server 的启动方式，确认如下参数：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>--enable-admission-plugins=MutatingAdmissionWebhook,ValidatingAdmissionWebhook
+</span></span></code></pre></td></tr></table></div></div><p>plugins 可以有多个，用逗号分隔，本示例其实只需要 <code>MutatingAdmissionWebhook</code>，至于其它的 plugins 用途请参考<a href=https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#how-do-i-turn-on-an-admission-controller target=_blank rel="noopener noreffer">官方文档</a>。</p><h3 id=2-准备-tlsssl-证书>2. 准备 TLS/SSL 证书</h3><p>这里我们使用自签的证书，先创建一个证书目录，比如 <code>~/certs</code>，以下操作都在这个目录下进行。</p><ol><li><p>创建我们自己的 root CA</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>openssl genrsa -des3 -out rootCA.key 4096
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 1024 -out rootCA.crt
+</span></span></code></pre></td></tr></table></div></div></li><li><p>创建证书</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>openssl genrsa -out mylocal.com.key 2048
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>openssl req -new -key mylocal.com.key -out mylocal.com.csr
+</span></span></code></pre></td></tr></table></div></div></li><li><p>使用我们自己的 root CA 去签我们的证书
+注意：由于我们会把 HTTPS server 部署在本地进行测试，所以我们在签名的时候要额外指定自己的内网IP。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>echo subjectAltName = IP:192.168.100.22 &gt; extfile.cnf
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>openssl x509 -req -in mylocal.com.csr \
+</span></span><span class=line><span class=cl>    -CA rootCA.crt -CAkey rootCA.key \
+</span></span><span class=line><span class=cl>    -CAcreateserial -out mylocal.com.crt \
+</span></span><span class=line><span class=cl>    -days 500 -extfile extfile.cnf
+</span></span></code></pre></td></tr></table></div></div></li></ol><p>执行完后你会得到以下文件：</p><ul><li><code>rootCA.key</code>：根 CA 私钥</li><li><code>rootCA.crt</code>：根 CA 证书（后面 k8s 需要用到）</li><li><code>rootCA.srl</code>：追踪发放的证书</li><li><code>mylocal.com.key</code>：自签域名的私钥（HTTPS server 需要用到）</li><li><code>mylocal.com.csr</code>：自签域名的证书签名请求文件</li><li><code>mylocal.com.crt</code>：自签域名的证书（HTTPS server 需要用到）</li></ul><h3 id=3-构建自己的-https-server>3. 构建自己的 HTTPS Server</h3><p>Webhook 的请求和响应都要是 JSON 格式的 <a href=https://github.com/kubernetes/api/blob/e2bb673563f3cf77dedec1dedb5645f2eaf6741b/admission/v1/types.go#L29 target=_blank rel="noopener noreffer">AdmissionReview</a> 对象。</p><blockquote><p>注意：AdmissionReview v1 版本和 v1beta1 版本有区别，我们这里使用 v1 版本。</p></blockquote><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=c1>// AdmissionReview describes an admission review request/response.
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>AdmissionReview</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>metav1</span><span class=p>.</span><span class=nx>TypeMeta</span> <span class=s>`json:&#34;,inline&#34;`</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// Request describes the attributes for the admission request.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// +optional
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>Request</span> <span class=o>*</span><span class=nx>AdmissionRequest</span> <span class=s>`json:&#34;request,omitempty&#34; protobuf:&#34;bytes,1,opt,name=request&#34;`</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// Response describes the attributes for the admission response.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// +optional
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>Response</span> <span class=o>*</span><span class=nx>AdmissionResponse</span> <span class=s>`json:&#34;response,omitempty&#34; protobuf:&#34;bytes,2,opt,name=response&#34;`</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>我们需要处理的逻辑其实就是解析 <code>AdmissionRequest</code>，然后构造 <code>AdmissionResponse</code> 最后返回响应。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=c1>// AdmissionResponse describes an admission response.
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>AdmissionResponse</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// UID is an identifier for the individual request/response.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// This must be copied over from the corresponding AdmissionRequest.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>UID</span> <span class=nx>types</span><span class=p>.</span><span class=nx>UID</span> <span class=s>`json:&#34;uid&#34; protobuf:&#34;bytes,1,opt,name=uid&#34;`</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// Allowed indicates whether or not the admission request was permitted.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>Allowed</span> <span class=kt>bool</span> <span class=s>`json:&#34;allowed&#34; protobuf:&#34;varint,2,opt,name=allowed&#34;`</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// The patch body. Currently we only support &#34;JSONPatch&#34; which implements RFC 6902.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// +optional
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>Patch</span> <span class=p>[]</span><span class=kt>byte</span> <span class=s>`json:&#34;patch,omitempty&#34; protobuf:&#34;bytes,4,opt,name=patch&#34;`</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// The type of Patch. Currently we only allow &#34;JSONPatch&#34;.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// +optional
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>PatchType</span> <span class=o>*</span><span class=nx>PatchType</span> <span class=s>`json:&#34;patchType,omitempty&#34; protobuf:&#34;bytes,5,opt,name=patchType&#34;`</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// ...
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>AdmissionResponse</code> 中的 <code>PatchType</code> 字段必须是 <code>JSONPatch</code>，<code>Patch</code> 字段必须是 <a href=https://www.rfc-editor.org/rfc/rfc6902 target=_blank rel="noopener noreffer">rfc6902 JSON Patch</a> 格式。</p><p>我们使用 go 编写一个最简单的 HTTPS Server 示例如下，该示例会修改 pod 的 spec.containers 数组，向其中追加一个 sidecar 容器：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;encoding/json&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;log&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;net/http&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nx>v1</span> <span class=s>&#34;k8s.io/api/admission/v1&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=nx>corev1</span> <span class=s>&#34;k8s.io/api/core/v1&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// patchOperation is an operation of a JSON patch, see https://tools.ietf.org/html/rfc6902 .
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>patchOperation</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Op</span>    <span class=kt>string</span>      <span class=s>`json:&#34;op&#34;`</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Path</span>  <span class=kt>string</span>      <span class=s>`json:&#34;path&#34;`</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Value</span> <span class=kd>interface</span><span class=p>{}</span> <span class=s>`json:&#34;value,omitempty&#34;`</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=nx>certFile</span> <span class=p>=</span> <span class=s>&#34;/Users/wy/certs/mylocal.com.crt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=nx>keyFile</span>  <span class=p>=</span> <span class=s>&#34;/Users/wy/certs/mylocal.com.key&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>http</span><span class=p>.</span><span class=nf>HandleFunc</span><span class=p>(</span><span class=s>&#34;/&#34;</span><span class=p>,</span> <span class=kd>func</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>defer</span> <span class=nx>req</span><span class=p>.</span><span class=nx>Body</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>		<span class=kd>var</span> <span class=nx>admissionReview</span> <span class=nx>v1</span><span class=p>.</span><span class=nx>AdmissionReview</span>
+</span></span><span class=line><span class=cl>		<span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewDecoder</span><span class=p>(</span><span class=nx>req</span><span class=p>.</span><span class=nx>Body</span><span class=p>).</span><span class=nf>Decode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>admissionReview</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>log</span><span class=p>.</span><span class=nf>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=kd>var</span> <span class=nx>patches</span> <span class=p>[]</span><span class=nx>patchOperation</span>
+</span></span><span class=line><span class=cl>		<span class=nx>patches</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>patches</span><span class=p>,</span> <span class=nx>patchOperation</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Op</span><span class=p>:</span>   <span class=s>&#34;add&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Path</span><span class=p>:</span> <span class=s>&#34;/spec/containers/-&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Value</span><span class=p>:</span> <span class=o>&amp;</span><span class=nx>corev1</span><span class=p>.</span><span class=nx>Container</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=nx>Image</span><span class=p>:</span> <span class=s>&#34;busybox&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>				<span class=nx>Name</span><span class=p>:</span>  <span class=s>&#34;sidecar&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=p>},</span>
+</span></span><span class=line><span class=cl>		<span class=p>})</span>
+</span></span><span class=line><span class=cl>		<span class=nx>patchBytes</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>Marshal</span><span class=p>(</span><span class=nx>patches</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>log</span><span class=p>.</span><span class=nf>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=kd>var</span> <span class=nx>PatchTypeJSONPatch</span> <span class=nx>v1</span><span class=p>.</span><span class=nx>PatchType</span> <span class=p>=</span> <span class=s>&#34;JSONPatch&#34;</span>
+</span></span><span class=line><span class=cl>		<span class=nx>admissionReview</span><span class=p>.</span><span class=nx>Response</span> <span class=p>=</span> <span class=o>&amp;</span><span class=nx>v1</span><span class=p>.</span><span class=nx>AdmissionResponse</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>UID</span><span class=p>:</span>       <span class=nx>admissionReview</span><span class=p>.</span><span class=nx>Request</span><span class=p>.</span><span class=nx>UID</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Allowed</span><span class=p>:</span>   <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Patch</span><span class=p>:</span>     <span class=nx>patchBytes</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=nx>PatchType</span><span class=p>:</span> <span class=o>&amp;</span><span class=nx>PatchTypeJSONPatch</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=c1>// Return the AdmissionReview with a response as JSON.
+</span></span></span><span class=line><span class=cl><span class=c1></span>		<span class=nx>bytes</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>Marshal</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>admissionReview</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>log</span><span class=p>.</span><span class=nf>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>(</span><span class=nx>bytes</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nx>log</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;About to listen on 8443. Go to https://127.0.0.1:8443/&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>err</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nf>ListenAndServeTLS</span><span class=p>(</span><span class=s>&#34;:8443&#34;</span><span class=p>,</span> <span class=nx>certFile</span><span class=p>,</span> <span class=nx>keyFile</span><span class=p>,</span> <span class=kc>nil</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>log</span><span class=p>.</span><span class=nf>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=4-配置-mutatingwebhookconfiguration>4. 配置 MutatingWebhookConfiguration</h3><p>我们需要告诉 k8s 往哪里发送请求以及其它信息，这就需要配置 <code>MutatingWebhookConfiguration</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>admissionregistration.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>MutatingWebhookConfiguration</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>test-sidecar-injector</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>webhooks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>sidecar-injector.mytest.io</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>admissionReviewVersions</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=l>v1 </span><span class=w> </span><span class=c># 版本一定要与 HTTPS Server 处理的版本一致</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>sideEffects</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;NoneOnDryRun&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>reinvocationPolicy</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;Never&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>timeoutSeconds</span><span class=p>:</span><span class=w> </span><span class=m>30</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>objectSelector</span><span class=p>:</span><span class=w> </span><span class=c># 选择特定资源触发 webhook</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>matchExpressions</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>key</span><span class=p>:</span><span class=w> </span><span class=l>run</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>operator</span><span class=p>:</span><span class=w> </span><span class=l>In</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>values</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span>- <span class=s2>&#34;nginx&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>rules</span><span class=p>:</span><span class=w>  </span><span class=c># 触发规则</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>apiGroups</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span>- <span class=s2>&#34;&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>apiVersions</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span>- <span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>operations</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span>- <span class=l>CREATE</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>resources</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span>- <span class=l>pods</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>scope</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;*&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>clientConfig</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>caBundle</span><span class=p>:</span><span class=w> </span><span class=l>${CA_PEM_B64}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=l>https://192.168.100.22:8443/  </span><span class=w> </span><span class=c># 指向我本地的IP地址</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=c># service:  # 如果把 server 部署到集群内部则可以通过 service 引用</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>其中的 ${CA_PEM_B64} 需要填入第一步的 rootCA.crt 文件的 base64 编码，我们可以执行以下命令得到：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>openssl base64 -A -in rootCA.crt
+</span></span></code></pre></td></tr></table></div></div><p>在上例中，我们还配置了 webhook 触发的资源要求和规则，比如这里的规则是创建 pods 并且 pod 的 labels 标签必须满足 <code>matchExpressions</code> 。</p><p>最后测试，我们可以执行 <code>kubectl run nginx --image=nginx</code>，成功之后再查看提交的 pod ，你会发现 containers 中包含有我们注入的 sidecar 。</p><h2 id=结语>结语</h2><p>通过本文相信你已经了解了 Admission Controller 的基本使用过程，诸多开源框架，比如 Istio 等也广泛地使用了 Admission Controller。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2023-04-16</span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/k8s-admission-controller-sidacar-example/ data-title="Kubernetes Admission Controller 简介 - 注入 sidacar 示例" data-hashtags=Kubernetes><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/k8s-admission-controller-sidacar-example/ data-hashtag=Kubernetes><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/k8s-admission-controller-sidacar-example/ data-title="Kubernetes Admission Controller 简介 - 注入 sidacar 示例"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/k8s-admission-controller-sidacar-example/ data-title="Kubernetes Admission Controller 简介 - 注入 sidacar 示例"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/k8s-admission-controller-sidacar-example/ data-title="Kubernetes Admission Controller 简介 - 注入 sidacar 示例"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/kubernetes/>Kubernetes</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/rfc6902-json-patch/ class=prev rel=prev title="什么？修改 JSON 内容居然还有个 JSON PATCH 标准"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>什么？修改 JSON 内容居然还有个 JSON PATCH 标准</a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>
