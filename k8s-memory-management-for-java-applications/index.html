@@ -1,0 +1,592 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Java 应用程序在 Kubernetes 上棘手的内存管理 - 凌虚 Blog</title><meta name=Description content="Java 应用程序在 Kubernetes 上棘手的内存管理"><meta property="og:title" content="Java 应用程序在 Kubernetes 上棘手的内存管理"><meta property="og:description" content="Java 应用程序在 Kubernetes 上棘手的内存管理"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/k8s-memory-management-for-java-applications/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-04-23T15:17:18+08:00"><meta property="article:modified_time" content="2023-04-23T16:44:46+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="Java 应用程序在 Kubernetes 上棘手的内存管理"><meta name=twitter:description content="Java 应用程序在 Kubernetes 上棘手的内存管理"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/k8s-memory-management-for-java-applications/><link rel=prev href=https://rifewang.github.io/k8s-admission-controller-sidacar-example/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Java 应用程序在 Kubernetes 上棘手的内存管理","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/k8s-memory-management-for-java-applications\/"},"image":["https:\/\/rifewang.github.io\/images\/avatar.png"],"genre":"posts","keywords":"Kubernetes, Java","wordcount":5771,"url":"https:\/\/rifewang.github.io\/k8s-memory-management-for-java-applications\/","datePublished":"2023-04-23T15:17:18+08:00","dateModified":"2023-04-23T16:44:46+08:00","license":"Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)","publisher":{"@type":"Organization","name":"凌虚","logo":"https:\/\/rifewang.github.io\/images\/avatar.png"},"author":{"@type":"Person","name":"凌虚"},"description":"Java 应用程序在 Kubernetes 上棘手的内存管理"}</script></head><script async src="https://www.googletagmanager.com/gtag/js?id=G-VRMQFEVL7J"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-VRMQFEVL7J")</script><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Java 应用程序在 Kubernetes 上棘手的内存管理</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span>&nbsp;<span class=post-category>included in <a href=/categories/kubernetes/><i class="far fa-folder fa-fw" aria-hidden=true></i>Kubernetes</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2023-04-23>2023-04-23</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;5771 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;12 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#引言>引言</a></li><li><a href=#jvm-内存模型简介>JVM 内存模型简介</a><ul><li><a href=#非-heap-内存>非 Heap 内存</a></li><li><a href=#heap-堆内存>Heap 堆内存</a></li></ul></li><li><a href=#kubernetes-内存管理>Kubernetes 内存管理</a></li><li><a href=#jvm-和-kubernetes>JVM 和 Kubernetes</a><ul><li><a href=#场景-1--java-out-of-memory-错误>场景 1 — Java Out Of Memory 错误</a></li><li><a href=#场景-2--pod-超出内存-limit-限制>场景 2 — Pod 超出内存 limit 限制</a></li><li><a href=#场景-3--pod-超出节点的可用内存>场景 3 — Pod 超出节点的可用内存</a></li><li><a href=#场景-4--参数配置良好应用程序运行良好>场景 4 — 参数配置良好，应用程序运行良好</a></li></ul></li><li><a href=#结语>结语</a></li></ul></nav></div></div><div class=content id=content><h2 id=引言>引言</h2><p>如何结合使用 JVM Heap 堆和 Kubernetes 内存的 requests 和 limits 并远离麻烦。</p><p>在容器环境中运行 Java 应用程序需要了解两者 —— JVM 内存机制和 Kubernetes 内存管理。这两个环境一起工作会产生一个稳定的应用程序，但是，错误配置最多可能导致基础设施超支，最坏情况下可能会导致应用程序不稳定或崩溃。我们将首先仔细研究 JVM 内存的工作原理，然后我们将转向 Kubernetes，最后，我们将把这两个概念放在一起。</p><h2 id=jvm-内存模型简介>JVM 内存模型简介</h2><p>JVM 内存管理是一种高度复杂的机制，多年来通过连续发布不断改进，是 JVM 平台的优势之一。对于本文，我们将只介绍对本主题有用的基础知识。在较高的层次上，JVM 内存由两个空间组成 —— Heap 和 Metaspace。</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://miro.medium.com/1*YsRNlCNS8Qm-d9SQv2-g1A.png data-srcset="https://miro.medium.com/1*YsRNlCNS8Qm-d9SQv2-g1A.png, https://miro.medium.com/1*YsRNlCNS8Qm-d9SQv2-g1A.png 1.5x, https://miro.medium.com/1*YsRNlCNS8Qm-d9SQv2-g1A.png 2x" data-sizes=auto alt=https://miro.medium.com/1*YsRNlCNS8Qm-d9SQv2-g1A.png title="JVM 内存模型"></p><h3 id=非-heap-内存>非 Heap 内存</h3><p>JVM 使用许多内存<a href=https://docs.oracle.com/en/java/javase/17/troubleshoot/diagnostic-tools.html#GUID-5EF7BB07-C903-4EBD-A9C2-EC0E44048D37 target=_blank rel="noopener noreffer">区域</a>。最值得注意的是 Metaspace。Metaspace 有几个功能。它主要用作方法区，其中存储应用程序的类结构和方法定义，包括标准库。内存池和常量池用于不可变对象，例如字符串，以及类常量。堆栈区域是用于线程执行的后进先出结构，存储原语和对传递给函数的对象的引用。根据 JVM 实现和版本，此空间用途的一些细节可能会有所不同。</p><p>我喜欢将 Metaspace 空间视为一个管理区域。这个空间的大小可以从几 MB 到几百 MB 不等，具体取决于代码库及其依赖项的大小，并且在应用程序的整个生命周期中几乎保持不变。默认情况下，此空间未绑定并会根据应用程序需要进行扩展。</p><p>Metaspace 是在 Java 8 中引入的，取代了 Permanent Generation，后者存在垃圾回收问题。</p><p>其他一些值得一提的非堆内存区域是代码缓存、线程、垃圾回收。<a href=https://www.baeldung.com/java-memory-beyond-heap target=_blank rel="noopener noreffer">更多关于非堆内存参考这里</a>。</p><h3 id=heap-堆内存>Heap 堆内存</h3><p>如果 Metaspace 是管理空间，那么 Heap 就是操作空间。这里存放着所有的实例对象，并且垃圾回收机制在这里最为活跃。该内存的大小因应用程序而异，取决于工作负载的大小 —— 应用程序需要满足单个请求和流量特征所需的内存。大型应用程序通常具有以GB为单位的堆大小。</p><p>我们将使用一个示例应用程序用于探索内存机制。源代码在<a href=https://github.com/danielsiwiec/heap-killer-demo target=_blank rel="noopener noreffer">此处</a>。</p><p>这个演示应用程序模拟了一个真实世界的场景，在该场景中，为传入请求提供服务的系统会在堆上累积对象，并在请求完成后成为垃圾回收的候选对象。该程序的核心是一个无限循环，通过将大型对象添加到列表并定期清除列表来创建堆上的大型对象。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>val list = mutableListOf&lt;ByteArray&gt;()
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>generateSequence(0) { it + 1 }.forEach {
+</span></span><span class=line><span class=cl>    if (it % (HEAP_TO_FILL / INCREMENTS_IN_MB) == 0) list.clear()
+</span></span><span class=line><span class=cl>    list.add(ByteArray(INCREMENTS_IN_MB * BYTES_TO_MB))
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>以下是应用程序的输出。在预设间隔（本例中为350MB堆大小）内，状态会被清除。重要的是要理解，清除状态并不会清空堆 - 这是垃圾收集器内部实现的决定何时将对象从内存中驱逐出去。让我们使用几个堆设置来运行此应用程序，以查看它们对JVM行为的影响。</p><p>首先，我们将使用 4 GB 的最大堆大小（由 -Xmx 标志控制）。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>~ java -jar -Xmx4G app/build/libs/app.jar
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>INFO           Used          Free            Total
+</span></span><span class=line><span class=cl>INFO       14.00 MB      36.00 MB       50.00 MB
+</span></span><span class=line><span class=cl>INFO       66.00 MB      16.00 MB       82.00 MB
+</span></span><span class=line><span class=cl>INFO      118.00 MB     436.00 MB      554.00 MB
+</span></span><span class=line><span class=cl>INFO      171.00 MB     383.00 MB      554.00 MB
+</span></span><span class=line><span class=cl>INFO      223.00 MB     331.00 MB      554.00 MB
+</span></span><span class=line><span class=cl>INFO      274.00 MB     280.00 MB      554.00 MB
+</span></span><span class=line><span class=cl>INFO      326.00 MB     228.00 MB      554.00 MB
+</span></span><span class=line><span class=cl>INFO  State cleared at ~ 350 MB.
+</span></span><span class=line><span class=cl>INFO           Used          Free            Total
+</span></span><span class=line><span class=cl>INFO      378.00 MB     176.00 MB      554.00 MB
+</span></span><span class=line><span class=cl>INFO      430.00 MB     208.00 MB      638.00 MB
+</span></span><span class=line><span class=cl>INFO      482.00 MB     156.00 MB      638.00 MB
+</span></span><span class=line><span class=cl>INFO      534.00 MB     104.00 MB      638.00 MB
+</span></span><span class=line><span class=cl>INFO      586.00 MB      52.00 MB      638.00 MB
+</span></span><span class=line><span class=cl>INFO      638.00 MB      16.00 MB      654.00 MB
+</span></span><span class=line><span class=cl>INFO      690.00 MB      16.00 MB      706.00 MB
+</span></span><span class=line><span class=cl>INFO  State cleared at ~ 350 MB.
+</span></span><span class=line><span class=cl>INFO           Used          Free            Total
+</span></span><span class=line><span class=cl>INFO      742.00 MB      16.00 MB      758.00 MB
+</span></span><span class=line><span class=cl>INFO      794.00 MB      16.00 MB      810.00 MB
+</span></span><span class=line><span class=cl>INFO      846.00 MB      16.00 MB      862.00 MB
+</span></span><span class=line><span class=cl>INFO      899.00 MB      15.00 MB      914.00 MB
+</span></span><span class=line><span class=cl>INFO      951.00 MB      15.00 MB      966.00 MB
+</span></span><span class=line><span class=cl>INFO     1003.00 MB      15.00 MB     1018.00 MB
+</span></span><span class=line><span class=cl>INFO     1055.00 MB      15.00 MB     1070.00 MB
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>...
+</span></span></code></pre></td></tr></table></div></div><p>有趣的是，尽管状态已被清除并准备好进行垃圾回收，但可以看到使用的内存（第一列）仍在增长。为什么会这样呢？由于堆有足够的空间可以扩展，JVM 延迟了通常需要大量 CPU 资源的垃圾回收，并优化为服务主线程。让我们看看不同堆大小如何影响此行为。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>~ java -jar -Xmx380M app/build/libs/app.jar
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>INFO           Used          Free            Total
+</span></span><span class=line><span class=cl>INFO       19.00 MB     357.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO       70.00 MB     306.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      121.00 MB     255.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      172.00 MB     204.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      208.00 MB     168.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      259.00 MB     117.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      310.00 MB      66.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO  State cleared at ~ 350 MB.
+</span></span><span class=line><span class=cl>INFO           Used          Free            Total
+</span></span><span class=line><span class=cl>INFO       55.00 MB     321.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      106.00 MB     270.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      157.00 MB     219.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      208.00 MB     168.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      259.00 MB     117.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      310.00 MB      66.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      361.00 MB      15.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO  State cleared at ~ 350 MB.
+</span></span><span class=line><span class=cl>INFO           Used          Free            Total
+</span></span><span class=line><span class=cl>INFO       55.00 MB     321.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      106.00 MB     270.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      157.00 MB     219.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      208.00 MB     168.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      259.00 MB     117.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      310.00 MB      66.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      361.00 MB      15.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO  State cleared at ~ 350 MB.
+</span></span><span class=line><span class=cl>INFO           Used          Free            Total
+</span></span><span class=line><span class=cl>INFO       55.00 MB     321.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      106.00 MB     270.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      157.00 MB     219.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>INFO      208.00 MB     168.00 MB      376.00 MB
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>...
+</span></span></code></pre></td></tr></table></div></div><p>在这种情况下，我们分配了刚好足够的堆大小（380 MB）来处理请求。我们可以看到，在这些限制条件下，GC立即启动以避免可怕的内存不足错误。这是 JVM 的承诺 - 它将始终在由于内存不足而失败之前尝试进行垃圾回收。为了完整起见，让我们看一下它的实际效果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>~ java -jar -Xmx150M app/build/libs/app.jar
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>INFO           Used          Free            Total
+</span></span><span class=line><span class=cl>INFO       19.00 MB     133.00 MB      152.00 MB
+</span></span><span class=line><span class=cl>INFO       70.00 MB      82.00 MB      152.00 MB
+</span></span><span class=line><span class=cl>INFO      106.00 MB      46.00 MB      152.00 MB
+</span></span><span class=line><span class=cl>Exception in thread &#34;main&#34;
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>Caused by: java.lang.OutOfMemoryError: Java heap space
+</span></span><span class=line><span class=cl> at com.dansiwiec.HeapDestroyerKt.blowHeap(HeapDestroyer.kt:28)
+</span></span><span class=line><span class=cl> at com.dansiwiec.HeapDestroyerKt.main(HeapDestroyer.kt:18)
+</span></span><span class=line><span class=cl> ... 8 more
+</span></span></code></pre></td></tr></table></div></div><p>对于 150 MB 的最大堆大小，进程无法处理 350MB 的工作负载，并且在堆被填满时失败，但在垃圾收集器尝试挽救这种情况之前不会失败。</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://miro.medium.com/1*DM-4JVktY46Oxb2RR9dvSQ.png data-srcset="https://miro.medium.com/1*DM-4JVktY46Oxb2RR9dvSQ.png, https://miro.medium.com/1*DM-4JVktY46Oxb2RR9dvSQ.png 1.5x, https://miro.medium.com/1*DM-4JVktY46Oxb2RR9dvSQ.png 2x" data-sizes=auto alt=https://miro.medium.com/1*DM-4JVktY46Oxb2RR9dvSQ.png title="Java Out Of Memory"></p><p>我们也来看看 Metaspace 的大小。为此，我们将使用 <code>jstat</code>（为简洁起见省略了输出）</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>~ jstat -gc 35118
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>MU
+</span></span><span class=line><span class=cl>4731.0
+</span></span></code></pre></td></tr></table></div></div><p>输出表明 Metaspace 利用率约为 5 MB。记住 Metaspace 负责存储类定义，作为实验，让我们将流行的 Spring Boot 框架添加到我们的应用程序中。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>~ jstat -gc 34643
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>MU
+</span></span><span class=line><span class=cl>28198.6
+</span></span></code></pre></td></tr></table></div></div><p>Metaspace 跃升至近 30 MB，因为类加载器占用的空间要大得多。对于较大的应用程序，此空间占用超过 100 MB 的情况并不罕见。接下来让我们进入 Kubernetes 领域。</p><h2 id=kubernetes-内存管理>Kubernetes 内存管理</h2><p>Kubernetes 内存控制在操作系统级别运行，与管理分配给它的内存的 JVM 形成对比。K8s 内存管理机制的目标是确保工作负载被调度到资源充足的节点上，并将它们保持在一定的限制范围内。</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://miro.medium.com/1*30nf3uBWQBKo5ON9ZsKazg.png data-srcset="https://miro.medium.com/1*30nf3uBWQBKo5ON9ZsKazg.png, https://miro.medium.com/1*30nf3uBWQBKo5ON9ZsKazg.png 1.5x, https://miro.medium.com/1*30nf3uBWQBKo5ON9ZsKazg.png 2x" data-sizes=auto alt=https://miro.medium.com/1*30nf3uBWQBKo5ON9ZsKazg.png title="Kubernetes Cluster 示例"></p><p>在定义工作负载时，用户有两个参数可以操作 — <code>requests</code> 和 <code>limits</code>。这些是在容器级别定义的，但是，为了简单起见，我们将根据 pod 参数来考虑它，这些参数只是容器设置的总和。</p><p>当请求 pod 时，<em>kube-scheduler</em>（控制平面的一个组件）查看资源请求并选择一个具有足够资源的节点来容纳 pod。一旦调度，允许 pod 超过其内存<code>requests</code>（只要节点有空闲内存）但禁止超过其<code>limits</code>。</p><p><em>Kubelet</em>（节点上的容器运行时）监视 pod 的内存利用率，如果超过内存限制，它将重新启动 pod 或在节点资源不足时将其完全从节点中逐出（有关更多详细信息，请参阅有关此主题的<a href=https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ target=_blank rel="noopener noreffer">官方文档</a>。这会导致臭名昭著的 OOMKilled（内存不足）的 pod 状态。</p><p>当 pod 保持在其限制范围内，但超出了节点的可用内存时，会出现一个有趣的场景。这是可能的，因为调度程序会查看 pod 的请求（而不是限制）以将其调度到节点上。在这种情况下，<em>kubelet</em> 会执行一个称为节点压力驱逐的过程。简而言之，这意味着 pod 正在终止，以便回收节点上的资源。根据节点上的资源状况有多糟糕，驱逐可能是软的（允许 pod 优雅地终止）或硬的。此场景如下图所示。</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://miro.medium.com/1*I8NWZCfTe6FdQeVGPZZLEw.png data-srcset="https://miro.medium.com/1*I8NWZCfTe6FdQeVGPZZLEw.png, https://miro.medium.com/1*I8NWZCfTe6FdQeVGPZZLEw.png 1.5x, https://miro.medium.com/1*I8NWZCfTe6FdQeVGPZZLEw.png 2x" data-sizes=auto alt=https://miro.medium.com/1*I8NWZCfTe6FdQeVGPZZLEw.png title="Pod 驱逐场景"></p><p>关于驱逐的内部运作，肯定还有很多东西需要了解。有关此复杂过程的更多信息，<a href=https://kubernetes.io/docs/concepts/scheduling-eviction/_print/#pg-78e0431b4b7516092662a7c289cbb304 target=_blank rel="noopener noreffer">请点击此处</a>。对于这个故事，我们就此打住，现在看看这两种机制 —— JVM 内存管理和 Kubernetes 是如何协同工作的。</p><h2 id=jvm-和-kubernetes>JVM 和 Kubernetes</h2><p>Java 10 引入了一个新的 JVM 标志 —— <code>-XX:+UseContainerSupport</code>（默认设置为 true），如果 JVM 在资源有限的容器环境中运行，它允许 JVM 检测可用内存和 CPU。该标志与 <code>-XX:MaxRAMPercentage</code> 一起使用，让我们根据总可用内存的百分比设置最大堆大小。在 Kubernetes 的情况下，容器上的 limits 设置被用作此计算的基础。例如 —— 如果 pod 具有 2GB 的限制，并且将 <code>MaxRAMPercentage</code> 标志设置为 75％，则结果将是 1500MB 的最大堆大小。</p><p>这需要一些技巧，因为正如我们之前看到的，Java 应用程序的总体内存占用量高于堆（还有 Metaspace 、线程、垃圾回收、APM 代理等）。这意味着，需要在最大堆空间、非堆内存使用量和 pod 限制之间取得平衡。具体来说，前两个的总和不能超过最后一个，因为它会导致 <code>OOMKilled</code>（参见上一节）。</p><p>为了观察这两种机制的作用，我们将使用相同的<a href=https://github.com/danielsiwiec/heap-killer-demo target=_blank rel="noopener noreffer">示例项目</a>，但这次我们将把它部署在（本地）Kubernetes 集群上。为了在 Kubernetes 上部署应用程序，我们将其打包为一个 Pod：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Pod</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>heapkiller</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>containers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>heapkiller</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>heapkiller</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>imagePullPolicy</span><span class=p>:</span><span class=w> </span><span class=l>Never</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>resources</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>requests</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;500Mi&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;500m&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>limits</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;500Mi&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;500m&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>env</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>JAVA_TOOL_OPTIONS</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>value</span><span class=p>:</span><span class=w> </span><span class=s1>&#39;-XX:MaxRAMPercentage=70.0&#39;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>快速复习第一部分 —— 我们确定应用程序需要<strong>至少 380MB</strong>的堆内存才能正常运行。</p><h3 id=场景-1--java-out-of-memory-错误>场景 1 — Java Out Of Memory 错误</h3><p>让我们首先了解我们可以操作的参数。它们是 — pod 内存的 <code>requests</code> 和 <code>limits</code>，以及 Java 的最大堆大小，在我们的例子中由 <code>MaxRAMPercentage</code> 标志控制。</p><p>在第一种情况下，我们将总内存的 70% 分配给堆。pod 请求和限制都设置为 500MB，这导致最大堆为 350MB（500MB 的 70%）。</p><p>我们执行 <code>kubectl apply -f pod.yaml</code> 部署 pod ，然后用 <code>kubectl get logs -f pod/heapkiller</code> 观察日志。应用程序启动后不久，我们会看到以下输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>INFO  Started HeapDestroyerKt in 5.599 seconds (JVM running for 6.912)
+</span></span><span class=line><span class=cl>INFO           Used          Free            Total
+</span></span><span class=line><span class=cl>INFO       17.00 MB       5.00 MB       22.00 MB
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>INFO      260.00 MB      78.00 MB      338.00 MB
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>Exception in thread &#34;main&#34; java.lang.reflect.InvocationTargetException
+</span></span><span class=line><span class=cl>Caused by: java.lang.OutOfMemoryError: Java heap space
+</span></span></code></pre></td></tr></table></div></div><p>如果我们执行 <code>kubectl describe pod/heapkiller</code> 拉出 pod 详细信息，我们将找到以下信息：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Containers:
+</span></span><span class=line><span class=cl>  heapkiller:
+</span></span><span class=line><span class=cl>    ....
+</span></span><span class=line><span class=cl>    State:          Waiting
+</span></span><span class=line><span class=cl>      Reason:       CrashLoopBackOff
+</span></span><span class=line><span class=cl>    Last State:     Terminated
+</span></span><span class=line><span class=cl>      Reason:       Error
+</span></span><span class=line><span class=cl>      Exit Code:    1
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>Events:
+</span></span><span class=line><span class=cl>  Type     Reason     Age                From               Message
+</span></span><span class=line><span class=cl>  ----     ------     ----               ----               -------
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>  Warning  BackOff    7s (x7 over 89s)   kubelet            Back-off restarting failed container
+</span></span></code></pre></td></tr></table></div></div><p>简而言之，这意味着 pod 以状态码 1 退出（Java Out Of Memory 的退出码），Kubernetes 将继续使用标准退避策略重新启动它（以指数方式增加重新启动之间的暂停时间）。下图描述了这种情况。</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://miro.medium.com/1*oBTXuelgGENXzYFrQufByQ.png data-srcset="https://miro.medium.com/1*oBTXuelgGENXzYFrQufByQ.png, https://miro.medium.com/1*oBTXuelgGENXzYFrQufByQ.png 1.5x, https://miro.medium.com/1*oBTXuelgGENXzYFrQufByQ.png 2x" data-sizes=auto alt=https://miro.medium.com/1*oBTXuelgGENXzYFrQufByQ.png title=https://miro.medium.com/1*oBTXuelgGENXzYFrQufByQ.png></p><p>这种情况下的关键要点是 —— 如果 Java 因 OutOfMemory 错误而失败，您将在 pod 日志中看到它👌。</p><h3 id=场景-2--pod-超出内存-limit-限制>场景 2 — Pod 超出内存 limit 限制</h3><p>为了实现这个场景，我们的 Java 应用程序需要更多内存。我们将 <code>MaxRAMPercentage</code> 从 70% 增加到 90%，看看会发生什么。我们按照与之前相同的步骤并查看日志。该应用程序运行良好了一段时间：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>INFO      323.00 MB      83.00 MB      406.00 MB
+</span></span><span class=line><span class=cl>INFO      333.00 MB      73.00 MB      406.00 MB
+</span></span></code></pre></td></tr></table></div></div><p>然后 …… 噗。没有更多的日志。我们运行与之前相同的 describe 命令以获取有关 pod 状态的详细信息。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Containers:
+</span></span><span class=line><span class=cl>  heapkiller:
+</span></span><span class=line><span class=cl>    State:          Waiting
+</span></span><span class=line><span class=cl>      Reason:       CrashLoopBackOff
+</span></span><span class=line><span class=cl>    Last State:     Terminated
+</span></span><span class=line><span class=cl>      Reason:       OOMKilled
+</span></span><span class=line><span class=cl>      Exit Code:    137
+</span></span><span class=line><span class=cl>Events:
+</span></span><span class=line><span class=cl>  Type     Reason     Age                  From              Message
+</span></span><span class=line><span class=cl> ----     ------     ----                 ----               ------
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl> Warning  BackOff    6s (x7 over 107s)    kubelet            Back-off restarting failed container
+</span></span></code></pre></td></tr></table></div></div><p>乍看之下，这与之前的场景类似 —— pod crash，现在处于 CrashLoopBackOff（Kubernetes 一直在重启），但实际上却大不相同。之前，pod 中的进程退出（JVM 因内存不足错误而崩溃），在这种情况下，是 Kubernetes 杀死了 pod。该 <code>OOMKill</code> 状态表示 Kubernetes 已停止 pod，因为它已超出其分配的内存限制。这怎么可能？</p><p>通过将 90% 的可用内存分配给堆，我们假设其他所有内容都适合剩余的 10% (50MB)，而对于我们的应用程序，情况并非如此，这导致内存占用超过 500MB 限制。下图展示了超出 pod 内存限制的场景。</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://miro.medium.com/1*WHAw15zBLvRbJeYheM6J6A.png data-srcset="https://miro.medium.com/1*WHAw15zBLvRbJeYheM6J6A.png, https://miro.medium.com/1*WHAw15zBLvRbJeYheM6J6A.png 1.5x, https://miro.medium.com/1*WHAw15zBLvRbJeYheM6J6A.png 2x" data-sizes=auto alt=https://miro.medium.com/1*WHAw15zBLvRbJeYheM6J6A.png title=https://miro.medium.com/1*WHAw15zBLvRbJeYheM6J6A.png></p><p><strong>要点</strong> —— <code>OOMKilled</code> 在 pod 的状态中查找。</p><h3 id=场景-3--pod-超出节点的可用内存>场景 3 — Pod 超出节点的可用内存</h3><p>最后一种不太常见的故障情况是 pod 驱逐。在这种情况下 — 内存<code>request</code>和<code>limit</code>是不同的。Kubernetes 根据<code>request</code>参数而不是<code>limit</code>参数在节点上调度 pod。如果一个节点满足请求，<em>kube-scheduler</em>将选择它，而不管节点满足限制的能力如何。在我们将 pod 调度到节点上之前，让我们先看一下该节点的一些详细信息：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>~ kubectl describe node/docker-desktop
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Allocatable:
+</span></span><span class=line><span class=cl>  cpu:                4
+</span></span><span class=line><span class=cl>  memory:             1933496Ki
+</span></span><span class=line><span class=cl>Allocated resources:
+</span></span><span class=line><span class=cl>  (Total limits may be over 100 percent, i.e., overcommitted.)
+</span></span><span class=line><span class=cl>  Resource           Requests     Limits
+</span></span><span class=line><span class=cl>  --------           --------     ------
+</span></span><span class=line><span class=cl>  cpu                850m (21%)   0 (0%)
+</span></span><span class=line><span class=cl>  memory             240Mi (12%)  340Mi (18%)
+</span></span></code></pre></td></tr></table></div></div><p>我们可以看到该节点有大约 2GB 的可分配内存，并且已经占用了大约 240MB（由<em>kube-system</em> pod，例如<em>etcd</em>和<em>coredns</em>）。</p><p>对于这种情况，我们调整了 pod 的参数 —— <code>request: 500Mi</code>（未更改），<code>limit: 2500Mi</code> 我们重新配置应用程序以将堆填充到 2500MB（之前为 350MB）。当 pod 被调度到节点上时，我们可以在节点描述中看到这种分配：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Allocated resources:
+</span></span><span class=line><span class=cl>  (Total limits may be over 100 percent, i.e., overcommitted.)
+</span></span><span class=line><span class=cl>  Resource           Requests     Limits
+</span></span><span class=line><span class=cl>  --------           --------     ------
+</span></span><span class=line><span class=cl>  cpu                1350m (33%)  500m (12%)
+</span></span><span class=line><span class=cl>  memory             740Mi (39%)  2840Mi (150%)
+</span></span></code></pre></td></tr></table></div></div><p>当 pod 到达节点的可用内存时，它会被杀死，我们会在 pod 的描述中看到以下详细信息：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>~ kubectl describe pod/heapkiller
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Status:           Failed
+</span></span><span class=line><span class=cl>Reason:           Evicted
+</span></span><span class=line><span class=cl>Message:          The node was low on resource: memory.
+</span></span><span class=line><span class=cl>Containers:
+</span></span><span class=line><span class=cl>  heapkiller:
+</span></span><span class=line><span class=cl>    State:          Terminated
+</span></span><span class=line><span class=cl>      Reason:       ContainerStatusUnknown
+</span></span><span class=line><span class=cl>      Message:      The container could not be located when the pod was terminated
+</span></span><span class=line><span class=cl>      Exit Code:    137
+</span></span><span class=line><span class=cl>      Reason:       OOMKilled
+</span></span></code></pre></td></tr></table></div></div><p>这表明由于节点内存不足，pod 被逐出。我们可以在节点描述中看到更多细节：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>~ kubectl describe node/docker-desktop
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Events:
+</span></span><span class=line><span class=cl>  Type     Reason                   Age                 From     Message
+</span></span><span class=line><span class=cl>  ----     ------                   ----                ----     -------
+</span></span><span class=line><span class=cl>  Warning  SystemOOM                1s                  kubelet  System OOM encountered, victim process: java, pid: 67144
+</span></span></code></pre></td></tr></table></div></div><p>此时，CrashBackoffLoop 开始，pod 不断重启。下图描述了这种情况。</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://miro.medium.com/1*QMdq8zdRp3xNTirtIFWhxA.png data-srcset="https://miro.medium.com/1*QMdq8zdRp3xNTirtIFWhxA.png, https://miro.medium.com/1*QMdq8zdRp3xNTirtIFWhxA.png 1.5x, https://miro.medium.com/1*QMdq8zdRp3xNTirtIFWhxA.png 2x" data-sizes=auto alt=https://miro.medium.com/1*QMdq8zdRp3xNTirtIFWhxA.png title=https://miro.medium.com/1*QMdq8zdRp3xNTirtIFWhxA.png></p><p><strong>关键要点</strong> —— 在 pod 的状态中查找 Evicted 以及通知节点内存不足的事件。</p><h3 id=场景-4--参数配置良好应用程序运行良好>场景 4 — 参数配置良好，应用程序运行良好</h3><p>最后一个场景显示应用程序在正确调整的参数下正常运行。为此，我们将pod 的<code>request</code>和 <code>limit</code> 都设置为 500MB，将 <code>-XX:MaxRAMPercentage</code> 设置为 80%。</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://miro.medium.com/1*2GT_--JS7VOfHCsixj8PeQ.png data-srcset="https://miro.medium.com/1*2GT_--JS7VOfHCsixj8PeQ.png, https://miro.medium.com/1*2GT_--JS7VOfHCsixj8PeQ.png 1.5x, https://miro.medium.com/1*2GT_--JS7VOfHCsixj8PeQ.png 2x" data-sizes=auto alt=https://miro.medium.com/1*2GT_--JS7VOfHCsixj8PeQ.png title=https://miro.medium.com/1*2GT_--JS7VOfHCsixj8PeQ.png></p><p>让我们收集一些统计数据，以了解节点级别和更深层次的 Pod 中正在发生的情况。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>~ kubectl describe node/docker-desktop
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Allocated resources:
+</span></span><span class=line><span class=cl>  (Total limits may be over 100 percent, i.e., overcommitted.)
+</span></span><span class=line><span class=cl>  Resource           Requests     Limits
+</span></span><span class=line><span class=cl>  --------           --------     ------
+</span></span><span class=line><span class=cl>  cpu                1350m (33%)  500m (12%)
+</span></span><span class=line><span class=cl>  memory             740Mi (39%)  840Mi (44%)
+</span></span></code></pre></td></tr></table></div></div><p>节点看起来很健康，有空闲资源👌。让我们看看 pod 的内部。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl># Run from within the container
+</span></span><span class=line><span class=cl>~ cat /sys/fs/cgroup/memory.current
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>523747328
+</span></span></code></pre></td></tr></table></div></div><p>这显示了容器的当前内存使用情况。那是 499MB，就在边缘。让我们看看是什么占用了这段内存：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl># Run from within the container
+</span></span><span class=line><span class=cl>~ ps -o pid,rss,command ax
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  PID   RSS   COMMAND
+</span></span><span class=line><span class=cl>    1 501652  java -XX:NativeMemoryTracking=summary -jar /app.jar
+</span></span><span class=line><span class=cl>   36   472   /bin/sh
+</span></span><span class=line><span class=cl>   55  1348   ps -o pid,rss,command ax
+</span></span></code></pre></td></tr></table></div></div><p>RSS，*Resident Set Size，*是对正在占用的内存进程的一个很好的估计。上面显示 490MB（501652 bytes）被 Java 进程占用。让我们再剥离一层，看看 JVM 的内存分配。我们传递给 Java 进程的标志 <code>-XX:NativeMemoryTracking</code> 允许我们收集有关 Java 内存空间的详细运行时统计信息。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
+</span><span class=lnt>76
+</span><span class=lnt>77
+</span><span class=lnt>78
+</span><span class=lnt>79
+</span><span class=lnt>80
+</span><span class=lnt>81
+</span><span class=lnt>82
+</span><span class=lnt>83
+</span><span class=lnt>84
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>~ jcmd 1 VM.native_memory summary
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Total: reserved=1824336KB, committed=480300KB
+</span></span><span class=line><span class=cl>-                 Java Heap (reserved=409600KB, committed=409600KB)
+</span></span><span class=line><span class=cl>                            (mmap: reserved=409600KB, committed=409600KB)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-                     Class (reserved=1049289KB, committed=4297KB)
+</span></span><span class=line><span class=cl>                            (classes #6760)
+</span></span><span class=line><span class=cl>                            (  instance classes #6258, array classes #502)
+</span></span><span class=line><span class=cl>                            (malloc=713KB #15321)
+</span></span><span class=line><span class=cl>                            (mmap: reserved=1048576KB, committed=3584KB)
+</span></span><span class=line><span class=cl>                            (  Metadata:   )
+</span></span><span class=line><span class=cl>                            (    reserved=32768KB, committed=24896KB)
+</span></span><span class=line><span class=cl>                            (    used=24681KB)
+</span></span><span class=line><span class=cl>                            (    waste=215KB =0.86%)
+</span></span><span class=line><span class=cl>                            (  Class space:)
+</span></span><span class=line><span class=cl>                            (    reserved=1048576KB, committed=3584KB)
+</span></span><span class=line><span class=cl>                            (    used=3457KB)
+</span></span><span class=line><span class=cl>                            (    waste=127KB =3.55%)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-                    Thread (reserved=59475KB, committed=2571KB)
+</span></span><span class=line><span class=cl>                            (thread #29)
+</span></span><span class=line><span class=cl>                            (stack: reserved=59392KB, committed=2488KB)
+</span></span><span class=line><span class=cl>                            (malloc=51KB #178)
+</span></span><span class=line><span class=cl>                            (arena=32KB #56)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-                      Code (reserved=248531KB, committed=14327KB)
+</span></span><span class=line><span class=cl>                            (malloc=800KB #4785)
+</span></span><span class=line><span class=cl>                            (mmap: reserved=247688KB, committed=13484KB)
+</span></span><span class=line><span class=cl>                            (arena=43KB #45)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-                        GC (reserved=1365KB, committed=1365KB)
+</span></span><span class=line><span class=cl>                            (malloc=25KB #83)
+</span></span><span class=line><span class=cl>                            (mmap: reserved=1340KB, committed=1340KB)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-                  Compiler (reserved=204KB, committed=204KB)
+</span></span><span class=line><span class=cl>                            (malloc=39KB #316)
+</span></span><span class=line><span class=cl>                            (arena=165KB #5)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-                  Internal (reserved=283KB, committed=283KB)
+</span></span><span class=line><span class=cl>                            (malloc=247KB #5209)
+</span></span><span class=line><span class=cl>                            (mmap: reserved=36KB, committed=36KB)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-                     Other (reserved=26KB, committed=26KB)
+</span></span><span class=line><span class=cl>                            (malloc=26KB #3)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-                    Symbol (reserved=6918KB, committed=6918KB)
+</span></span><span class=line><span class=cl>                            (malloc=6206KB #163986)
+</span></span><span class=line><span class=cl>                            (arena=712KB #1)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-    Native Memory Tracking (reserved=3018KB, committed=3018KB)
+</span></span><span class=line><span class=cl>                            (malloc=6KB #92)
+</span></span><span class=line><span class=cl>                            (tracking overhead=3012KB)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-        Shared class space (reserved=12288KB, committed=12224KB)
+</span></span><span class=line><span class=cl>                            (mmap: reserved=12288KB, committed=12224KB)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-               Arena Chunk (reserved=176KB, committed=176KB)
+</span></span><span class=line><span class=cl>                            (malloc=176KB)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-                   Logging (reserved=5KB, committed=5KB)
+</span></span><span class=line><span class=cl>                            (malloc=5KB #219)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-                 Arguments (reserved=1KB, committed=1KB)
+</span></span><span class=line><span class=cl>                            (malloc=1KB #53)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-                    Module (reserved=229KB, committed=229KB)
+</span></span><span class=line><span class=cl>                            (malloc=229KB #1710)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-                 Safepoint (reserved=8KB, committed=8KB)
+</span></span><span class=line><span class=cl>                            (mmap: reserved=8KB, committed=8KB)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-           Synchronization (reserved=48KB, committed=48KB)
+</span></span><span class=line><span class=cl>                            (malloc=48KB #574)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-            Serviceability (reserved=1KB, committed=1KB)
+</span></span><span class=line><span class=cl>                            (malloc=1KB #14)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-                 Metaspace (reserved=32870KB, committed=24998KB)
+</span></span><span class=line><span class=cl>                            (malloc=102KB #52)
+</span></span><span class=line><span class=cl>                            (mmap: reserved=32768KB, committed=24896KB)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-      String Deduplication (reserved=1KB, committed=1KB)
+</span></span><span class=line><span class=cl>                            (malloc=1KB #8)
+</span></span></code></pre></td></tr></table></div></div><p>这可能是不言而喻的 —— 这个场景仅用于说明目的。在现实生活中的应用程序中，我不建议使用如此少的资源进行操作。您所感到舒适的程度将取决于您可观察性实践的成熟程度（换句话说——您多快注意到有问题），工作负载的重要性以及其他因素，例如故障转移。</p><h2 id=结语>结语</h2><p>感谢您坚持阅读这篇长文章！我想提供一些建议，帮助您远离麻烦：</p><ol><li>设置内存的 <code>request</code> 和 <code>limit</code> 一样，这样你就可以避免由于节点资源不足而导致 pod 被驱逐（缺点就是会导致节点资源利用率降低）。</li><li>仅在出现 Java <code>OutOfMemory</code> 错误时增加 pod 的内存限制。如果发生 <code>OOMKilled</code> 崩溃，请将更多内存留给非堆使用。</li><li>将最大和初始堆大小设置为相同的值。这样，您将在堆分配增加的情况下防止性能损失，并且如果堆百分比/非堆内存/pod 限制错误，您将“快速失败”。有关此建议的更多信息，<a href=https://community.oracle.com/tech/developers/discussion/4478818/best-practices-java-memory-arguments-for-containers target=_blank rel="noopener noreffer">请点击此处</a>。</li></ol><p>Kubernetes 资源管理和 JVM 内存区域的主题很深，本文只是浅尝辄止。以下是另外一些参考资料：</p><ul><li><a href=https://learnk8s.io/setting-cpu-memory-limits-requests target=_blank rel="noopener noreffer">https://learnk8s.io/setting-cpu-memory-limits-requests</a></li><li><a href=https://srvaroa.github.io/jvm/kubernetes/memory/docker/oomkiller/2019/05/29/k8s-and-java.html target=_blank rel="noopener noreffer">https://srvaroa.github.io/jvm/kubernetes/memory/docker/oomkiller/2019/05/29/k8s-and-java.html</a></li><li><a href=https://home.robusta.dev/blog/kubernetes-memory-limit target=_blank rel="noopener noreffer">https://home.robusta.dev/blog/kubernetes-memory-limit</a></li><li><a href="https://forums.oracle.com/ords/r/apexds/community/q?question=best-practices-java-memory-arguments-for-containers-7408" target=_blank rel="noopener noreffer">https://forums.oracle.com/ords/r/apexds/community/q?question=best-practices-java-memory-arguments-for-containers-7408</a></li></ul><hr><p><em>文本翻译自: <a href=https://danoncoding.com/tricky-kubernetes-memory-management-for-java-applications-d2f88dd4e9f6 target=_blank rel="noopener noreffer">https://danoncoding.com/tricky-kubernetes-memory-management-for-java-applications-d2f88dd4e9f6</a></em></p><hr></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2023-04-23</span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/k8s-memory-management-for-java-applications/ data-title="Java 应用程序在 Kubernetes 上棘手的内存管理" data-hashtags=Kubernetes,Java><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/k8s-memory-management-for-java-applications/ data-hashtag=Kubernetes><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/k8s-memory-management-for-java-applications/ data-title="Java 应用程序在 Kubernetes 上棘手的内存管理"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/k8s-memory-management-for-java-applications/ data-title="Java 应用程序在 Kubernetes 上棘手的内存管理"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/k8s-memory-management-for-java-applications/ data-title="Java 应用程序在 Kubernetes 上棘手的内存管理"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/kubernetes/>Kubernetes</a>,&nbsp;<a href=/tags/java/>Java</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/k8s-admission-controller-sidacar-example/ class=prev rel=prev title="Kubernetes Admission Controller 简介 - 注入 sidacar 示例"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Kubernetes Admission Controller 简介 - 注入 sidacar 示例</a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>
