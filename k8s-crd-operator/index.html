@@ -1,0 +1,362 @@
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Kubernetes CRD & Operator 简介 - 凌虚 Blog</title><meta name=Description content="Kubernetes CRD & Operator 简介"><meta property="og:title" content="Kubernetes CRD & Operator 简介">
+<meta property="og:description" content="Kubernetes CRD & Operator 简介"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/k8s-crd-operator/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-12-19T10:37:48+08:00"><meta property="article:modified_time" content="2023-12-19T16:41:25+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="Kubernetes CRD & Operator 简介"><meta name=twitter:description content="Kubernetes CRD & Operator 简介"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/k8s-crd-operator/><link rel=prev href=https://rifewang.github.io/the-internals-and-the-latest-trends-of-container-runtimes/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Kubernetes CRD \u0026 Operator 简介","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/k8s-crd-operator\/"},"image":["https:\/\/rifewang.github.io\/images\/avatar.png"],"genre":"posts","keywords":"Kubernetes, Golang","wordcount":2518,"url":"https:\/\/rifewang.github.io\/k8s-crd-operator\/","datePublished":"2023-12-19T10:37:48+08:00","dateModified":"2023-12-19T16:41:25+08:00","license":"Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)","publisher":{"@type":"Organization","name":"凌虚","logo":"https:\/\/rifewang.github.io\/images\/avatar.png"},"author":{"@type":"Person","name":"凌虚"},"description":"Kubernetes CRD \u0026 Operator 简介"}</script></head><script async src="https://www.googletagmanager.com/gtag/js?id=G-VRMQFEVL7J"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-VRMQFEVL7J")</script><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i>
+</span></span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Kubernetes CRD & Operator 简介</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span>&nbsp;<span class=post-category>included in <a href=/categories/kubernetes/><i class="far fa-folder fa-fw" aria-hidden=true></i>Kubernetes</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2023-12-19>2023-12-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;2518 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;6 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#kubernetes-crd>Kubernetes CRD</a></li><li><a href=#operator>Operator</a></li><li><a href=#kubebuilder>Kubebuilder</a><ul><li><a href=#1-安装>1. 安装</a></li><li><a href=#2-创建一个测试目录>2. 创建一个测试目录</a></li><li><a href=#3-初始化项目>3. 初始化项目</a></li><li><a href=#4-定义-crd>4. 定义 CRD</a><ul><li><a href=#a-在代码中修改-crd-的结构>a. 在代码中修改 CRD 的结构</a></li><li><a href=#b-通过命令自动生成-crd-yaml>b. 通过命令自动生成 CRD yaml</a></li></ul></li><li><a href=#5-补充-controller-逻辑>5. 补充 controller 逻辑</a><ul><li><a href=#a-修改-controller-补充业务逻辑>a. 修改 controller 补充业务逻辑</a></li><li><a href=#b-进行测试>b. 进行测试</a></li></ul></li></ul></li><li><a href=#总结>总结</a></li></ul></nav></div></div><div class=content id=content><h2 id=kubernetes-crd>Kubernetes CRD</h2><p>在 kubernetes 中有一系列内置的资源，诸如：<code>pod</code>、<code>deployment</code>、<code>configmap</code>、<code>service</code> …… 等等，它们由 k8s 的内部组件管理。而除了这些内置资源之外，k8s 还提供了另外一种方式让用户可以随意地自定义资源，这就是 <code>CRD</code> (全称 <code>CustomResourceDefinitions</code>) 。</p><p>例如，我可以通过 <code>CRD</code> 去定义一个 mypod、myjob、myanything 等等资源，一旦注册成功，那么这些自定义资源便会享受与内置资源相同的待遇。具体而言就是：</p><ul><li>我们可以像使用 <code>kubectl</code> 增删改查 deployment 一样去操作这些 <code>CRD</code> 自定义资源。</li><li><code>CRD</code> 自定义资源的数据跟 pod 等内置资源一样会存储到 k8s 控制平面的 <code>etcd</code> 中。</li></ul><p>需要注意的是，<code>CRD</code> 在不同的语境下有不同的含义，有时候可能只是指 k8s 中的 <code>CustomResourceDefinitions</code> 这一种特定的资源，有时候也可能是指用户通过 <code>CRD</code> 所创建出来的自定义资源。</p><p>狭义上的 <code>CRD</code> (全称 <code>CustomResourceDefinitions</code>) 是 k8s 中的一种特殊的内置资源，我们可以通过它去创建我们自定义的其它资源。例如，我们可以通过 <code>CRD</code> 去创建一个叫 <code>CronTab</code> 的资源：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>apiextensions.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>CustomResourceDefinition</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=c># 名称必须匹配 &lt;plural&gt;.&lt;group&gt;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>crontabs.stable.example.com</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=c># group 名称，用于 REST API: /apis/&lt;group&gt;/&lt;version&gt;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>group</span><span class=p>:</span><span class=w> </span><span class=l>stable.example.com</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>versions</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>served</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>storage</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>schema</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>openAPIV3Schema</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>object</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>properties</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c># 定义属性</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>object</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>properties</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=nt>cronSpec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>string</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=nt>image</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>string</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=c># 作用范围可以是 Namespaced 或者 Cluster</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>scope</span><span class=p>:</span><span class=w> </span><span class=l>Namespaced</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>names</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=c># 复数名称，使用于 URL: /apis/&lt;group&gt;/&lt;version&gt;/&lt;plural&gt;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>plural</span><span class=p>:</span><span class=w> </span><span class=l>crontabs</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=c># 单数名称，可用于 CLI</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>singular</span><span class=p>:</span><span class=w> </span><span class=l>crontab</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=c># 驼峰单数，用于资源清单</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>CronTab</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=c># 名字简写，可用于 CLI</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>shortNames</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=l>ct</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>一旦我们 apply 这个 yaml 文件，那么我们的自定义资源 <code>CronTab</code> 也就注册到 k8s 了。这个时候我们就可以任意操作这个自定义资源，比如 my-crontab.yaml:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;stable.example.com/v1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>CronTab</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>my-new-cron-object</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>cronSpec</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;* * * * */5&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>my-awesome-cron-image</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>执行 <code>kubectl apply -f my-crontab.yaml</code> 就可以创建我们自定义的 CronTab，执行 <code>kubectl get crontab</code> 就可以查询到我们自定义的 CronTab 列表。</p><p><img class=lazyload src=/svg/loading.min.svg data-src=/images/k8s/crd-operator/crd.png data-srcset="/images/k8s/crd-operator/crd.png, /images/k8s/crd-operator/crd.png 1.5x, /images/k8s/crd-operator/crd.png 2x" data-sizes=auto alt=/images/k8s/crd-operator/crd.png title=/images/k8s/crd-operator/crd.png></p><p>通过 <code>CRD</code> 自定义资源的优点是，我们无需操心自定义资源的数据存储，也无需再额外实现一个 http server 去对外暴露操作这些自定义资源的 API 接口，因为这些 k8s 都帮我们做好了，我们只需要像其它内置资源一样使用自定义资源即可。</p><p>但是！只有 <code>CRD</code> 往往是不够的，例如上文中我们执行 <code>kubectl apply -f my-crontab.yaml</code> 创建了一个 crontab 自定义资源，但是这个 crontab 不会有任何执行的内容（不会跑任何程序），而很多场景下我们是希望自定义资源能够执行点什么。这个时候我们就需要 <code>Operator</code> 了。</p><h2 id=operator>Operator</h2><p><code>Operator</code> 其实就是 custom resource controller（自定义资源的控制器），它干的事情就是监听自定义资源的变更，然后针对性地做一些操作。例如，监听到某个自定义资源被创建后，<code>Operator</code> 可以读取这个自定义资源的属性然后创建一个 pod 去运行具体的程序，并将这个 pod 绑定到自定义资源对象上。</p><p><img class=lazyload src=/svg/loading.min.svg data-src=/images/k8s/crd-operator/k8s-operator-1800x1013.webp data-srcset="/images/k8s/crd-operator/k8s-operator-1800x1013.webp, /images/k8s/crd-operator/k8s-operator-1800x1013.webp 1.5x, /images/k8s/crd-operator/k8s-operator-1800x1013.webp 2x" data-sizes=auto alt=/images/k8s/crd-operator/k8s-operator-1800x1013.webp title=/images/k8s/crd-operator/k8s-operator-1800x1013.webp></p><p>那 <code>Operator</code> 以何种方式存在呢？其实它跟普通的服务一样，可以是 <code>deployment</code>，也可以是 <code>statefuleSet</code>。</p><p>至于常说的 <code>Operator pattern</code> 其实就是 <code>CRD + custom controller</code> 这种模式。</p><h2 id=kubebuilder>Kubebuilder</h2><p>我们在构建项目时常常希望有一个好用的框架，能够提供一系列工具帮助开发者更轻松地进行创建、测试和部署。而针对 <code>CRD</code> 和 <code>Operator</code> 的场景就有这么一个框架 <code>Kubebuilder</code>。</p><p>接下来我将会使用 <code>Kubebuilder</code> 创建一个小项目，其中会创建一个自定义资源 Foo ，并在 controller 中监听这个资源的变更并把它打印出来。</p><h3 id=1-安装>1. 安装</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=c1># download kubebuilder and install locally.</span>
+</span></span><span class=line><span class=cl>curl -L -o kubebuilder <span class=s2>&#34;https://go.kubebuilder.io/dl/latest/</span><span class=k>$(</span>go env GOOS<span class=k>)</span><span class=s2>/</span><span class=k>$(</span>go env GOARCH<span class=k>)</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>chmod +x kubebuilder <span class=o>&amp;&amp;</span> mv kubebuilder /usr/local/bin/
+</span></span></code></pre></td></tr></table></div></div><h3 id=2-创建一个测试目录>2. 创建一个测试目录</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>mkdir kubebuilder-test
+</span></span><span class=line><span class=cl><span class=nb>cd</span> kubebuilder-test
+</span></span></code></pre></td></tr></table></div></div><h3 id=3-初始化项目>3. 初始化项目</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>kubebuilder init --domain mytest.domain --repo mytest.domain/foo
+</span></span></code></pre></td></tr></table></div></div><h3 id=4-定义-crd>4. 定义 CRD</h3><p>假设我们想要定义一个如下格式的 CRD：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;mygroup.mytest.domain/v1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Foo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>xxx</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>image</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>msg</span><span class=p>:</span><span class=w> </span><span class=l>message</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>那么我们需要创建一个 CRD（本质上也是创建一个 API ）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>kubebuilder create api --group mygroup --version v1 --kind Foo
+</span></span></code></pre></td></tr></table></div></div><p>执行之后输入 y 确认生成，然后 <code>kubebuilder</code> 会帮我们自动创建一些目录和文件，其中：</p><ul><li><code>api/v1/foo_types.go</code> 文件中定义了这个 CRD（也是 API）。</li><li><code>internal/controllers/foo_controller.go</code> 文件则是控制 CRD 的业务逻辑。</li></ul><p>由于自动生成的文件只是一个基本框架，我们需要按照自己的需求进行相应的修改。</p><h4 id=a-在代码中修改-crd-的结构>a. 在代码中修改 CRD 的结构</h4><p>首先，修改 <code>api/v1/foo_types.go</code> 调整 CRD 的结构（注意不要删除 <code>//+kubebuilder</code> 这种注释）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=c1>// FooSpec defines the desired state of Foo
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>FooSpec</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Image</span> <span class=kt>string</span> <span class=s>`json:&#34;image&#34;`</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Msg</span>   <span class=kt>string</span> <span class=s>`json:&#34;msg&#34;`</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// FooStatus defines the observed state of Foo
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>FooStatus</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>PodName</span> <span class=kt>string</span> <span class=s>`json:&#34;podName&#34;`</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=b-通过命令自动生成-crd-yaml>b. 通过命令自动生成 CRD yaml</h4><p>执行 <code>make manifests</code> 命令之后，<code>kubebuilder</code> 就会在 <code>config/crd/bases</code> 目录下生成一个 <code>mygroup.mytest.domain_foos.yaml</code> 文件，这个文件就是我们定义 CRD 的 yaml 文件：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>apiextensions.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>CustomResourceDefinition</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>annotations</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>controller-gen.kubebuilder.io/version</span><span class=p>:</span><span class=w> </span><span class=l>v0.13.0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>foos.mygroup.mytest.domain</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>group</span><span class=p>:</span><span class=w> </span><span class=l>mygroup.mytest.domain</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>names</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Foo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>listKind</span><span class=p>:</span><span class=w> </span><span class=l>FooList</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>plural</span><span class=p>:</span><span class=w> </span><span class=l>foos</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>singular</span><span class=p>:</span><span class=w> </span><span class=l>foo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>scope</span><span class=p>:</span><span class=w> </span><span class=l>Namespaced</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>versions</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>schema</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>openAPIV3Schema</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=l>Foo is the Schema for the foos API</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>properties</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>apiVersion</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=s1>&#39;APIVersion defines the versioned schema of this representation
+</span></span></span><span class=line><span class=cl><span class=s1>              of an object. Servers should convert recognized schemas to the latest
+</span></span></span><span class=line><span class=cl><span class=s1>              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources&#39;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>string</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>kind</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=s1>&#39;Kind is a string value representing the REST resource this
+</span></span></span><span class=line><span class=cl><span class=s1>              object represents. Servers may infer this from the endpoint the client
+</span></span></span><span class=line><span class=cl><span class=s1>              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds&#39;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>string</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>object</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=l>FooSpec defines the desired state of Foo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>properties</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>image</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>string</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>msg</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>string</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>required</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span>- <span class=l>image</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span>- <span class=l>msg</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>object</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>status</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=l>FooStatus defines the observed state of Foo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>properties</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>podName</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>string</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>required</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span>- <span class=l>podName</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>object</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>object</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>served</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>storage</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>subresources</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>status</span><span class=p>:</span><span class=w> </span>{}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p><code>make manifests</code> 指令执行的具体内容定义在了 <code>Makefile</code> 文件中：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>.PHONY: manifests
+</span></span><span class=line><span class=cl>manifests: controller-gen <span class=c1>## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.</span>
+</span></span><span class=line><span class=cl>	<span class=k>$(</span>CONTROLLER_GEN<span class=k>)</span> rbac:roleName<span class=o>=</span>manager-role crd webhook <span class=nv>paths</span><span class=o>=</span><span class=s2>&#34;./...&#34;</span> output:crd:artifacts:config<span class=o>=</span>config/crd/bases
+</span></span></code></pre></td></tr></table></div></div><p>从中可以看到其实 <code>kubebuilder</code> 使用了 <code>controller-gen</code> 工具去扫描代码中特定格式的注释（如 <code>//+kubebuilder:...</code>）进而生成的 CRD yaml 文件。</p><h3 id=5-补充-controller-逻辑>5. 补充 controller 逻辑</h3><p>假设我们要监听用户创建的自定义资源 Foo 然后把它的属性打印出来。</p><h4 id=a-修改-controller-补充业务逻辑>a. 修改 controller 补充业务逻辑</h4><p>修改 <code>internal/controllers/foo_controller.go</code> 文件补充我们自己的业务逻辑，如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>FooReconciler</span><span class=p>)</span> <span class=nf>Reconcile</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>req</span> <span class=nx>ctrl</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>(</span><span class=nx>ctrl</span><span class=p>.</span><span class=nx>Result</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>l</span> <span class=o>:=</span> <span class=nx>log</span><span class=p>.</span><span class=nf>FromContext</span><span class=p>(</span><span class=nx>ctx</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 补充业务逻辑
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>foo</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>mygroupv1</span><span class=p>.</span><span class=nx>Foo</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nf>Get</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>req</span><span class=p>.</span><span class=nx>NamespacedName</span><span class=p>,</span> <span class=nx>foo</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>l</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>err</span><span class=p>,</span> <span class=s>&#34;unable to fetch Foo&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=nx>ctrl</span><span class=p>.</span><span class=nx>Result</span><span class=p>{},</span> <span class=nx>client</span><span class=p>.</span><span class=nf>IgnoreNotFound</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 打印 Foo 属性
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>l</span><span class=p>.</span><span class=nf>Info</span><span class=p>(</span><span class=s>&#34;Received Foo&#34;</span><span class=p>,</span> <span class=s>&#34;Image&#34;</span><span class=p>,</span> <span class=nx>foo</span><span class=p>.</span><span class=nx>Spec</span><span class=p>.</span><span class=nx>Image</span><span class=p>,</span> <span class=s>&#34;Msg&#34;</span><span class=p>,</span> <span class=nx>foo</span><span class=p>.</span><span class=nx>Spec</span><span class=p>.</span><span class=nx>Msg</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=nx>ctrl</span><span class=p>.</span><span class=nx>Result</span><span class=p>{},</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// SetupWithManager sets up the controller with the Manager.
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>FooReconciler</span><span class=p>)</span> <span class=nf>SetupWithManager</span><span class=p>(</span><span class=nx>mgr</span> <span class=nx>ctrl</span><span class=p>.</span><span class=nx>Manager</span><span class=p>)</span> <span class=kt>error</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=nx>ctrl</span><span class=p>.</span><span class=nf>NewControllerManagedBy</span><span class=p>(</span><span class=nx>mgr</span><span class=p>).</span>
+</span></span><span class=line><span class=cl>		<span class=nf>For</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>mygroupv1</span><span class=p>.</span><span class=nx>Foo</span><span class=p>{}).</span>
+</span></span><span class=line><span class=cl>		<span class=nf>Complete</span><span class=p>(</span><span class=nx>r</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=b-进行测试>b. 进行测试</h4><p>注意：测试需要有本地或远程的 k8s 集群环境，其将会默认使用跟当前 kubectl 一致的环境。</p><p>执行 <code>make install</code> 注册 CRD ，从 <code>Makefile</code> 中可以看到其实际执行了如下指令：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>.PHONY: install
+</span></span><span class=line><span class=cl>install: manifests kustomize <span class=c1>## Install CRDs into the K8s cluster specified in ~/.kube/config.</span>
+</span></span><span class=line><span class=cl>	<span class=k>$(</span>KUSTOMIZE<span class=k>)</span> build config/crd <span class=p>|</span> <span class=k>$(</span>KUBECTL<span class=k>)</span> apply -f -
+</span></span></code></pre></td></tr></table></div></div><p>执行 <code>make run</code> 运行 controller，从 <code>Makefile</code> 中可以看到其实际执行了如下指令：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>.PHONY: run
+</span></span><span class=line><span class=cl>run: manifests generate fmt vet <span class=c1>## Run a controller from your host.</span>
+</span></span><span class=line><span class=cl>	go run ./cmd/main.go
+</span></span></code></pre></td></tr></table></div></div><p>然后可以看到如下输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>go fmt ./...
+</span></span><span class=line><span class=cl>go vet ./...
+</span></span><span class=line><span class=cl>go run ./cmd/main.go
+</span></span><span class=line><span class=cl>2023-12-19T15:14:18+08:00       INFO    setup   starting manager
+</span></span><span class=line><span class=cl>2023-12-19T15:14:18+08:00       INFO    controller-runtime.metrics      Starting metrics server
+</span></span><span class=line><span class=cl>2023-12-19T15:14:18+08:00       INFO    starting server <span class=o>{</span><span class=s2>&#34;kind&#34;</span>: <span class=s2>&#34;health probe&#34;</span>, <span class=s2>&#34;addr&#34;</span>: <span class=s2>&#34;[::]:8081&#34;</span><span class=o>}</span>
+</span></span><span class=line><span class=cl>2023-12-19T15:14:18+08:00       INFO    controller-runtime.metrics      Serving metrics server  <span class=o>{</span><span class=s2>&#34;bindAddress&#34;</span>: <span class=s2>&#34;:8080&#34;</span>, <span class=s2>&#34;secure&#34;</span>: false<span class=o>}</span>
+</span></span><span class=line><span class=cl>2023-12-19T15:14:18+08:00       INFO    Starting EventSource    <span class=o>{</span><span class=s2>&#34;controller&#34;</span>: <span class=s2>&#34;foo&#34;</span>, <span class=s2>&#34;controllerGroup&#34;</span>: <span class=s2>&#34;mygroup.mytest.domain&#34;</span>, <span class=s2>&#34;controllerKind&#34;</span>: <span class=s2>&#34;Foo&#34;</span>, <span class=s2>&#34;source&#34;</span>: <span class=s2>&#34;kind source: *v1.Foo&#34;</span><span class=o>}</span>
+</span></span><span class=line><span class=cl>2023-12-19T15:14:18+08:00       INFO    Starting Controller     <span class=o>{</span><span class=s2>&#34;controller&#34;</span>: <span class=s2>&#34;foo&#34;</span>, <span class=s2>&#34;controllerGroup&#34;</span>: <span class=s2>&#34;mygroup.mytest.domain&#34;</span>, <span class=s2>&#34;controllerKind&#34;</span>: <span class=s2>&#34;Foo&#34;</span><span class=o>}</span>
+</span></span><span class=line><span class=cl>2023-12-19T15:14:19+08:00       INFO    Starting workers        <span class=o>{</span><span class=s2>&#34;controller&#34;</span>: <span class=s2>&#34;foo&#34;</span>, <span class=s2>&#34;controllerGroup&#34;</span>: <span class=s2>&#34;mygroup.mytest.domain&#34;</span>, <span class=s2>&#34;controllerKind&#34;</span>: <span class=s2>&#34;Foo&#34;</span>, <span class=s2>&#34;worker count&#34;</span>: 1<span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>我们提交一个 foo.yaml 试试：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;mygroup.mytest.domain/v1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Foo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>test-foo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>test-image</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>msg</span><span class=p>:</span><span class=w> </span><span class=l>test-message</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>执行 <code>kubectl apply -f foo.yaml</code> 之后我们就会在 controller 的输出中看到 foo 被打印了出来：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>2023-12-19T15:16:00+08:00       INFO    Received Foo    <span class=o>{</span><span class=s2>&#34;controller&#34;</span>: <span class=s2>&#34;foo&#34;</span>, <span class=s2>&#34;controllerGroup&#34;</span>: <span class=s2>&#34;mygroup.mytest.domain&#34;</span>, <span class=s2>&#34;controllerKind&#34;</span>: <span class=s2>&#34;Foo&#34;</span>, <span class=s2>&#34;Foo&#34;</span>: <span class=o>{</span><span class=s2>&#34;name&#34;</span>:<span class=s2>&#34;test-foo&#34;</span>,<span class=s2>&#34;namespace&#34;</span>:<span class=s2>&#34;aries&#34;</span><span class=o>}</span>, <span class=s2>&#34;namespace&#34;</span>: <span class=s2>&#34;aries&#34;</span>, <span class=s2>&#34;name&#34;</span>: <span class=s2>&#34;test-foo&#34;</span>, <span class=s2>&#34;reconcileID&#34;</span>: <span class=s2>&#34;8dfd629e-3081-4d40-8fc6-bcc3e81bbb39&#34;</span>, <span class=s2>&#34;Image&#34;</span>: <span class=s2>&#34;test-image&#34;</span>, <span class=s2>&#34;Msg&#34;</span>: <span class=s2>&#34;test-message&#34;</span><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>这就是使用 <code>kubebuilder</code> 的一个简单示例。</p><h2 id=总结>总结</h2><p>Kubernetes 的 <code>CRD</code> 和 <code>Operator</code> 机制为用户提供了强大的扩展性。<code>CRD</code> 允许用户自定义资源，而 <code>Operators</code> 则可以管理这些资源。正是这种扩展机制为 Kubernetes 生态系统提供了极大的灵活性和可塑性，使得它可以更广泛的应用于各种场景中。</p><hr><p>参考资料：</p><ul><li><em><a href=https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/ target=_blank rel="noopener noreffer">https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/</a></em></li><li><em><a href=https://kubernetes.io/docs/concepts/extend-kubernetes/operator/ target=_blank rel="noopener noreffer">https://kubernetes.io/docs/concepts/extend-kubernetes/operator/</a></em></li><li><em><a href=https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/ target=_blank rel="noopener noreffer">https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/</a></em></li><li><em><a href=https://book.kubebuilder.io/introduction target=_blank rel="noopener noreffer">https://book.kubebuilder.io/introduction</a></em></li></ul></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2023-12-19</span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/k8s-crd-operator/ data-title="Kubernetes CRD & Operator 简介" data-hashtags=Kubernetes,Golang><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/k8s-crd-operator/ data-hashtag=Kubernetes><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/k8s-crd-operator/ data-title="Kubernetes CRD & Operator 简介"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/k8s-crd-operator/ data-title="Kubernetes CRD & Operator 简介"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/k8s-crd-operator/ data-title="Kubernetes CRD & Operator 简介"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/kubernetes/>Kubernetes</a>,&nbsp;<a href=/tags/golang/>Golang</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/the-internals-and-the-latest-trends-of-container-runtimes/ class=prev rel=prev title=容器运行时的内部结构和最新趋势（2023）><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>容器运行时的内部结构和最新趋势（2023）</a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>
