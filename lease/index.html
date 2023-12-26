@@ -1,0 +1,160 @@
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Kubernetes Lease 及分布式选主 - 凌虚 Blog</title><meta name=Description content="Kubernetes Lease 及分布式选主"><meta property="og:title" content="Kubernetes Lease 及分布式选主">
+<meta property="og:description" content="Kubernetes Lease 及分布式选主"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/lease/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-12-26T11:42:30+08:00"><meta property="article:modified_time" content="2023-12-26T16:45:34+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="Kubernetes Lease 及分布式选主"><meta name=twitter:description content="Kubernetes Lease 及分布式选主"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/lease/><link rel=prev href=https://rifewang.github.io/k8s-from-deploy-to-pod/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Kubernetes Lease 及分布式选主","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/lease\/"},"image":["https:\/\/rifewang.github.io\/images\/avatar.png"],"genre":"posts","keywords":"Kubernetes","wordcount":1181,"url":"https:\/\/rifewang.github.io\/lease\/","datePublished":"2023-12-26T11:42:30+08:00","dateModified":"2023-12-26T16:45:34+08:00","license":"Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)","publisher":{"@type":"Organization","name":"凌虚","logo":"https:\/\/rifewang.github.io\/images\/avatar.png"},"author":{"@type":"Person","name":"凌虚"},"description":"Kubernetes Lease 及分布式选主"}</script></head><script async src="https://www.googletagmanager.com/gtag/js?id=G-VRMQFEVL7J"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-VRMQFEVL7J")</script><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i>
+</span></span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Kubernetes Lease 及分布式选主</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span>&nbsp;<span class=post-category>included in <a href=/categories/kubernetes/><i class="far fa-folder fa-fw" aria-hidden=true></i>Kubernetes</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2023-12-26>2023-12-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;1181 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;3 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#分布式选主>分布式选主</a></li><li><a href=#kubernetes-lease>Kubernetes Lease</a><ul><li><a href=#使用示例>使用示例</a></li></ul></li></ul></nav></div></div><div class=content id=content><h2 id=分布式选主>分布式选主</h2><p>在分布式系统中，应用服务常常会通过多个节点（或实例）的方式来保证高可用。然而在某些场景下，有些数据或者任务无法被并行操作，此时就需要由一个特定的节点来执行这些特殊的任务（或者进行协调及决策），这个特定的节点也就是领导者（Leader），而在多个节点中选择领导者的机制也就是分布式选主（Leader Election）。</p><p>如今诸多知名项目也都使用了分布式选主，例如：</p><ul><li><code>Etcd</code></li><li><code>Kafka</code></li><li><code>Elasticsearch</code></li><li><code>Zookeeper</code></li></ul><p>常用算法包括：</p><ul><li><code>Paxos</code>：一种著名的分布式共识算法，原理和实现较为复杂（此算法基本就是共识理论的奠基之作，曾有人说：&ldquo;世界上只有一种共识协议，就是 Paxos，其他所有共识算法都是 Paxos 的退化版本&rdquo;）。</li><li><code>Raft</code>：目前最广泛使用的分布式共识算法之一，Etcd 使用的就是 <code>Raft</code>，Elasticsearch 和 Kafka 在后来的版本中也都抛弃了早期的算法并转向了 <code>Raft</code>。</li><li><code>ZAB（Zookeeper Atomic Broadcast</code>）：Zookeeper 使用的一致性协议，也包括选主机制。</li></ul><h2 id=kubernetes-lease>Kubernetes Lease</h2><p>在 Kubernetes 中，诸如 <code>kube-scheduler</code> 和 <code>kube-controller-manager</code> 等核心组件也需要使用分布式选主，因为其需要确保任一时刻只有一个调度器在做出调度决策，同一时间只有一个控制管理器在处理资源对象。</p><p>然而，除了核心组件，用户的应用服务很可能也有类似分布式选主的需求，为了满足这种通用需求，kubernetes 提供了 <code>Lease</code>（翻译为“租约”）这样一个特殊的资源对象。</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://raw.githubusercontent.com/RifeWang/images/master/k8s/k8s-lease.png data-srcset="https://raw.githubusercontent.com/RifeWang/images/master/k8s/k8s-lease.png, https://raw.githubusercontent.com/RifeWang/images/master/k8s/k8s-lease.png 1.5x, https://raw.githubusercontent.com/RifeWang/images/master/k8s/k8s-lease.png 2x" data-sizes=auto alt=https://raw.githubusercontent.com/RifeWang/images/master/k8s/k8s-lease.png title=https://raw.githubusercontent.com/RifeWang/images/master/k8s/k8s-lease.png></p><p>如上图所示，在 k8s 中选主是通过争抢一个分布式锁（<code>Lease</code>）来实现的，抢到锁的实例成为 leader，为了确认自己持续存活，leader 需要不断的续签这个锁（<code>Lease</code>），一旦 leader 挂掉，则锁被释放，其他候选人便可以竞争成为新的 leader。</p><p><code>Lease</code> 的结构也很简单：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>coordination.k8s.io/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Lease</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=c># object</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>acquireTime</span><span class=p>:</span><span class=w> </span><span class=c># 当前租约被获取的时间</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>holderIdentity</span><span class=p>:</span><span class=w> </span><span class=c># 当前租约持有者的身份信息</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>leaseDurationSeconds</span><span class=p>:</span><span class=w> </span><span class=c># 租约候选者需要等待才能强制获取它的持续时间</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>leaseTransitions</span><span class=p>:</span><span class=w> </span><span class=c># 租约换了多少次持有者</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>renewTime</span><span class=p>:</span><span class=w> </span><span class=c># 当前租约持有者最后一次更新租约的时间</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p><code>Lease</code> 本质上与其它资源并无区别，除了 <code>Lease</code>，其实也可以用 configmap 或者 endpoint 作为分布式锁，因为在底层都是 k8s 通过资源对象的 <code>resourceVersion</code> 字段进行 compare-and-swap，也就是通过这个字段实现的乐观锁。当然在实际使用中，建议还是用 <code>Lease</code>。</p><h3 id=使用示例>使用示例</h3><p>使用 <code>Lease</code> 进行分布式选主的示例如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-golang data-lang=golang><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;context&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;k8s.io/client-go/kubernetes&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;k8s.io/client-go/rest&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;k8s.io/client-go/tools/leaderelection&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;k8s.io/client-go/tools/leaderelection/resourcelock&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>config</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>rest</span><span class=p>.</span><span class=nf>InClusterConfig</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>clientset</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>kubernetes</span><span class=p>.</span><span class=nf>NewForConfig</span><span class=p>(</span><span class=nx>config</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 配置 Lease 参数
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>leaseLock</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>resourcelock</span><span class=p>.</span><span class=nx>LeaseLock</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>LeaseMeta</span><span class=p>:</span> <span class=nx>metav1</span><span class=p>.</span><span class=nx>ObjectMeta</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>Name</span><span class=p>:</span>      <span class=s>&#34;my-lease&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>Namespace</span><span class=p>:</span> <span class=s>&#34;default&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Client</span><span class=p>:</span> <span class=nx>clientset</span><span class=p>.</span><span class=nf>CoordinationV1</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl>        <span class=nx>LockConfig</span><span class=p>:</span> <span class=nx>resourcelock</span><span class=p>.</span><span class=nx>ResourceLockConfig</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>Identity</span><span class=p>:</span> <span class=s>&#34;my-identity&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 配置 Leader Election
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>leaderElectionConfig</span> <span class=o>:=</span> <span class=nx>leaderelection</span><span class=p>.</span><span class=nx>LeaderElectionConfig</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Lock</span><span class=p>:</span>          <span class=nx>leaseLock</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>LeaseDuration</span><span class=p>:</span> <span class=mi>15</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>RenewDeadline</span><span class=p>:</span> <span class=mi>10</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>RetryPeriod</span><span class=p>:</span>   <span class=mi>2</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Callbacks</span><span class=p>:</span> <span class=nx>leaderelection</span><span class=p>.</span><span class=nx>LeaderCallbacks</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>OnStartedLeading</span><span class=p>:</span> <span class=kd>func</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=c1>// 当前实例成为 Leader
+</span></span></span><span class=line><span class=cl><span class=c1></span>                <span class=c1>// 在这里执行 Leader 专属的逻辑
+</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=nx>OnStoppedLeading</span><span class=p>:</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=c1>// 当前实例失去 Leader 地位
+</span></span></span><span class=line><span class=cl><span class=c1></span>                <span class=c1>// 可以在这里执行清理工作
+</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=nx>OnNewLeader</span><span class=p>:</span> <span class=kd>func</span><span class=p>(</span><span class=nx>identity</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=c1>// 有新的 Leader 产生
+</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>leaderElector</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>leaderelection</span><span class=p>.</span><span class=nf>NewLeaderElector</span><span class=p>(</span><span class=nx>leaderElectionConfig</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 开始 Leader Election
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>leaderElector</span><span class=p>.</span><span class=nf>Run</span><span class=p>(</span><span class=nx>ctx</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><hr><p>参考资料：</p><ul><li><em><a href=https://kubernetes.io/docs/concepts/architecture/leases/ target=_blank rel="noopener noreffer">https://kubernetes.io/docs/concepts/architecture/leases/</a></em></li><li><em><a href=https://kubernetes.io/docs/reference/kubernetes-api/cluster-resources/lease-v1/ target=_blank rel="noopener noreffer">https://kubernetes.io/docs/reference/kubernetes-api/cluster-resources/lease-v1/</a></em></li><li><em><a href=https://pkg.go.dev/k8s.io/client-go@v0.29.0/tools/leaderelection target=_blank rel="noopener noreffer">https://pkg.go.dev/k8s.io/client-go@v0.29.0/tools/leaderelection</a></em></li></ul></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2023-12-26</span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/lease/ data-title="Kubernetes Lease 及分布式选主" data-hashtags=Kubernetes><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/lease/ data-hashtag=Kubernetes><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/lease/ data-title="Kubernetes Lease 及分布式选主"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/lease/ data-title="Kubernetes Lease 及分布式选主"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/lease/ data-title="Kubernetes Lease 及分布式选主"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/kubernetes/>Kubernetes</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/k8s-from-deploy-to-pod/ class=prev rel=prev title="Kubernetes 从提交 deployment 到 pod 运行的全过程"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Kubernetes 从提交 deployment 到 pod 运行的全过程</a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>
