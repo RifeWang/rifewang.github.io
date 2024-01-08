@@ -1,0 +1,368 @@
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Redis Stack 不只是缓存之 RedisJSON - 凌虚 Blog</title><meta name=Description content="Redis Stack 不只是缓存之 RedisJSON"><meta property="og:title" content="Redis Stack 不只是缓存之 RedisJSON">
+<meta property="og:description" content="Redis Stack 不只是缓存之 RedisJSON"><meta property="og:type" content="article"><meta property="og:url" content="https://rifewang.github.io/redis-stack-json/"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-01-08T10:57:38+08:00"><meta property="article:modified_time" content="2024-01-08T15:06:34+08:00"><meta property="og:site_name" content="凌虚 Blog"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="Redis Stack 不只是缓存之 RedisJSON"><meta name=twitter:description content="Redis Stack 不只是缓存之 RedisJSON"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/redis-stack-json/><link rel=prev href=https://rifewang.github.io/2023-summary/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Redis Stack 不只是缓存之 RedisJSON","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/redis-stack-json\/"},"image":["https:\/\/rifewang.github.io\/images\/avatar.png"],"genre":"posts","wordcount":2741,"url":"https:\/\/rifewang.github.io\/redis-stack-json\/","datePublished":"2024-01-08T10:57:38+08:00","dateModified":"2024-01-08T15:06:34+08:00","license":"Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)","publisher":{"@type":"Organization","name":"凌虚","logo":"https:\/\/rifewang.github.io\/images\/avatar.png"},"author":{"@type":"Person","name":"凌虚"},"description":"Redis Stack 不只是缓存之 RedisJSON"}</script></head><script async src="https://www.googletagmanager.com/gtag/js?id=G-VRMQFEVL7J"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-VRMQFEVL7J")</script><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i>
+</span></span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about/ title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Redis Stack 不只是缓存之 RedisJSON</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2024-01-08>2024-01-08</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;2741 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;6 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#redis-stack>Redis Stack</a></li><li><a href=#redisjson>RedisJSON</a></li><li><a href=#jsonpath>JSONPath</a></li><li><a href=#json-command>JSON command</a><ul><li><a href=#通用类>通用类</a></li><li><a href=#针对-array-数组类型>针对 array 数组类型</a></li><li><a href=#针对-object-对象类型>针对 object 对象类型</a></li><li><a href=#针对-number-类型>针对 number 类型</a></li><li><a href=#针对-string-类型>针对 string 类型</a></li><li><a href=#针对-boolean-类型>针对 boolean 类型</a></li><li><a href=#调试>调试</a></li><li><a href=#批量操作>批量操作</a></li><li><a href=#已弃用>已弃用</a></li></ul></li><li><a href=#总结>总结</a></li></ul></nav></div></div><div class=content id=content><h2 id=redis-stack>Redis Stack</h2><p>虽然 Redis 作为一个 key-value 数据库早已被广泛应用于各种缓存相关的场景，然而其团队的却并未故步自封，他们希望更进一步为开发者提供一个不只有缓存功能的强大的实时数据平台，用于处理所有实时数据的应用场景。</p><p>为此，除了我们所熟知的核心缓存功能之外，Redis 还通过提供 <code>RedisJSON</code>、<code>RediSearch</code>、<code>RedisTimeSeries</code>、<code>RedisBloom</code> 等多个模块从而支持 JSON 数据、查询与搜索（包括全文搜索、向量搜索、GEO 地理位置等）、时序数据、概率计算等等扩展功能。</p><p>而所谓的 <code>Redis Stack</code> 就是这样一个统一了所有上述模块的集大成者（就是除了缓存功能之外，把 <code>RedisJSON</code>、<code>RediSearch</code>、<code>RedisTimeSeries</code>、<code>RedisBloom</code> 等模块都打包到了一起）。</p><h2 id=redisjson>RedisJSON</h2><p><code>RedisJSON</code> 是 Redis 的一个模块，它用来专门处理 JSON 格式的数据。除了 <code>string</code>、<code>list</code>、<code>set</code>、<code>hash</code> &mldr; 等核心数据类型之外，<code>RedisJSON</code> 模块将 <code>JSON</code> 也作为了一种原生的数据类型。</p><h2 id=jsonpath>JSONPath</h2><p>为了更方便地访问 JSON 数据中的特定元素，可以使用 path 路径这样一种方式。目前 path 语法有两种：<code>JSONPath syntax</code>（JSONPath 语法） 和 <code>legacy path syntax</code>（传统 path 语法），本文只讲 <a href=https://redis.io/docs/data-types/json/path/ target=_blank rel="noopener noreffer">JSONPath</a> 这种语法。</p><p>语法元素说明：</p><ul><li><code>$</code>：JSON 数据的根路径。</li><li><code>.</code> 或者 <code>[]</code>：子元素。</li><li><code>..</code>：递归地遍历 JSON 文档。</li><li><code>*</code>：通配符，返回所有元素。</li><li><code>[]</code>：下标运算符，访问数组元素。</li><li><code>[,]</code>：并集，选择多个元素。</li><li><code>[start : end : step]</code>：数组切片，其中 start、end 是索引，step 是步长。</li><li><code>?()</code>：过滤 JSON 对象或数组。支持比较运算符（<code>==</code>、<code>!=</code>、<code>&lt;</code>、<code>&lt;=</code>、<code>></code>、<code>>=</code>、<code>=~</code>）、逻辑运算符（<code>&&</code>、<code>||</code>）和括号（<code>(</code>, <code>)</code>）</li><li><code>()</code>：脚本表达式。</li><li><code>@</code>：当前元素，用于过滤器或脚本表达式。</li></ul><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;store&#34;</span><span class=p>:{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;book&#34;</span><span class=p>:[</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;category&#34;</span><span class=p>:</span><span class=s2>&#34;reference&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;author&#34;</span><span class=p>:</span><span class=s2>&#34;Nigel Rees&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;title&#34;</span><span class=p>:</span><span class=s2>&#34;Sayings of the Century&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;price&#34;</span><span class=p>:</span><span class=mf>8.95</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;category&#34;</span><span class=p>:</span><span class=s2>&#34;fiction&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;author&#34;</span><span class=p>:</span><span class=s2>&#34;Evelyn Waugh&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;title&#34;</span><span class=p>:</span><span class=s2>&#34;Sword of Honour&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nt>&#34;price&#34;</span><span class=p>:</span><span class=mf>12.99</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>],</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;bicycle&#34;</span><span class=p>:{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;color&#34;</span><span class=p>:</span><span class=s2>&#34;red&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;price&#34;</span><span class=p>:</span><span class=mf>19.95</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li><code>$</code> 指向数据的根路径，返回的也就是整个数据。</li><li><code>.</code> 访问子元素，例如 <code>$.store.bicycle.color</code>。</li><li><code>..</code> 递归遍历，例如 <code>$.store.book..title</code> 获取 book 数组中的所有对象的 title 属性。</li><li><code>*</code>：通配符，返回所有元素，例如 <code>$.*</code> 由于第一层级只有 store 一个元素，所以这里等价于 <code>$.store</code>；<code>$.store.*</code> 则返回 store 下面所有元素的值，也就是 <code>$.store.book</code> 的值和 <code>$.store.bicycle</code> 的值。</li><li><code>[]</code>：下标运算符，从零开始，访问数组元素。例如 <code>$.store.book[1]</code> 返回 book 数组中的第二个元素。</li><li><code>[,]</code>：并集，选择多个元素，例如 <code>$.store.book[0,1]</code> 返回 book 数组的前两个元素。</li><li><code>[start : end : step]</code>：数组切片，例如 <code>$.store.book[0:1]</code> 返回 book 数组中的第一个元素。</li><li><code>@</code>：当前元素，用于过滤器或脚本表达式。</li><li><code>?()</code>：过滤 JSON 对象或数组，例如 <code>$.store.book[?(@.price>10)]</code> 获取 book 数组中 price > 10 的数据。</li></ul><h2 id=json-command>JSON command</h2><p>在 Redis Stack 中支持的 <a href="https://redis.io/commands/?group=json" target=_blank rel="noopener noreffer">JSON 命令</a>：</p><h3 id=通用类>通用类</h3><ul><li><code>JSON.SET</code>：设置值</li></ul><blockquote><p>SET 语法：<code>JSON.SET key path value [NX | XX]</code> (NX 不存在则设置，XX 存在则设置)</p></blockquote><ul><li><code>JSON.GET</code>：获取值</li></ul><blockquote><p>GET 语法：<code>JSON.GET key [INDENT indent] [NEWLINE newline] [SPACE space] [path [path ...]]</code></p></blockquote><ul><li><code>JSON.MERGE</code>：合并值</li></ul><blockquote><p>MERGE 语法：<code>JSON.MERGE key path value</code></p></blockquote><ul><li><code>JSON.FORGET</code>：同 JSON.DEL</li><li><code>JSON.DEL</code>：删除值</li></ul><blockquote><p>DEL 语法：<code>JSON.DEL key [path]</code></p></blockquote><ul><li><code>JSON.CLEAR</code>：清空 array 或 object 类型的值并将 number 类型的值设置为 0</li></ul><blockquote><p>CLEAR 语法：<code>JSON.CLEAR key [path]</code></p></blockquote><ul><li><code>JSON.TYPE</code>：返回 JSON 值的类型。类型有：string、number、boolean、object、array、null、integer（integer 有点特殊，它并不是 JSON 标准定义的基本类型，但是给出了校验方式）</li></ul><blockquote><p>TYPE 语法：<code>JSON.TYPE key [path]</code></p></blockquote><p>示例（以下示例均是通过 redis-cli 进行）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>&gt; JSON.SET id:1 $ <span class=s1>&#39;{&#34;a&#34;:2}&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.SET id:1 $.b <span class=s1>&#39;3&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET id:1 $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[{\&#34;a\&#34;:2,\&#34;b\&#34;:3}]&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET id:1 $.a $.b
+</span></span><span class=line><span class=cl><span class=s2>&#34;{\&#34;</span>$<span class=s2>.a\&#34;:[2],\&#34;</span>$<span class=s2>.b\&#34;:[3]}&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET id:1 INDENT <span class=s2>&#34;\t&#34;</span> NEWLINE <span class=s2>&#34;\n&#34;</span> SPACE <span class=s2>&#34; &#34;</span> $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[\n\t{\n\t\t\&#34;a\&#34;: 2,\n\t\t\&#34;b\&#34;: 3\n\t}\n]&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>&gt; JSON.SET id:2 $ <span class=s1>&#39;{&#34;a&#34;:2}&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.MERGE id:2 $.c <span class=s1>&#39;[4,5]&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET id:2 $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[{\&#34;a\&#34;:2,\&#34;c\&#34;:[4,5]}]&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.TYPE id:2 $.a
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;integer&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.TYPE id:2 $.c
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;array&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>&gt; JSON.SET id:3 $ <span class=s1>&#39;{&#34;a&#34;:{&#34;b&#34;: [1, 2]}, &#34;c&#34;: &#34;c&#34;, &#34;d&#34;: 123}&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET id:3 $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[{\&#34;a\&#34;:{\&#34;b\&#34;:[1,2]},\&#34;c\&#34;:\&#34;c\&#34;,\&#34;d\&#34;:123}]&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.CLEAR id:3 $.*
+</span></span><span class=line><span class=cl><span class=o>(</span>integer<span class=o>)</span> <span class=m>2</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET id:3 $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[{\&#34;a\&#34;:{},\&#34;c\&#34;:\&#34;c\&#34;,\&#34;d\&#34;:0}]&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.DEL id:3 $.a
+</span></span><span class=line><span class=cl><span class=o>(</span>integer<span class=o>)</span> <span class=m>1</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET id:3 $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[{\&#34;d\&#34;:0,\&#34;c\&#34;:\&#34;c\&#34;}]&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.DEL id:3
+</span></span><span class=line><span class=cl><span class=o>(</span>integer<span class=o>)</span> <span class=m>1</span>
+</span></span></code></pre></td></tr></table></div></div><p>从以上示例中可以看到，通过 JSONPath 可以只操作 JSON 中的部分值，这也意味着用户可以针对特定部分进行原子操作。</p><h3 id=针对-array-数组类型>针对 array 数组类型</h3><ul><li><code>JSON.ARRAPPEND</code>：数组尾部增加元素</li></ul><blockquote><p>ARRAPPEND 语法：<code>JSON.ARRAPPEND key [path] value [value ...]</code></p></blockquote><ul><li><code>JSON.ARRINDEX</code>：数组中出现指定值的第一个 index</li></ul><blockquote><p>ARRINDEX 语法：<code>JSON.ARRINDEX key path value [start [stop]]</code></p></blockquote><ul><li><code>JSON.ARRINSERT</code>：数组指定索引处插入元素</li></ul><blockquote><p>ARRINSERT 语法：<code>JSON.ARRINSERT key path index value [value ...]</code></p></blockquote><ul><li><code>JSON.ARRLEN</code>：返回数组的长度</li></ul><blockquote><p>ARRLEN 语法：<code>JSON.ARRLEN key [path]</code></p></blockquote><ul><li><code>JSON.ARRPOP</code>：从数组的索引中删除并返回一个元素</li></ul><blockquote><p>ARRPOP 语法：<code>JSON.ARRPOP key [path [index]]</code></p></blockquote><ul><li><code>JSON.ARRTRIM</code>：修剪数组，使其仅包含指定范围的元素</li></ul><blockquote><p>ARRTRIM 语法：<code>JSON.ARRTRIM key path start stop</code></p></blockquote><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>&gt; JSON.SET id:4 $ <span class=s1>&#39;[1,2,3]&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.ARRAPPEND id:4 $ <span class=s1>&#39;4&#39;</span> <span class=s1>&#39;5&#39;</span>
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;5&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET id:4 $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[[1,2,3,4,5]]&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.ARRINSERT id:4 $ <span class=m>2</span> <span class=s1>&#39;2&#39;</span> <span class=s1>&#39;3&#39;</span>
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;7&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET id:4 $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[[1,2,2,3,3,4,5]]&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.ARRINDEX id:4 $ <span class=s1>&#39;3&#39;</span>
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;3&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.ARRPOP id:4
+</span></span><span class=line><span class=cl><span class=s2>&#34;5&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.ARRLEN id:4
+</span></span><span class=line><span class=cl><span class=o>(</span>integer<span class=o>)</span> <span class=m>6</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.ARRTRIM id:4 $ <span class=m>1</span> <span class=m>3</span>
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;3&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET id:4 $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[[2,2,3]]&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=针对-object-对象类型>针对 object 对象类型</h3><ul><li><code>JSON.OBJKEYS</code>：返回 object 中的 key 数组</li><li><code>JSON.OBJLEN</code>：返回 object 中的 key 的数量</li></ul><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>&gt; JSON.SET doc $ <span class=s1>&#39;{&#34;a&#34;:[3], &#34;nested&#34;: {&#34;a&#34;: {&#34;b&#34;:2, &#34;c&#34;: 1}}}&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.OBJKEYS doc $..a
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;null&#34;</span>
+</span></span><span class=line><span class=cl>2<span class=o>)</span> 1<span class=o>)</span> <span class=s2>&#34;b&#34;</span>
+</span></span><span class=line><span class=cl>   2<span class=o>)</span> <span class=s2>&#34;c&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.OBJLEN doc $
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;2&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=针对-number-类型>针对 number 类型</h3><ul><li><code>JSON.NUMINCRBY</code>：为 number 类型增加数值</li></ul><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>&gt; JSON.SET doc $ <span class=s1>&#39;{&#34;a&#34;: 1, &#34;b&#34;: 2}&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.NUMINCRBY doc $.a <span class=m>10</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;[11]&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET doc $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[{\&#34;a\&#34;:11,\&#34;b\&#34;:2}]&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.NUMINCRBY doc $.b -3
+</span></span><span class=line><span class=cl><span class=s2>&#34;[-1]&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET doc $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[{\&#34;a\&#34;:11,\&#34;b\&#34;:-1}]&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=针对-string-类型>针对 string 类型</h3><ul><li><code>JSON.STRAPPEND</code>：追加字符串</li><li><code>JSON.STRLEN</code>：返回字符串的长度</li></ul><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>&gt; JSON.SET doc $ <span class=s1>&#39;{&#34;a&#34;:&#34;foo&#34;, &#34;nested&#34;: {&#34;a&#34;: &#34;hello&#34;}, &#34;nested2&#34;: {&#34;a&#34;: 31}}&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.STRAPPEND doc $..a <span class=s1>&#39;&#34;baz&#34;&#39;</span>
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;6&#34;</span>
+</span></span><span class=line><span class=cl>2<span class=o>)</span> <span class=s2>&#34;8&#34;</span>
+</span></span><span class=line><span class=cl>3<span class=o>)</span> <span class=s2>&#34;null&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET doc $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[{\&#34;a\&#34;:\&#34;foobaz\&#34;,\&#34;nested\&#34;:{\&#34;a\&#34;:\&#34;hellobaz\&#34;},\&#34;nested2\&#34;:{\&#34;a\&#34;:31}}]&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.STRLEN doc $.a
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;6&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=针对-boolean-类型>针对 boolean 类型</h3><ul><li><code>JSON.TOGGLE</code>：切换布尔值，把 false 与 true 对换</li></ul><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>&gt; JSON.SET doc $ <span class=s1>&#39;{&#34;bool&#34;: true}&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.TOGGLE doc $.bool
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;0&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET doc $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[{\&#34;bool\&#34;:false}]&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.TOGGLE doc $.bool
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;1&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.GET doc $
+</span></span><span class=line><span class=cl><span class=s2>&#34;[{\&#34;bool\&#34;:true}]&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=调试>调试</h3><ul><li><code>JSON.DEBUG</code></li><li><code>JSON.DEBUG MEMORY</code>：返回内存占用大小</li></ul><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>&gt; JSON.SET doc $ <span class=s1>&#39;{&#34;a&#34;: 1, &#34;b&#34;: 2, &#34;c&#34;: {}}&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.DEBUG MEMORY doc
+</span></span><span class=line><span class=cl><span class=o>(</span>integer<span class=o>)</span> <span class=m>147</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.DEBUG MEMORY doc $.c
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;8&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=批量操作>批量操作</h3><ul><li><code>JSON.MGET</code>：批量 GET 多个 key 的值</li></ul><blockquote><p><code>JSON.MGET key [key ...] path</code></p></blockquote><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>&gt; JSON.SET doc1 $ <span class=s1>&#39;{&#34;a&#34;:1, &#34;b&#34;: 2, &#34;nested&#34;: {&#34;a&#34;: 3}, &#34;c&#34;: null}&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.SET doc2 $ <span class=s1>&#39;{&#34;a&#34;:4, &#34;b&#34;: 5, &#34;nested&#34;: {&#34;a&#34;: 6}, &#34;c&#34;: null}&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.MGET doc1 doc2 $..a
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;[1,3]&#34;</span>
+</span></span><span class=line><span class=cl>2<span class=o>)</span> <span class=s2>&#34;[4,6]&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li><code>JSON.MSET</code>：批量 SET 设置数值，这个操作是原子的，这意味着批量操作要么全都生效，要么全都不生效</li></ul><blockquote><p><code>JSON.MSET key path value [key path value ...]</code></p></blockquote><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>&gt; JSON.MSET doc1 $ <span class=s1>&#39;{&#34;a&#34;:1}&#39;</span> doc2 $ <span class=s1>&#39;{&#34;f&#34;:{&#34;a&#34;:2}}&#39;</span> doc3 $ <span class=s1>&#39;{&#34;f1&#34;:{&#34;a&#34;:0},&#34;f2&#34;:{&#34;a&#34;:0}}&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.MSET doc1 $ <span class=s1>&#39;{&#34;a&#34;:2}&#39;</span> doc2 $.f.a <span class=s1>&#39;3&#39;</span> doc3 $ <span class=s1>&#39;{&#34;f1&#34;:{&#34;a&#34;:1},&#34;f2&#34;:{&#34;a&#34;:2}}&#39;</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;OK&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&gt; JSON.MGET doc1 doc2 doc3 $
+</span></span><span class=line><span class=cl>1<span class=o>)</span> <span class=s2>&#34;[{\&#34;a\&#34;:2}]&#34;</span>
+</span></span><span class=line><span class=cl>2<span class=o>)</span> <span class=s2>&#34;[{\&#34;f\&#34;:{\&#34;a\&#34;:3}}]&#34;</span>
+</span></span><span class=line><span class=cl>3<span class=o>)</span> <span class=s2>&#34;[{\&#34;f1\&#34;:{\&#34;a\&#34;:1},\&#34;f2\&#34;:{\&#34;a\&#34;:2}}]&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=已弃用>已弃用</h3><ul><li><code>JSON.RESP</code></li><li><code>JSON.MUMMULTIBY</code></li></ul><h2 id=总结>总结</h2><p>面对 JSON 数据格式的流行，Redis 也并未落后，通过 <code>RedisJSON</code> 模块很好地进行了支持。而基于 <code>RedisJSON</code>，Redis Stack 还能作为一个 Document database 文档数据库、一个全文搜索引擎、或者一个向量搜索引擎。</p><p>本文姑且介绍了 <code>RedisJSON</code> 的基本用法。关注我，等待我的后续文章进一步了解 Redis Stack 的其他功能。</p><hr><p>参考资料：</p><ul><li><em><a href=https://redis.io/docs/about/about-stack/ target=_blank rel="noopener noreffer">https://redis.io/docs/about/about-stack/</a></em></li><li><em><a href=https://redis.io/docs/data-types/json/ target=_blank rel="noopener noreffer">https://redis.io/docs/data-types/json/</a></em></li><li><em><a href="https://redis.io/commands/?group=json" target=_blank rel="noopener noreffer">https://redis.io/commands/?group=json</a></em></li></ul></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2024-01-08</span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/redis-stack-json/ data-title="Redis Stack 不只是缓存之 RedisJSON"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/redis-stack-json/><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/redis-stack-json/ data-title="Redis Stack 不只是缓存之 RedisJSON"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/redis-stack-json/ data-title="Redis Stack 不只是缓存之 RedisJSON"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/redis-stack-json/ data-title="Redis Stack 不只是缓存之 RedisJSON"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/2023-summary/ class=prev rel=prev title="2023 年终总结 | 而立之年惨遭年底裁员"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>2023 年终总结 | 而立之年惨遭年底裁员</a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>
