@@ -24,6 +24,9 @@ draft: false
 - 🌐 &#160; ![Linux](https://img.shields.io/badge/-Linux-333333?style=flat&logo=Linux)  ![Docker](https://img.shields.io/badge/-Docker-333333?style=flat&logo=Docker)  ![Kubernetes](https://img.shields.io/badge/-Kubernetes-333333?style=flat&logo=Kubernetes)
 - 🛢 &#160; ![MySQL](https://img.shields.io/badge/-MySQL-333333?style=flat&logo=mysql)  ![Redis](https://img.shields.io/badge/-Redis-333333?style=flat&logo=redis)  ![Elasticsearch](https://img.shields.io/badge/-Elasticsearch-333333?style=flat&logo=Elasticsearch)  ![ClickHouse](https://img.shields.io/badge/-ClickHouse-333333?style=flat&logo=ClickHouse)
 
+## 我的完整简历
+
+[点击查看我的简历](/resume/resume)，欢迎给我推荐工作机会😁
 
 ---
 欢迎关注我的微信公众号，并与我交流：

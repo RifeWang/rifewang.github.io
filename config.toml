@@ -70,8 +70,8 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
     identifier = "about"
     pre = ""
     post = ""
-    name = "关于"
-    url = "/about/"
+    name = "作者"
+    url = "/about"
     title = ""
 
 
