@@ -28,7 +28,7 @@ disableComments = true
 
 社交平台：
 
-* 个人博客：[凌虚 https://rifewang.github.io](https://rifewang.github.io/)
+* 个人博客：[https://lingxu.pages.dev](https://lingxu.pages.dev/)
 * 微信公众号：[系统架构师Go](https://raw.githubusercontent.com/RifeWang/images/master/qrcode.jpg)
 * 掘金：[凌虚](https://juejin.cn/user/2893570337419720/posts)
 * Segmentfault 思否：[凌虚](https://segmentfault.com/u/rife/articles) （2022、2023 年度 Maintainer）
