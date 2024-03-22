@@ -59,9 +59,17 @@ disableComments = true
 
 ### 优脑银河（浙江）科技有限公司（ 2021.7 ~ 2023.12 ）
 
-* 项目名称：科研云、疗法云、手术规划、多模态阅片等多个项目。
-* 项目地址：https://app.neuralgalaxy.cn/research/
-* 项目概述：基本功能包括对机构、患者、影像数据等的管理，核心功能则是对医学影像数据的处理。
+* 负责项目：
+    * 项目名称：多模态阅片
+    * 项目地址：https://app.neuralgalaxy.cn/#/multiviewer
+    * 项目概述：大脑影像数据的多模态联动可视化。
+    <br/>
+    * 项目名称：科研云
+    * 项目地址：https://app.neuralgalaxy.cn/research/
+    * 项目概述：为科研用户提供大脑影像数据的管理、计算、可视化云平台。
+    <br/>
+    * 项目名称：疗法云
+    * 项目概述：为诊所等用户提供对患者和影像数据的管理，以及基于影像数据进行计算并出具治疗方案。
 * 个人职责：
     * 后端业务负责人，安排组内技术培训，协调后端同学的工作内容，组织产品的上线发版。
     * 负责技术选型、架构演进。
@@ -129,7 +137,7 @@ disableComments = true
 我熟悉的技能或工具包括但不限于：
 
 - 基本工具：Git / Linux
-- 通信协议：HTTP / HTTPS
+- 通信协议：HTTP / HTTPS / gRPC
 - 编程语言：Node.js / Python / Golang
 - 数据库：MySQL / InfluxDB
 - 消息队列：RabbitMQ / NSQ / Kafka
