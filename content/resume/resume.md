@@ -15,18 +15,10 @@ disableComments = true
 
 ## 个人信息
 
-基本信息：
-
-* 姓名：王颖
-* 性别：男
-* 生日：1993.08.27
-* 毕业时间：2016 年 6 月
-* 邮箱：rifewang@gmail.com
-
+* 基本信息：王颖 / 男 / 1993.08.27 / 本科
+* 联系方式：rifewang@gmail.com
 
 </br>
-
-社交平台：
 
 * 个人博客：[https://lingxu.pages.dev](https://lingxu.pages.dev/)
 * 微信公众号：[系统架构师Go](https://raw.githubusercontent.com/RifeWang/images/master/qrcode.jpg)
@@ -36,19 +28,19 @@ disableComments = true
 
 </br>
 
-本人 8 年工作经验，涉足互联网、脑科学、医疗器械相关领域，具备多个从零开始打造项目的经验。我主导过的互联网项目曾服务百万级用户、处理日均千万级流量、管理十亿级图片。
+本人 8 年工作经验，涉足互联网、脑科学相关领域，具备从零开始打造项目、以及推进已有项目演化迭代的经验。我主导过的互联网项目曾服务百万级用户、处理日均千万级流量、管理十亿级图片。
 
-我具备良好的技术广度，理解前端技术（曾是全栈开发）、熟悉并掌握后端 + 云原生（Kubernetes）+ 大数据（Elasticsearch）三大项技术领域，并拥有以下官方技术认证：
+我具备良好的技术广度，理解前端技术（曾是全栈开发）、熟悉并掌握**后端** + **云原生（Kubernetes）**+ **大数据（Elasticsearch）** 三大项技术领域，并拥有以下官方技术认证：
 - `Certified Kubernetes Administrator`
 - `Elastic Certified Engineer`
 
-我具备良好的职业操守，并在事业上有所追求，工作期间曾获得年度优秀个人、年度创新团队等荣誉。
+我具备良好的职业操守，并在事业上有所追求，工作期间曾获得：*年度优秀个人*、*年度创新团队* 等荣誉。
 
-我一直坚持终生学习的信条，并乐于接受未知的挑战，多年来也一直坚持写作和技术分享，已发布 150+ 篇原创技术文章，涵盖后端、中间件、数据库、全文搜索引擎、容器与云原生、工程实践等诸多领域。
+我长期保持学习和运动等良好习惯，并乐于接受未知的挑战，多年以来从未中断写作和技术分享，已发布 150+ 篇技术文章，涵盖后端、中间件、数据库、全文搜索引擎、容器与云原生、工程实践等诸多领域。
 
 以下是我的部分文章：
+- [又拍图片管家十亿级搜图系统的底层原理及两代演进](https://segmentfault.com/a/1190000022842774)
 - [Kubernetes 从提交 deployment 到 pod 运行的全过程](https://juejin.cn/post/7315405820673310759)
-- [又拍图片管家搜图系统的两代演进及底层原理](https://segmentfault.com/a/1190000022842774)
 - [ElasticSearch 专栏](https://juejin.cn/column/7314860085930180623)
 - [时序数据库 InfluxDB 系列](https://segmentfault.com/a/1190000020803478)
 
@@ -57,25 +49,37 @@ disableComments = true
 
 ## 工作经历
 
+### 居家：2024.1 ~ 至今
+
+被裁员后，我本人在家期间并未躺平，做了很多事情：
+
+* 学习+考证：已考取 `CKA` 和 `ECE` 认证，并已参加五月份的软考高级-系统架构设计师的考试。
+* 运动：成功减肥 20 斤，身体状态调理得非常好。
+* 读书：广泛涉猎技术类和非技术类书籍，精神状态饱满，心态良好。
+
 ### 优脑银河（浙江）科技有限公司（ 2021.7 ~ 2023.12 ）
 
 * 负责项目：
-    * 项目名称：多模态阅片
-    * 项目地址：https://app.neuralgalaxy.cn/#/multiviewer
+    * 项目名称：多模态阅片（ https://app.neuralgalaxy.cn/#/multiviewer ）
     * 项目概述：大脑影像数据的多模态联动可视化。
+
     <br/>
-    * 项目名称：科研云
-    * 项目地址：https://app.neuralgalaxy.cn/research/
+
+    * 项目名称：科研云（ https://app.neuralgalaxy.cn/research/ ）
     * 项目概述：为科研用户提供大脑影像数据的管理、计算、可视化云平台。
+
     <br/>
+
     * 项目名称：疗法云
     * 项目概述：为诊所等用户提供对患者和影像数据的管理，以及基于影像数据进行计算并出具治疗方案。
+
 * 个人职责：
-    * 后端业务负责人，安排组内技术培训，协调后端同学的工作内容，组织产品的上线发版。
+    * 后端业务负责人，协调团队成员的工作内容，组织产品的上线发版。
+    * 负责后端团队的技术培训。
     * 负责技术选型、架构演进。
     * 负责多个项目的后端开发，包括但不限于接口、数据库、中间件的设计及实现等。
-    * 负责 kubernetes 基础设施相关内容，包括后端团队培训。
-    * 负责底层任务编排调度引擎（Argo-workflows）相关内容。
+    * 负责 kubernetes 基础设施相关内容。
+    * 负责底层任务编排调度引擎（Argo-workflows）等相关内容。
 
 
 ### 杭州又拍云科技有限公司（ 2018.4 ~ 2021.4 ）
@@ -84,7 +88,7 @@ disableComments = true
 * 项目概述：为用户提供图片视频相关的存储、展示、外链等综合管理功能。
 * 个人职责：主导 Web 主站的架构和后端相关工作，服务百万级用户、应对日均千万级 PV 流量、管理十亿级图片。
 * 具体内容包括但不限于：
-    * Web 后端架构设计及实现。
+    * Web 后端系统架构演进。
     * REST API 接口设计及实现。
     * 基于 MySQL / InfluxDB 进行数据存储建模及查询优化。
     * 基于 Redis / Memcached 构建数据的高效缓存。
@@ -136,14 +140,13 @@ disableComments = true
 
 我熟悉的技能或工具包括但不限于：
 
-- 基本工具：Git / Linux
-- 通信协议：HTTP / HTTPS / gRPC
-- 编程语言：Node.js / Python / Golang
+- 云服务：AWS / Aliyun / 私有云
+- 基本工具：Git / Linux / HTTP / gRPC
+- 编程语言：Node.js / Golang
 - 数据库：MySQL / InfluxDB
-- 消息队列：RabbitMQ / NSQ / Kafka
-- 缓存系统：Redis / Memcached
+- 中间件：Redis / RabbitMQ / NSQ
 - 全文搜索及日志分析：Elasticsearch
-- 大数据统计分析：ClickHouse
+- 大数据：Kafka / ClickHouse
 - 向量搜索引擎：Milvus
 - 容器与云原生：Docker / Kubernetes / Argo-worfklows
 
