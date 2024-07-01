@@ -18,7 +18,7 @@ disableComments = true
 * 基本信息：王颖 / 男 / 1993.08.27 / 本科
 * 联系方式：rifewang@gmail.com
 
-----
+</br>
 
 * 个人博客：[https://lingxu.pages.dev](https://lingxu.pages.dev/)
 * 微信公众号：[系统架构师Go](https://raw.githubusercontent.com/RifeWang/images/master/qrcode.jpg)
@@ -44,10 +44,13 @@ disableComments = true
 - [ElasticSearch 专栏](https://juejin.cn/column/7314860085930180623)
 - [时序数据库 InfluxDB 系列](https://segmentfault.com/a/1190000020803478)
 
+</br>
 
 ----
 
 ## 工作经历
+
+----
 
 ### 沉淀提升：2024.1 ~ 至今
 
@@ -57,6 +60,8 @@ disableComments = true
 * 运动：成功减肥 20 斤，身体状态非常好。
 * 旅游：出国旅游一周，收获到了不一样的人生体验。
 * 读书：广泛涉猎技术类和非技术类书籍，精神状态饱满。
+
+----
 
 ### 优脑银河（浙江）科技有限公司（ 2021.7 ~ 2023.12 ）
 
@@ -78,14 +83,16 @@ disableComments = true
 * 负责后端团队的技术培训。
 * 负责技术选型、架构演进。
 * 负责多个项目的后端开发，包括但不限于接口、数据库、中间件的设计及实现等。
+* 负责基于无头浏览器的服务端渲染截图服务。
 * 负责 kubernetes 基础设施相关内容。
 * 负责底层任务编排调度引擎（Argo-workflows）等相关内容。
 
+----
 
 ### 杭州又拍云科技有限公司（ 2018.4 ~ 2021.4 ）
 
 * 项目名称：又拍图片管家（ https://x.yupoo.com ）
-* 项目概述：为用户提供图片视频相关的存储、展示、外链等综合管理功能。
+* 项目概述：为用户提供图片视频相关的管理、展示、外链等综合管理功能。
 * 个人职责：负责 Web 主站的架构演进和后端研发工作，服务百万级用户、应对日均千万级 PV 流量、管理十亿级图片。
 * 具体内容包括但不限于：
     * Web 后端系统架构演进。
@@ -120,12 +127,15 @@ disableComments = true
 * 项目概述：跨境电商浏览器。
 * 个人职责：负责部分后端研发工作。
 
+----
 
 ### 财游（上海）信息技术有限公司（ 2017.4 ~ 2018.4 ）
 
 * 项目名称：财宝理财
 * 项目概述：互联网金融 P2P 项目，为用户提供理财服务。
 * 个人职责：作为创业团队的核心研发，从零开始将产品打造上线，负责了部分前端开发、全部后端开发和系统架构工作。
+
+----
 
 ### 武汉东浦信息技术有限公司（ 2016.6 ~ 2017.4 ）
 
@@ -139,12 +149,12 @@ disableComments = true
 
 我熟悉的技能或工具包括但不限于：
 
-- 云服务：AWS / Aliyun
+- 云服务：AWS / Aliyun / 私有云
 - 基本工具：Git / Linux / HTTP / gRPC
 - 编程语言：Node.js / Golang
 - 数据库：MySQL / InfluxDB
 - 中间件：Redis / RabbitMQ / NSQ
-- 全文搜索及日志分析：Elasticsearch
+- 全文搜索及日志分析：Elasticsearch / ELK
 - 大数据：Kafka / ClickHouse
 - 向量搜索引擎：Milvus
 - 容器与云原生：Docker / Kubernetes / Argo-worfklows
