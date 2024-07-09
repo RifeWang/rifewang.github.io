@@ -1,0 +1,268 @@
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Redis 向量搜索 - 凌虚 Blog</title><meta name=Description content="Redis 向量搜索"><meta property="og:url" content="https://rifewang.github.io/redis-vector/">
+<meta property="og:site_name" content="凌虚 Blog"><meta property="og:title" content="Redis 向量搜索"><meta property="og:description" content="Redis 向量搜索"><meta property="og:locale" content="zh_CN"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-07-09T20:30:47+08:00"><meta property="article:modified_time" content="2024-07-09T22:31:35+08:00"><meta property="article:tag" content="Redis"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="Redis 向量搜索"><meta name=twitter:description content="Redis 向量搜索"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/redis-vector/><link rel=prev href=https://rifewang.github.io/image-search-use-client-model/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Redis 向量搜索","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/redis-vector\/"},"image":["https:\/\/rifewang.github.io\/images\/avatar.png"],"genre":"posts","keywords":"Redis","wordcount":1819,"url":"https:\/\/rifewang.github.io\/redis-vector\/","datePublished":"2024-07-09T20:30:47+08:00","dateModified":"2024-07-09T22:31:35+08:00","license":"Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)","publisher":{"@type":"Organization","name":"凌虚","logo":"https:\/\/rifewang.github.io\/images\/avatar.png"},"author":{"@type":"Person","name":"凌虚"},"description":"Redis 向量搜索"}</script></head><script async src="https://www.googletagmanager.com/gtag/js?id=G-VRMQFEVL7J"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-VRMQFEVL7J")</script><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about>作者 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i>
+</span></span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about title>作者</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Redis 向量搜索</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span>&nbsp;<span class=post-category>included in <a href=/categories/middleware/><i class="far fa-folder fa-fw" aria-hidden=true></i>Middleware</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2024-07-09>2024-07-09</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;1819 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;4 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#序言>序言</a></li><li><a href=#redis-作为向量数据库>Redis 作为向量数据库</a><ul><li><a href=#创建索引--插入向量>创建索引 & 插入向量</a></li><li><a href=#向量搜索>向量搜索</a></li></ul></li><li><a href=#性能>性能</a></li></ul></nav></div></div><div class=content id=content><h2 id=序言>序言</h2><p><code>Redis</code> 除了我们所熟知的缓存功能之外，还通过 <code>RedisJSON</code>、<code>RediSearch</code>、<code>RedisTimeSeries</code>、<code>RedisBloom</code> 等模块支持了 JSON 数据、查询与搜索（包括全文搜索、向量搜索、GEO 地理位置等）、时序数据、概率计算等等扩展功能。这些模块既可以按需导入，也被全部打包到了 <code>Redis Stack</code> 中方便我们直接使用。</p><p>本文将会简述 Redis 如何作为向量数据库使用。</p><h2 id=redis-作为向量数据库>Redis 作为向量数据库</h2><p>假设我们使用 Redis 来完成以图搜图服务，核心数据有：</p><ul><li><code>photoID</code>：每个图片的唯一ID</li><li><code>userID</code>：图片所属的用户ID，后续查询时可以作为过滤条件</li><li><code>vector</code>：每个图片的特性向量</li></ul><h3 id=创建索引--插入向量>创建索引 & 插入向量</h3><p>为此，我们使用 JSON 格式来保存数据，并使用 <a href=https://redis.io/docs/latest/commands/ft.create/ target=_blank rel="noopener noreffer"><code>FT.CREATE</code></a> 命令创建索引（由于向量计算的特殊性，必须创建索引才能进行搜索）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>FT.CREATE photos ON JSON
+</span></span><span class=line><span class=cl>PREFIX <span class=m>1</span> photoID: SCORE 1.0
+</span></span><span class=line><span class=cl>SCHEMA
+</span></span><span class=line><span class=cl>    $.userID as userID NUMERIC
+</span></span><span class=line><span class=cl>	$.vector AS vector VECTOR FLAT <span class=m>6</span> TYPE FLOAT32 DIM <span class=m>512</span> DISTANCE_METRIC L2
+</span></span></code></pre></td></tr></table></div></div><p>上述命令的意思是：</p><ul><li>我们基于 JSON 创建了一个名为 photos 的索引</li><li>该索引作用于前缀为 <code>photoID:</code> 的所有 key</li><li>JSON 数据中有两个字段：<ul><li>一个字段是 userID ，类型为 <code>NUMERIC</code> 数字</li><li>另一个字段是 vector，类型为 <code>VECTOR</code> 向量，该向量字段使用的相似性算法是 <code>FLAT</code>（目前只支持 <code>FLAT</code> 和 <code>HNSW</code>），<code>6</code> 表示命令后面跟着 6 个参数，<code>TYPE FLOAT32</code> 表示向量中元素的类型，<code>DIM 512</code> 表示向量的维度是 512，<code>DISTANCE_METRIC L2</code> 表示计算向量距离使用的是 L2 欧几里得距离（除了 <code>L2</code> 之外还支持 <code>IP</code> 内积和 <code>COSINE</code> 余弦距离）</li></ul></li></ul><p>代码示例（已经有很多文章示例用的 Python，本文决定用 Go 来实现）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>redis_test</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;bytes&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;context&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;encoding/binary&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;encoding/json&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;math/rand&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;strconv&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;github.com/redis/go-redis/v9&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>GenVectorArr</span><span class=p>(</span><span class=nx>dim</span> <span class=kt>int</span><span class=p>)</span> <span class=p>[]</span><span class=kt>float32</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>vectors</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>([]</span><span class=kt>float32</span><span class=p>,</span> <span class=nx>dim</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>dim</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>vectors</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=p>=</span> <span class=nx>rand</span><span class=p>.</span><span class=nf>Float32</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=nx>vectors</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>Photos</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ID</span>     <span class=kt>int</span>       <span class=s>`json:&#34;-&#34;`</span>
+</span></span><span class=line><span class=cl>	<span class=nx>UserID</span> <span class=kt>int</span>       <span class=s>`json:&#34;userID&#34;`</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Vector</span> <span class=p>[]</span><span class=kt>float32</span> <span class=s>`json:&#34;vector&#34;`</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>rds</span> <span class=o>*</span><span class=nx>redis</span><span class=p>.</span><span class=nx>Client</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>getRedisClient</span><span class=p>()</span> <span class=o>*</span><span class=nx>redis</span><span class=p>.</span><span class=nx>Client</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>rds</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>rds</span> <span class=p>=</span> <span class=nx>redis</span><span class=p>.</span><span class=nf>NewClient</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>redis</span><span class=p>.</span><span class=nx>Options</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Addr</span><span class=p>:</span>     <span class=s>&#34;your-redis-host&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Username</span><span class=p>:</span> <span class=s>&#34;xxxx&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Password</span><span class=p>:</span> <span class=s>&#34;xxxx&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=p>})</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=nx>rds</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>CreateVector</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>rdb</span> <span class=o>:=</span> <span class=nf>getRedisClient</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=nx>rdb</span><span class=p>.</span><span class=nf>FlushAll</span><span class=p>(</span><span class=nx>ctx</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 创建索引：
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// FT.CREATE photos ON JSON
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// PREFIX 1 photoID: SCORE 1.0
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// SCHEMA
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// 	 $.userID as userID NUMERIC
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// 	 $.vector AS vector VECTOR FLAT 6 TYPE FLOAT32 DIM 512 DISTANCE_METRIC L2
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>val</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>rdb</span><span class=p>.</span><span class=nf>Do</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;FT.CREATE&#34;</span><span class=p>,</span> <span class=s>&#34;photos&#34;</span><span class=p>,</span> <span class=s>&#34;ON&#34;</span><span class=p>,</span> <span class=s>&#34;JSON&#34;</span><span class=p>,</span> <span class=s>&#34;PREFIX&#34;</span><span class=p>,</span> <span class=s>&#34;1&#34;</span><span class=p>,</span> <span class=s>&#34;photoID:&#34;</span><span class=p>,</span> <span class=s>&#34;SCORE&#34;</span><span class=p>,</span> <span class=s>&#34;1.0&#34;</span><span class=p>,</span> <span class=s>&#34;SCHEMA&#34;</span><span class=p>,</span> <span class=s>&#34;$.userID&#34;</span><span class=p>,</span> <span class=s>&#34;as&#34;</span><span class=p>,</span> <span class=s>&#34;userID&#34;</span><span class=p>,</span> <span class=s>&#34;NUMERIC&#34;</span><span class=p>,</span> <span class=s>&#34;$.vector&#34;</span><span class=p>,</span> <span class=s>&#34;as&#34;</span><span class=p>,</span> <span class=s>&#34;vector&#34;</span><span class=p>,</span> <span class=s>&#34;VECTOR&#34;</span><span class=p>,</span> <span class=s>&#34;FLAT&#34;</span><span class=p>,</span> <span class=s>&#34;6&#34;</span><span class=p>,</span> <span class=s>&#34;TYPE&#34;</span><span class=p>,</span> <span class=s>&#34;FLOAT32&#34;</span><span class=p>,</span> <span class=s>&#34;DIM&#34;</span><span class=p>,</span> <span class=s>&#34;512&#34;</span><span class=p>,</span> <span class=s>&#34;DISTANCE_METRIC&#34;</span><span class=p>,</span> <span class=s>&#34;L2&#34;</span><span class=p>).</span><span class=nf>Result</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;FT.CREATE:&#34;</span><span class=p>,</span> <span class=nx>val</span><span class=p>.(</span><span class=kt>string</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 插入 1000 个向量
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>1000</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>photo</span> <span class=o>:=</span> <span class=nx>Photos</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>ID</span><span class=p>:</span>     <span class=mi>100000</span> <span class=o>+</span> <span class=nx>i</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=nx>UserID</span><span class=p>:</span> <span class=mi>200000</span> <span class=o>+</span> <span class=p>(</span><span class=nx>i</span> <span class=o>/</span> <span class=mi>100</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Vector</span><span class=p>:</span> <span class=nf>GenVectorArr</span><span class=p>(</span><span class=mi>512</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=nx>photobytes</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>Marshal</span><span class=p>(</span><span class=nx>photo</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=k>if</span> <span class=nx>r</span> <span class=o>:=</span> <span class=nx>rdb</span><span class=p>.</span><span class=nf>JSONSet</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;photoID:&#34;</span><span class=o>+</span><span class=nx>strconv</span><span class=p>.</span><span class=nf>Itoa</span><span class=p>(</span><span class=nx>photo</span><span class=p>.</span><span class=nx>ID</span><span class=p>),</span> <span class=s>&#34;$&#34;</span><span class=p>,</span> <span class=nx>photobytes</span><span class=p>);</span> <span class=nx>r</span><span class=p>.</span><span class=nf>Err</span><span class=p>()</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nb>panic</span><span class=p>(</span><span class=nx>r</span><span class=p>.</span><span class=nf>Err</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>示例中，我们使用 <a href=https://redis.io/docs/latest/commands/json.set/ target=_blank rel="noopener noreffer"><code>JSON.SET</code></a> 插入了 1000 个随机生成的 512 维向量。</p><p>查看单个数据占用的内存大小可以使用 <a href=https://redis.io/docs/latest/commands/json.debug-memory/ target=_blank rel="noopener noreffer"><code>JSON.DEBUG MEMORY</code></a> 命令：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>&gt; JSON.DEBUG memory photoID:100000
+</span></span><span class=line><span class=cl><span class=o>(</span>integer<span class=o>)</span> <span class=m>16552</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以看到我们的单条数据使用了约 16 KB 内存，以此类推 1000 条数据需要 16 MB 内存，1 百万数据需要 16 GB 内存。</p><p>查看索引信息则可以使用 <a href=https://redis.io/docs/latest/commands/ft.info/ target=_blank rel="noopener noreffer"><code>FT.INFO</code></a> 命令。</p><h3 id=向量搜索>向量搜索</h3><p>向量搜索使用的命令是 <a href=https://redis.io/docs/latest/commands/ft.search/ target=_blank rel="noopener noreffer"><code>FT.SEARCH</code></a>。</p><p>搜索示例 1：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>FT.SEARCH photos <span class=s2>&#34;*=&gt;[KNN 10 @vector </span><span class=nv>$BLOB</span><span class=s2> AS my_scores]&#34;</span>
+</span></span><span class=line><span class=cl>    RETURN <span class=m>1</span> $.userID
+</span></span><span class=line><span class=cl>    PARAMS <span class=m>2</span>
+</span></span><span class=line><span class=cl>    BLOB <span class=s2>&#34;查询向量&#34;</span>
+</span></span><span class=line><span class=cl>    SORTBY my_scores
+</span></span><span class=line><span class=cl>    DIALECT <span class=m>2</span>
+</span></span></code></pre></td></tr></table></div></div><p>含义是：</p><ul><li>在 photos 索引上进行向量搜索，</li><li><code>"*=>[KNN 10 @vector $BLOB AS my_scores]"</code> 搜索范围是 <code>*</code> 既索引的全部数据，执行的是 KNN 搜索，返回 10 个文档，搜索字段是 vector，相似度分数定义为 my_scores</li><li><code>RETURN 1 $.userID</code> 搜索结果只返回 userID 字段（由于 vector 字段比较大，取回会浪费网络传输时间，所以用不到的话就忽略）</li><li><code>PARAMS 2</code> 两个查询参数</li><li><code>BLOB "查询向量"</code> 通过二进制传输查询向量</li><li><code>SORTBY my_scores</code> 排序</li><li><code>DIALECT 2</code> 执行查询的 dialect 版本</li></ul><p>搜索示例 2，增加预过滤：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>FT.SEARCH photos <span class=s2>&#34;(@userID:[200000,200000])=&gt;[KNN </span><span class=nv>$K</span><span class=s2> @vector </span><span class=nv>$BLOB</span><span class=s2> AS my_scores]&#34;</span>
+</span></span><span class=line><span class=cl>    RETURN <span class=m>1</span> $.userID
+</span></span><span class=line><span class=cl>    PARAMS <span class=m>4</span>
+</span></span><span class=line><span class=cl>    BLOB <span class=s2>&#34;查询向量&#34;</span>
+</span></span><span class=line><span class=cl>    K <span class=m>3</span>
+</span></span><span class=line><span class=cl>    SORTBY my_scores
+</span></span><span class=line><span class=cl>    DIALECT <span class=m>2</span>
+</span></span></code></pre></td></tr></table></div></div><p>通过设置 userID 的范围对索引中的部分数据进行向量搜索。</p><p>代码示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=c1>// Float32SliceToBytes converts a []float32 to a byte slice (BLOB).
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=nf>Float32SliceToBytes</span><span class=p>(</span><span class=nx>data</span> <span class=p>[]</span><span class=kt>float32</span><span class=p>)</span> <span class=p>([]</span><span class=kt>byte</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>buf</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>bytes</span><span class=p>.</span><span class=nx>Buffer</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>err</span> <span class=o>:=</span> <span class=nx>binary</span><span class=p>.</span><span class=nf>Write</span><span class=p>(</span><span class=nx>buf</span><span class=p>,</span> <span class=nx>binary</span><span class=p>.</span><span class=nx>LittleEndian</span><span class=p>,</span> <span class=nx>data</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=nx>buf</span><span class=p>.</span><span class=nf>Bytes</span><span class=p>(),</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>SearchVector</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>rdb</span> <span class=o>:=</span> <span class=nf>getRedisClient</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 构造查询向量
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>searchVector</span> <span class=o>:=</span> <span class=nf>GenVectorArr</span><span class=p>(</span><span class=mi>512</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>searchBlob</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nf>Float32SliceToBytes</span><span class=p>(</span><span class=nx>searchVector</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// KNN 向量搜索，对 vector 字段进行向量搜索，返回 10 个文档，按照与查询向量的距离对结果进行排序：
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// FT.SEARCH photos &#34;*=&gt;[KNN 10 @vector $BLOB AS my_scores]&#34; RETURN 1 $.userID PARAMS 2 BLOB &#34;查询向量&#34; SORTBY my_scores DIALECT 2
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>val</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>rdb</span><span class=p>.</span><span class=nf>Do</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;FT.SEARCH&#34;</span><span class=p>,</span> <span class=s>&#34;photos&#34;</span><span class=p>,</span> <span class=s>&#34;*=&gt;[KNN 10 @vector $BLOB AS my_scores]&#34;</span><span class=p>,</span> <span class=s>&#34;RETURN&#34;</span><span class=p>,</span> <span class=s>&#34;1&#34;</span><span class=p>,</span> <span class=s>&#34;$.userID&#34;</span><span class=p>,</span> <span class=s>&#34;PARAMS&#34;</span><span class=p>,</span> <span class=s>&#34;2&#34;</span><span class=p>,</span> <span class=s>&#34;BLOB&#34;</span><span class=p>,</span> <span class=nx>searchBlob</span><span class=p>,</span> <span class=s>&#34;SORTBY&#34;</span><span class=p>,</span> <span class=s>&#34;my_scores&#34;</span><span class=p>,</span> <span class=s>&#34;DIALECT&#34;</span><span class=p>,</span> <span class=s>&#34;2&#34;</span><span class=p>).</span><span class=nf>Result</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;FT.SEARCH:&#34;</span><span class=p>,</span> <span class=nx>val</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// KNN 向量搜索，增加预过滤条件
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// FT.SEARCH photos &#34;(@userID:[200000,200000])=&gt;[KNN $K @vector $BLOB AS my_scores]&#34; RETURN 1 $.userID PARAMS 4 BLOB &#34;查询向量&#34; K 3 SORTBY my_scores DIALECT 2
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>r2</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>rdb</span><span class=p>.</span><span class=nf>Do</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;FT.SEARCH&#34;</span><span class=p>,</span> <span class=s>&#34;photos&#34;</span><span class=p>,</span> <span class=s>&#34;(@userID:[200000,200000])=&gt;[KNN $K @vector $BLOB AS my_scores]&#34;</span><span class=p>,</span> <span class=s>&#34;RETURN&#34;</span><span class=p>,</span> <span class=s>&#34;1&#34;</span><span class=p>,</span> <span class=s>&#34;$.userID&#34;</span><span class=p>,</span> <span class=s>&#34;PARAMS&#34;</span><span class=p>,</span> <span class=s>&#34;4&#34;</span><span class=p>,</span> <span class=s>&#34;BLOB&#34;</span><span class=p>,</span> <span class=nx>searchBlob</span><span class=p>,</span> <span class=s>&#34;K&#34;</span><span class=p>,</span> <span class=s>&#34;3&#34;</span><span class=p>,</span> <span class=s>&#34;SORTBY&#34;</span><span class=p>,</span> <span class=s>&#34;my_scores&#34;</span><span class=p>,</span> <span class=s>&#34;DIALECT&#34;</span><span class=p>,</span> <span class=s>&#34;2&#34;</span><span class=p>).</span><span class=nf>Result</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;-------------------------&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;FT.SEARCH with filter total results:&#34;</span><span class=p>,</span> <span class=nx>r2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=性能>性能</h2><p>Redis 官方专门写过一篇文章 <a href=https://redis.io/blog/benchmarking-results-for-vector-databases/ target=_blank rel="noopener noreffer">Benchmarking results for vector databases</a>。</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://raw.githubusercontent.com/RifeWang/images/master/redis/redis-vector-benchmark.png data-srcset="https://raw.githubusercontent.com/RifeWang/images/master/redis/redis-vector-benchmark.png, https://raw.githubusercontent.com/RifeWang/images/master/redis/redis-vector-benchmark.png 1.5x, https://raw.githubusercontent.com/RifeWang/images/master/redis/redis-vector-benchmark.png 2x" data-sizes=auto alt=https://raw.githubusercontent.com/RifeWang/images/master/redis/redis-vector-benchmark.png title=https://raw.githubusercontent.com/RifeWang/images/master/redis/redis-vector-benchmark.png></p><p>其结论就是不论是吞吐量还是搜索延时，Redis 作为向量数据库在测试中表现得最好。</p><p>另外由于向量计算比较耗时，如果仍然放在单线程中完成，一定会发生阻塞影响后续调用，所以针对搜索场景，Redis 使用了多线程的方式进行了改进：</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://raw.githubusercontent.com/RifeWang/images/master/redis/redis-vector-search-multi-thread.png data-srcset="https://raw.githubusercontent.com/RifeWang/images/master/redis/redis-vector-search-multi-thread.png, https://raw.githubusercontent.com/RifeWang/images/master/redis/redis-vector-search-multi-thread.png 1.5x, https://raw.githubusercontent.com/RifeWang/images/master/redis/redis-vector-search-multi-thread.png 2x" data-sizes=auto alt=https://raw.githubusercontent.com/RifeWang/images/master/redis/redis-vector-search-multi-thread.png title=https://raw.githubusercontent.com/RifeWang/images/master/redis/redis-vector-search-multi-thread.png></p><p>更多信息请查阅上述官方文章。</p><p>最后，如果我们的数据量并不大，那么使用 Redis 作为向量数据库也是一个很好的选择。</p><hr><p>参考资料：</p><ul><li><em><a href=https://redis.io/blog/benchmarking-results-for-vector-databases/ target=_blank rel="noopener noreffer">https://redis.io/blog/benchmarking-results-for-vector-databases/</a></em></li><li><em><a href=https://cookbook.openai.com/examples/vector_databases/redis/getting-started-with-redis-and-openai target=_blank rel="noopener noreffer">https://cookbook.openai.com/examples/vector_databases/redis/getting-started-with-redis-and-openai</a></em></li><li><em><a href=https://redis.io/docs/latest/develop/get-started/vector-database/ target=_blank rel="noopener noreffer">https://redis.io/docs/latest/develop/get-started/vector-database/</a></em></li><li><em><a href=https://redis.io/docs/latest/develop/interact/search-and-query/advanced-concepts/vectors/ target=_blank rel="noopener noreffer">https://redis.io/docs/latest/develop/interact/search-and-query/advanced-concepts/vectors/</a></em></li><li><em><a href=https://redis.io/docs/latest/develop/interact/search-and-query/indexing/ target=_blank rel="noopener noreffer">https://redis.io/docs/latest/develop/interact/search-and-query/indexing/</a></em></li><li><em><a href=https://redis.io/docs/latest/develop/interact/search-and-query/query/vector-search/ target=_blank rel="noopener noreffer">https://redis.io/docs/latest/develop/interact/search-and-query/query/vector-search/</a></em></li></ul></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2024-07-09</span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/redis-vector/ data-title="Redis 向量搜索" data-hashtags=Redis><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/redis-vector/ data-hashtag=Redis><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/redis-vector/ data-title="Redis 向量搜索"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/redis-vector/ data-title="Redis 向量搜索"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/redis-vector/ data-title="Redis 向量搜索"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/redis/>Redis</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/image-search-use-client-model/ class=prev rel=prev title=以图搜图架构优化：使用客户端模型提取图像特征><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>以图搜图架构优化：使用客户端模型提取图像特征</a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>
