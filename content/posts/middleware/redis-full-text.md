@@ -35,8 +35,6 @@ disableComments = true
 
 #### 数据集
 
-数据集来源于 https://github.com/jlshix/movielens-douban-dataset/blob/master/movie.json。
-
 数据格式如下图所示：
 
 ![](https://raw.githubusercontent.com/RifeWang/images/master/redis/movie-dataset.png)
