@@ -165,10 +165,13 @@ FT.SEARCH movies '(@genres:{剧情|动作})(@rating:[8.0,+inf])'
 
 ##### 前缀后缀、模糊搜索
 
-- `FT.SEARCH movies '@title:爱*' RETURN 1 title`
-- `FT.SEARCH movies '@title:*情' RETURN 1 title`
-- `FT.SEARCH movies '@title:*命*' RETURN 1 title`
-- `FT.SEARCH movies '@title:%人生%' RETURN 1 title`
+```sh
+FT.SEARCH movies '@title:爱*' RETURN 1 title
+FT.SEARCH movies '@title:*情' RETURN 1 title
+FT.SEARCH movies '@title:*命*' RETURN 1 title
+FT.SEARCH movies '@title:%人生%' RETURN 1 title
+```
+
 
 ##### 自定义分词
 
