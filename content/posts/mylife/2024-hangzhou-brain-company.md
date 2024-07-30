@@ -1,8 +1,8 @@
 +++
 draft = false
 date = 2024-03-28T00:19:50+08:00
-title = "我的求职序章之杭州脑科学/脑机接口领域公司梳理"
-description = "我的求职序章之杭州脑科学/脑机接口领域公司梳理"
+title = "2024 杭州脑科学/脑机接口领域公司梳理"
+description = "2024 杭州脑科学/脑机接口领域公司梳理"
 slug = ""
 authors = []
 tags = []
@@ -15,14 +15,9 @@ disableComments = true
 
 ## 背景说明
 
-大家好，我是凌虚。
+我自从 2023 年底被前公司裁员之后，这段时间又经历了出国旅游、分手、过年、学习、考证等等历程。
 
-我自从 2023 年底被前公司毕业了之后，这段时间经历了出国旅游、分手、过年、学习、考证等等历程，部分内容大家感兴趣的话也可以看看我写过的几篇博文：
-- [2023 年终总结 | 而立之年惨遭年底裁员](https://lingxu.pages.dev/2023-summary/)
-- [我的 2024 年 CKA 认证两天速通攻略](https://lingxu.pages.dev/2024-cka-cert/)
-- [我的 2024 年 Elasticsearch 认证考试经验与真题回顾](https://lingxu.pages.dev/2024-ece/)
-
-我自认为是一个理解前端技术（曾是全栈开发）、熟悉并掌握后端 + 云原生（Kubernetes）+ 大数据（Elasticsearch）三大项技术领域的男人，入行以来基本都在互联网领域，三年前追求创造社会价值进而加入了一家互联网+脑科学领域的公司，由此接触了一些脑科学相关的东西。
+我自认为是一个理解前端技术、熟练掌握后端 + 云原生 + 大数据三大项技术领域的男人，入行以来基本都在互联网领域，三年前追求创造社会价值进而加入了一家互联网+脑科学领域的公司，由此接触了一些脑科学相关的东西。
 
 我本人一直做的是计算机软件工作，定居在杭州，现在也跟大多数人一样面临着找工作的问题，我暂时还没有公开我的简历，因为我希望继续留在脑科学相关领域，所以我现阶段主动进行了一些信息收集，打算有合适的机会主动投递，当然最后的结果让人心碎，我根本就找不到一家适合的公司。
 
@@ -30,13 +25,13 @@ disableComments = true
 
 ## 杭州的脑科学/脑机接口相关公司
 
-注：以下个人感觉均是主观判断，招聘只罗列了软件相关的岗位。
+注：以下个人感觉均是主观判断。
 
-- 曼安智能
+- 曼安智能 mindangel
     - 融资：不明确
     - 官网：http://www.mindangel.cc/
     - 产品：脑电设备
-    - 招聘：嵌入式软件工程师
+    - 招聘：https://www.zhipin.com/gongsi/56876e4bd07a07101XN72t20.html
     - 个人感觉：官网比较简陋，没有软件方向合适的岗位
 
 - 普可医疗
@@ -44,7 +39,7 @@ disableComments = true
     - 官网：http://www.pearlcare.com.cn/
     - 产品：一次性使用心电电极、麻醉深度监测仪、一次性使用脑电传感器
     - 子公司：浙江一洋医疗科技有限公司 http://www.yymed.com.cn/
-    - 招聘：算法工程师、嵌入式软件工程师
+    - 招聘：https://www.zhipin.com/gongsi/2ded58e6a3d5c7a61HV7092-FQ~~.html
     - 个人感觉：没有合适的岗位
 
 - 佳量医疗
@@ -54,77 +49,77 @@ disableComments = true
     - 子公司：
         - 诺为医疗 https://www.neuhill.com/ 官网没东西
         - 纽顿科技
-    - 招聘：算法工程师、嵌入式软件工程师
+    - 招聘：https://www.zhipin.com/gongsi/74f8cc29477e10b40H1z0ti4Fg~~.html
     - 个人感觉：官网不是自己搭建的，没有合适的岗位
 
-- 纽若思医疗
+- 纽若思医疗 neurons
     - 融资：A轮，数千万人民币
     - 官网：http://www.neurons.top/
     - 产品：贴片式多导睡眠记录仪、多导睡眠脑电记录仪、心理评估系统
-    - 招聘：嵌入式开发工程师
+    - 招聘：https://www.zhipin.com/gongsi/b5ffbe8668e473801HZ-3t-1.html
     - 个人感觉：没有合适的岗位
 
 - 柔灵科技
     - 融资：天使轮，数千万人民币
     - 官网：https://www.flexolinkai.com/
     - 产品：脑电睡眠监测仪、额贴式脑机安睡仪、肌电手环、配合脑电助眠机器人使用的APP
-    - 招聘：算法工程师
+    - 招聘：https://www.zhipin.com/gongsi/e42cd1dd78322b721nx-2di1EVE~.html
     - 个人感觉：官网相对正式，还是EEG脑电相关，无合适岗位
 
 - 回车电子科技
     - 融资：Pre-A轮，1500万人民币
     - 官网：https://www.entertech.cn/
     - 产品：脑机接口 BMI VR 一体机、冥想头环、脑机接口传感模块、情感云计算平台
-    - 招聘：无信息
+    - 招聘：https://www.zhipin.com/gongsi/753e5e6a29faa6561nR42dm5.html
     - 个人感觉：云计算平台看起来我可以做，但是太简单了总体来说还是不合适
 
-- 强脑科技
+- 强脑科技 BrainCo
     - 融资：A轮，2500万美元
     - 官网：https://www.brainco.cn/#/
     - 产品：仿生手、仿生腿、可穿戴头环
-    - 招聘：无软件工程师岗位
+    - 招聘：https://www.zhipin.com/gongsi/176fdc9881fdc5f51HJ_3t6-GQ~~.html
     - 个人感觉：无合适岗位
 
 - 神灯科技
     - 融资：Pre-A轮，1500万人民币
     - 官网：没找到
     - 产品：脑电改善睡眠
-    - 招聘：嵌入式开发工程师
+    - 招聘：https://www.zhipin.com/gongsi/9cee53df7947c9761nZ709u5.html
     - 个人感觉：无合适岗位
 
 - 妞诺科技
     - 融资：不明确
     - 官网：https://www.neurotech.cn/
     - 产品：云平台（大数据可视化分析系统、脑电流转系统、脑电监测系统、神经学科科研数据库、患者管理系统、诊疗系统、会诊系统）
-    - 招聘：算法工程师
+    - 招聘：https://www.zhipin.com/gongsi/7bb9136b3253b3981HR-39s~.html
     - 个人感觉：无合适岗位
 
 - 极智医疗
     - 融资：A轮，数千万人民币
     - 官网：官网维护中 http://www.jizhiyiliao.com/
     - 产品：无有效信息
-    - 招聘：C# .NET软件工程师
+    - 招聘：https://www.zhipin.com/gongsi/8aeca46d991f40d20Xd429q_.html
     - 个人感觉：无合适岗位
 
 - 南粟科技
     - 融资：Pre-A轮，数千万人民币
     - 官网：https://www.nanstech.com/
     - 产品：语言、孤独症等康复系统（小南听说APP）
-    - 招聘：无软件工程师岗位
-    - 个人感觉：无合适岗位
+    - 招聘：https://www.zhipin.com/gongsi/c5b834acc6ed1d1d1HNz29-0Fw~~.html
+    - 个人感觉：无软件工程师岗位
 
 - 心景科技
     - 融资：A轮，数千万人民币
     - 官网：https://www.med-vision.cn/
     - 产品：基于 VR 做睡眠障碍、焦虑、成瘾等的辅助治疗
-    - 招聘：安卓、前端、大数据
+    - 招聘：https://www.zhipin.com/gongsi/7ab8c08db6fb96dc0HN-3t61.html
     - 个人感觉：无合适岗位
 
 - 博灵脑机
     - 融资：不需要融资，由上市公司创新医疗和科研团队共同出资设立
     - 官网：http://www.blbci.cn/sy
     - 产品：无
-    - 招聘：前端、算法工程师
+    - 招聘：https://www.zhipin.com/gongsi/b0795a9f2d5ce78c1XR839S1EVo~.html
     - 个人感觉：官网很简陋，无合适岗位
 
 以上就是我目前收集到的杭州脑科学/脑机接口领域的公司情况。
