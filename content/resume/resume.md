@@ -17,15 +17,15 @@ disableComments = true
 
 * 基本信息：王颖 / 男 / 本科    |    联系方式：18772964832 / rifewang@gmail.com
 * 微信公众号：[系统架构师Go](https://raw.githubusercontent.com/RifeWang/images/master/qrcode.jpg)（写作七年半）
-* Segmentfault 思否：[凌虚](https://segmentfault.com/u/rife/articles) （2022、2023 年度 Maintainer）
+* 技术社区 Segmentfault 思否：[凌虚](https://segmentfault.com/u/rife/articles) （2022、2023 年度 Maintainer）
 
 ----
 
 本人拥有 8 年互联网和脑科学领域的工作经验。主导过服务数百万用户、日均千万级流量、管理数十亿级图片的互联网项目。负责研发的脑科学项目应用服务于多家头部医院、科研机构和诊所。
 
-我具备丰富的技术广度，熟悉 **后端**、**云原生**、**大数据** 等多项技术领域，拥有 **系统架构设计师**、**Certified Kubernetes Administrator**、**Elastic Certified Engineer** 等官方技术认证。
+具备丰富的技术广度，涵盖 **后端**、**云原生**、**大数据** 等多项技术领域，拥有 **系统架构设计师**、**Certified Kubernetes Administrator**、**Elastic Certified Engineer** 等官方技术认证。
 
-职业素养良好，曾获得：**年度优秀个人**、**年度创新团队**等荣誉。多年来一直坚持运动、学习、写作，已发布 150+ 篇技术文章。
+职场表现卓越，曾获：**年度优秀个人**、**年度创新团队** 等荣誉。内核优秀、长期自律，多年来一直坚持运动、学习、写作，已发布 150+ 篇技术文章。
 
 ## 工作经历
 
@@ -57,7 +57,7 @@ disableComments = true
 
 * 项目名称：以图搜图服务
 * 项目概述：提供相似性图像内容的快速搜索功能。
-* 个人职责：从零探索，独立构建了以卷积神经网络和向量搜索为核心整个系统，支撑了十亿级别的图像搜索。
+* 个人职责：从零探索，独立构建了以卷积神经网络和向量搜索为核心的整个系统，支撑了十亿级别的图像搜索。
 
 </br>
 
@@ -79,10 +79,10 @@ disableComments = true
 
 ## 专业技能
 
-- 8 年开发经验，5 年架构经验，有较强的架构设计能力和编码能力
-- 丰富的 AWS、Aliyun 等云服务使用经验
-- 独立解决问题的能力，熟练应用 Node.js、Golang 等编程语言
-- 熟悉 MySQL、Redis、MQ 消息队列等常用服务组件
-- 熟悉 Kafka、ClickHouse、Elasticsearch、Grafana，在大数据领域有一定项目经验
-- 熟悉 Linux 操作系统，Docker 容器技术，熟练使用 Kubernetes
+- 8 年开发经验，5 年架构经验，较强的架构设计能力和编码能力
+- 丰富的 AWS、Aliyun 等公有云以及企业自建私有云使用经验
+- 擅长 Node.js、Golang 等语言，熟悉 MySQL、Redis、MQ 等常用服务组件原理和优化
+- 熟悉 Elasticsearch 原理，具备搜索经验
+- 熟悉 Kafka、ClickHouse、ELK，拥有数据仓库和大数据领域项目经验
+- 熟悉 Linux 和云原生生态，理解 Docker、Kubernetes、Argo-workflows 架构及原理
 - 熟悉计算机视觉和向量搜索，对 AI 有一定的理解并经常使用
