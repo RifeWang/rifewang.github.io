@@ -15,7 +15,7 @@ disableComments = true
 
 ## 个人信息
 
-* 基本信息：王颖 / 男 / 本科    |    联系方式：18772964832 / rifewang@gmail.com
+* 基本信息：王颖 / 男 / 本科    |    联系方式：187 7296 4832 / rifewang@gmail.com
 * 微信公众号：[系统架构师Go](https://raw.githubusercontent.com/RifeWang/images/master/qrcode.jpg)（写作七年半）
 * 技术社区 Segmentfault 思否：[凌虚](https://segmentfault.com/u/rife/articles) （2022、2023 年度 Maintainer）
 
@@ -31,7 +31,8 @@ disableComments = true
 
 ### 自我提升 | 2024.1 ~ 至今
 
-主动选择了自我调整：沉淀学习，并考取`CKA`、`ECE`、`系统架构设计师`等证书；成功减肥 20 斤，身心健康向上。
+沉淀学习，并考取`CKA`、`ECE`、`系统架构设计师`等证书，为拿下杭州市 E 类人才做准备；
+自我调整，减脂 20 斤，博览群书，身心健康向上。
 
 ### 优脑银河（浙江）科技有限公司 | 2021.7 ~ 2023.12
 
@@ -48,7 +49,7 @@ disableComments = true
 * 项目名称：又拍图片管家（ https://x.yupoo.com ）
 * 项目概述：为用户提供图片视频相关的存储、展示、外链、个人主页、统计分析等功能。
 * 个人职责：负责 Web 主站的架构迭代和后端研发工作，服务百万级用户、应对日均千万级 PV 流量、管理十亿级图片。
-    - 推进 web 系统的架构迭代，保障系统的高可用和高性能。
+    - 推进 web 系统的架构迭代，应对高并发等挑战，保障系统的高可用和高性能。
     - 负责 REST API 设计、MySQL 数据建模、Redis 缓存构建，以及编码实现、系统优化。
     - 利用消息队列 NSQ / Kafka 解耦服务，推动系统向微服务的演进。
     - 基于 ElasticSearch 构建全文搜索功能与日志分析系统。
@@ -79,10 +80,10 @@ disableComments = true
 
 ## 专业技能
 
-- 8 年开发经验，5 年架构经验，较强的架构设计能力和编码能力
+- 8 年开发 5 年架构，较强的架构设计和编码能力，对高并发、分布式、微服务有深入理解
 - 丰富的 AWS、Aliyun 等公有云以及企业自建私有云使用经验
 - 擅长 Node.js、Golang 等语言，熟悉 MySQL、Redis、MQ 等常用服务组件原理和优化
 - 熟悉 Elasticsearch 原理，具备搜索经验
 - 熟悉 Kafka、ClickHouse、ELK，拥有数据仓库和大数据领域项目经验
 - 熟悉 Linux 和云原生生态，理解 Docker、Kubernetes、Argo-workflows 架构及原理
-- 熟悉计算机视觉和向量搜索，对 AI 有一定的理解并经常使用
+- 熟悉计算机视觉、Milvus 等向量搜索，对 AI 有一定的理解并经常使用
