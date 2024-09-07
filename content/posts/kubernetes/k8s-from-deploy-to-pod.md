@@ -19,11 +19,11 @@ disableComments = true
 
 在搞清楚从 `deployment` 提交到 `pod` 运行整个过程之前，我们有先来看看 `Kubernetes` 的集群架构：
 
-![](/images/k8s/kubernetes-cluster-architecture.svg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/kubernetes-cluster-architecture.png)
 
 上图与下图相同：
 
-![](/images/k8s/k8s-architecture.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/k8s-architecture.png)
 
 如图所示，k8s 集群分为 `control plane` 控制平面和 `node` 节点。
 
@@ -43,14 +43,14 @@ disableComments = true
 
 从 `Deployment` 到 `Pod` 的整个过程如下图所示：
 
-![](/images/k8s/from-deploy-to-pod/k8s-from-deploy-to-pod.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/k8s-from-deploy-to-pod.png)
 
 
 ### 1. 请求发送到 `kube-api-server`
 
 请求发送到 `kube-api-server`，然后会进行认证、鉴权、变更、校验等一系列过程，最后将 deployment 的数据持久化存储至 `etcd`。
 
-![](/images/k8s/admission-controller-phases.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/admission-controller-phases.png)
 
 在这个过程我们可以通过 mutation admission 的 webhook 自主地对资源对象进行任意的变更，比如注入 sidecar 等等。
 
@@ -60,7 +60,7 @@ disableComments = true
 
 针对 `Deployment`，由于其并不直接管理 `Pod`，而是 `Deployment` 管理 `ReplicaSet`，`ReplicaSet` 再管理 `Pod`：
 
-![](/images/k8s/from-deploy-to-pod/deploy-replicaset-pod.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/deploy-replicaset-pod.png)
 
 因此其中涉及到 `controller manager` 中的两个部分：
 - `deployment controller`
@@ -98,7 +98,7 @@ disableComments = true
 
 至此，Kubernetes 从创建 deployment 到 pod 运行的全过程就是这样了。
 
-![](/images/k8s/from-deploy-to-pod/k8s-from-deploy-to-pod.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/k8s-from-deploy-to-pod.png)
 
 
 ---
