@@ -1,1 +1,11 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Node.js - Category - 凌虚 Blog</title><link>https://rifewang.github.io/categories/node.js/</link><description>Node.js - Category - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Wed, 18 Sep 2019 19:15:57 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/node.js/" rel="self" type="application/rss+xml"/><item><title>从 V8 优化看高效 JavaScript【译】</title><link>https://rifewang.github.io/efficient-js-from-v8-optimization/</link><pubDate>Wed, 18 Sep 2019 19:15:57 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/efficient-js-from-v8-optimization/</guid><description>文本翻译自: https://blog.logrocket.com/how-javascript-works-optimizing-the-v8-compiler-for-efficiency 理解 JavaScript 是如何工作的对于编写高效的 JS 大有帮助。 V8 执行 JS 分为三个阶段： 源代码转换为 AST 抽象语法树。 语法树转换为字节码：这个过程由 V8 的</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Node.js - Category - 凌虚 Blog</title><link>https://rifewang.github.io/categories/node.js/</link><description>Node.js - Category - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Wed, 18 Sep 2019 19:15:57 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/node.js/" rel="self" type="application/rss+xml"/><item><title>从 V8 优化看高效 JavaScript【译】</title><link>https://rifewang.github.io/efficient-js-from-v8-optimization/</link><pubDate>Wed, 18 Sep 2019 19:15:57 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/efficient-js-from-v8-optimization/</guid><description><![CDATA[<p><em>文本翻译自:
+<a href="https://blog.logrocket.com/how-javascript-works-optimizing-the-v8-compiler-for-efficiency" target="_blank" rel="noopener noreffer ">https://blog.logrocket.com/how-javascript-works-optimizing-the-v8-compiler-for-efficiency</a></em></p>
+<hr>
+<p>理解 JavaScript 是如何工作的对于编写高效的 JS 大有帮助。</p>
+<p>V8 执行 JS 分为三个阶段：</p>
+<ul>
+<li>源代码转换为 AST 抽象语法树。</li>
+<li>语法树转换为字节码：这个过程由 V8 的 Ignition 完成，2017年之前是没有的。</li>
+<li>字节码编译成机器码：由 V8 的编译器 TurboFan 来完成。</li>
+</ul>
+<p>第一个阶段并不是文本的讨论范围，第二三阶段对于编写优化 JS 有直接影响。</p>]]></description></item></channel></rss>

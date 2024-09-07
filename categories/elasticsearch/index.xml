@@ -1,1 +1,46 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Elasticsearch - Category - 凌虚 Blog</title><link>https://rifewang.github.io/categories/elasticsearch/</link><description>Elasticsearch - Category - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Sun, 17 Mar 2024 22:18:54 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/elasticsearch/" rel="self" type="application/rss+xml"/><item><title>我的 2024 年 Elasticsearch 认证考试经验与真题回顾</title><link>https://rifewang.github.io/2024-ece/</link><pubDate>Sun, 17 Mar 2024 22:18:54 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/2024-ece/</guid><description>背景说明 大家好，我是凌虚。 我于 2024 年 3 月 14 日参加了 Elastic Certified Engineer（ECE）认证考试，并与 18 日收到了考试通过的邮件。本文将会回顾我的考试过</description></item><item><title>Elasticsearch 向量搜索</title><link>https://rifewang.github.io/es-vector-search/</link><pubDate>Fri, 15 Apr 2022 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/es-vector-search/</guid><description>Elasticsearch 向量搜索 本文将会介绍 Elasticsearch 向量搜索的两种方式。 向量搜索 提到向量搜索，我想你一定想知道： 向量搜索是什么？ 向量搜索的应用场景有哪些？ 向量搜索与全文</description></item><item><title>Elasticsearch 分布式搜索的运行机制</title><link>https://rifewang.github.io/es-distribute-search-steps/</link><pubDate>Tue, 17 Nov 2020 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/es-distribute-search-steps/</guid><description>Elasticsearch 分布式搜索的运行机制 ES 有两种 search_type 即搜索类型： query_then_fetch （默认） dfs_query_then_fetch query_then_fetch 用户发起搜索，请求到集群中的某个节点。 query 会被发送到所有相关的 shard 分片上。 每个 shard 分片独</description></item><item><title>Elasticsearch Search Template</title><link>https://rifewang.github.io/es-search-template/</link><pubDate>Mon, 16 Nov 2020 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/es-search-template/</guid><description>Elasticsearch Search Template 所谓 search template 搜索模板其实就是： 预先定义好查询语句 DSL 的结构并预留参数 搜索的时再传入参数值 渲染出完整的 DSL ，最后进行搜索 使用搜索模板可以将 DSL 从应</description></item><item><title>构造请求日志分析系统</title><link>https://rifewang.github.io/log-analyzer-system/</link><pubDate>Sat, 07 Nov 2020 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/log-analyzer-system/</guid><description>构造请求日志分析系统 请求日志记录哪些数据 time_local : 请求的时间 remote_addr : 客户端的 IP 地址 request_method : 请求方法 request_schema : 请求协议，常见的 http 和 https request_host : 请求的域名 request_path : 请求的 path 路径</description></item><item><title>Elasticsearch 自定义打分 Function score query</title><link>https://rifewang.github.io/es-function-score-query/</link><pubDate>Mon, 02 Nov 2020 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/es-function-score-query/</guid><description>Elasticsearch 自定义打分 Function score query Elasticsearch 会为 query 的每个文档计算一个相关度得分 score ，并默认按照 score 从高到低的顺序返回搜索结果。 在很多场景下，我们不仅需要搜索到匹配的结果</description></item><item><title>数据管道 Logstash 入门</title><link>https://rifewang.github.io/logstash/</link><pubDate>Sun, 01 Nov 2020 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/logstash/</guid><description>Logstash 入门 Logstash 是什么 Logstash 就是一个开源的数据流工具，它会做三件事： 从数据源拉取数据 对数据进行过滤、转换等处理 将处理后的数据写入目标地 例如： 监听某个目录</description></item><item><title>Elasticsearch 入门指南</title><link>https://rifewang.github.io/es-guide/</link><pubDate>Sun, 29 Jul 2018 16:24:53 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/es-guide/</guid><description>引言 Elasticsearch 是什么？一个开源的可扩展、高可用、分布式的全文搜索引擎。 你为什么需要它？《人生一串》中有这样一段话： 没了烟火气，人生就是一段孤独的旅程</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Elasticsearch - Category - 凌虚 Blog</title><link>https://rifewang.github.io/categories/elasticsearch/</link><description>Elasticsearch - Category - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Sun, 17 Mar 2024 22:18:54 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/elasticsearch/" rel="self" type="application/rss+xml"/><item><title>我的 2024 年 Elasticsearch 认证考试经验与真题回顾</title><link>https://rifewang.github.io/2024-ece/</link><pubDate>Sun, 17 Mar 2024 22:18:54 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/2024-ece/</guid><description><![CDATA[<h2 id="背景说明">背景说明</h2>
+<p>大家好，我是凌虚。</p>
+<p>我于 2024 年 3 月 14 日参加了 Elastic Certified Engineer（ECE）认证考试，并与 18 日收到了考试通过的邮件。本文将会回顾我的考试过程、考试真题、个人感受。</p>]]></description></item><item><title>Elasticsearch 向量搜索</title><link>https://rifewang.github.io/es-vector-search/</link><pubDate>Fri, 15 Apr 2022 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/es-vector-search/</guid><description><![CDATA[<h1 id="elasticsearch-向量搜索">Elasticsearch 向量搜索</h1>
+<p>本文将会介绍 Elasticsearch 向量搜索的两种方式。</p>
+<h2 id="向量搜索">向量搜索</h2>
+<p>提到向量搜索，我想你一定想知道：</p>]]></description></item><item><title>Elasticsearch 分布式搜索的运行机制</title><link>https://rifewang.github.io/es-distribute-search-steps/</link><pubDate>Tue, 17 Nov 2020 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/es-distribute-search-steps/</guid><description><![CDATA[<h1 id="elasticsearch-分布式搜索的运行机制">Elasticsearch 分布式搜索的运行机制</h1>
+<p>ES 有两种 <code>search_type</code> 即搜索类型：</p>
+<ul>
+<li><code>query_then_fetch</code> （默认）</li>
+<li><code>dfs_query_then_fetch</code></li>
+</ul>
+<h2 id="query_then_fetch"><code>query_then_fetch</code></h2>
+<p></p>]]></description></item><item><title>Elasticsearch Search Template</title><link>https://rifewang.github.io/es-search-template/</link><pubDate>Mon, 16 Nov 2020 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/es-search-template/</guid><description><![CDATA[<h1 id="elasticsearch-search-template">Elasticsearch Search Template</h1>
+<p>所谓 search template 搜索模板其实就是：</p>
+<ol>
+<li>预先定义好查询语句 DSL 的结构并预留参数</li>
+<li>搜索的时再传入参数值</li>
+<li>渲染出完整的 DSL ，最后进行搜索</li>
+</ol>
+<p>使用搜索模板可以将 DSL 从应用程序中解耦出来，并且可以更加灵活的更改查询语句。</p>]]></description></item><item><title>构造请求日志分析系统</title><link>https://rifewang.github.io/log-analyzer-system/</link><pubDate>Sat, 07 Nov 2020 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/log-analyzer-system/</guid><description><![CDATA[<h1 id="构造请求日志分析系统">构造请求日志分析系统</h1>
+<h2 id="请求日志记录哪些数据">请求日志记录哪些数据</h2>
+<ul>
+<li><code>time_local</code> : 请求的时间</li>
+<li><code>remote_addr</code> : 客户端的 IP 地址</li>
+<li><code>request_method</code> : 请求方法</li>
+<li><code>request_schema</code> : 请求协议，常见的 http 和 https</li>
+<li><code>request_host</code> : 请求的域名</li>
+<li><code>request_path</code> : 请求的 path 路径</li>
+<li><code>request_query</code> : 请求的 query 参数</li>
+<li><code>request_size</code> : 请求的大小</li>
+<li><code>referer</code> : 请求来源地址，假设你在 a.com 网站下贴了 b.com 的链接，那么当用户从 a.com 点击访问 b.com 的时候，referer 记录的就是 a.com ，这个是浏览器的行为</li>
+<li><code>user_agent</code> : 客户端浏览器相关信息</li>
+<li><code>status</code> : 请求的响应状态</li>
+<li><code>request_time</code> : 请求的耗时</li>
+<li><code>bytes_sent</code> : 响应的大小</li>
+</ul>
+<p>很多时候我们会使用负载网关去代理转发请求给实际的后端服务，这时候请求日志还会包括以下数据：</p>]]></description></item><item><title>Elasticsearch 自定义打分 Function score query</title><link>https://rifewang.github.io/es-function-score-query/</link><pubDate>Mon, 02 Nov 2020 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/es-function-score-query/</guid><description>&lt;h1 id="elasticsearch-自定义打分-function-score-query">Elasticsearch 自定义打分 Function score query&lt;/h1>
+&lt;p>Elasticsearch 会为 query 的每个文档计算一个相关度得分 score ，并默认按照 score 从高到低的顺序返回搜索结果。
+在很多场景下，我们不仅需要搜索到匹配的结果，还需要能够按照某种方式对搜索结果重新打分排序。例如：&lt;/p></description></item><item><title>数据管道 Logstash 入门</title><link>https://rifewang.github.io/logstash/</link><pubDate>Sun, 01 Nov 2020 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/logstash/</guid><description><![CDATA[<h1 id="logstash-入门">Logstash 入门</h1>
+<hr>
+<h2 id="logstash-是什么">Logstash 是什么</h2>
+<p>Logstash 就是一个开源的数据流工具，它会做三件事：</p>]]></description></item><item><title>Elasticsearch 入门指南</title><link>https://rifewang.github.io/es-guide/</link><pubDate>Sun, 29 Jul 2018 16:24:53 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/es-guide/</guid><description><![CDATA[<h3 id="引言">引言</h3>
+<p>Elasticsearch 是什么？一个开源的可扩展、高可用、分布式的全文搜索引擎。</p>
+<p>你为什么需要它？《人生一串》中有这样一段话：</p>
+<blockquote>
+<p>没了烟火气，人生就是一段孤独的旅程。</p>]]></description></item></channel></rss>
