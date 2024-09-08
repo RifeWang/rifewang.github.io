@@ -4,18 +4,18 @@ date: 2023-02-14T17:03:10+08:00
 draft: false
 ---
 
-本人具备多年项目经验，目前负责后端开发与系统架构，坐标杭州。我的博客将会持续分享有关 Node.js，Python，Golang，编程，应用开发，消息队列，中间件，数据库，容器化，云原生，大数据，图像处理，机器学习，人工智能，架构，程序员成长，等等一系列文章。
+本人具有多年研发和架构经验。我的博客将会持续分享有关 Node.js，Python，Golang，编程，应用开发，消息队列，中间件，数据库，容器化，云原生，大数据，图像处理，机器学习，人工智能，架构，程序员成长等等一系列文章。
 
 ## ⭐ 我是凌虚
 
 [![Github](https://img.shields.io/badge/-Github-000?style=flat&logo=Github&logoColor=white)](https://github.com/RifeWang)   [![Gmail](https://img.shields.io/badge/-rifewang@gmail.com-c14438?style=flat&logo=Gmail&logoColor=white&link=mailto:rifewang@gmail.com)](mailto:rifewang@gmail.com)
 
 - 🧑‍💻 一名软件开发工程师与系统架构师。
-- 🌐 我曾经主导的项目服务于数百万用户，应对日均千万级流量，管理数十亿级别的图片。
-- 🔥 目前正在互联网医疗器械与医疗服务领域的公司深耕，希望用技术造福大众。
-- ❤️ 热爱 `Node.js` 和 `Golang`, 擅长 `Elasticsearch` 和 `Kubernetes`.
-- 🏠 目前工作并生活在杭州。
-- 💬 有任何问题都可以与我微信 [rifewang](./Wechat-rifewang.jpeg) 交流。
+- 🌐 曾主导的互联网项目处理日均千万级 PV 流量，管理数十亿级别的图片。
+- 🔥 曾负责研发的前沿脑科学和医疗仪器项目服务于数十家医疗和科研机构。
+- ❤️ 丰富的技术广度，擅长 `Node.js`、`Golang`，后端、大数据、`Kubernetes` 云原生等诸多领域。
+- 🏠 目前生活在杭州，欢迎向我推荐新的工作机会。
+- 💬 欢迎与我微信 [rifewang](./Wechat-rifewang.jpeg) 交流。
 
 ## 🛠 我的技术栈
 
@@ -26,7 +26,7 @@ draft: false
 
 ## 我的完整简历
 
-[点击查看我的简历](/resume/resume)，欢迎给我推荐工作机会😁
+[点击查看我的简历](/resume/resume)，欢迎向我推荐新的工作机会😁
 
 ---
 欢迎关注我的微信公众号，并与我交流：
