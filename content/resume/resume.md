@@ -96,6 +96,6 @@ disableComments = true
 - 擅长 Node.js、Golang，也能写 Python，语言只是工具，解决问题才是重点，经验丰富的工程师掌握一门编程语言并不是什么难事。
 - 熟悉 MySQL、Redis、MQ、Elasticsearch 等原理，具备全文搜索和日志聚合分析经验。
 - 熟悉 Kafka、ClickHouse、ELK，拥有数据仓库和大数据领域项目经验。
-- 熟悉 Linux 和 Cloud Native，理解 Docker、Kubernetes、Argo-workflows 架构及原理。
+- 熟悉 Linux、CNCF，理解 Docker、Kubernetes、Argo 架构及原理，熟练使用 Helm、Kustomize、Harbor、Terraform、Prometheus 等常用工具。
 - 熟悉计算机视觉、Milvus 等向量搜索，理解 AI 原理并日常使用以提升效率。
 - 具备技术团队管理经验，拥有 Scrum 敏捷开发、DevOps 等实践经验。
