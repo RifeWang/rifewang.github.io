@@ -3,7 +3,13 @@
 <p><code>Redis</code> 除了我们所熟知的缓存功能之外，还通过 <code>RedisJSON</code>、<code>RediSearch</code>、<code>RedisTimeSeries</code>、<code>RedisBloom</code> 等模块支持了 JSON 数据、查询与搜索（包括全文搜索、向量搜索、GEO 地理位置等）、时序数据、概率计算等等扩展功能。这些模块既可以按需导入，也被全部打包到了 <code>Redis Stack</code> 中方便我们直接使用。</p>]]></description></item><item><title>Redis Stack 不只是缓存之 RedisJSON</title><link>https://rifewang.github.io/redis-stack-json/</link><pubDate>Mon, 08 Jan 2024 10:57:38 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/redis-stack-json/</guid><description>&lt;h2 id="redis-stack">Redis Stack&lt;/h2>
 &lt;p>虽然 Redis 作为一个 key-value 数据库早已被广泛应用于各种缓存相关的场景，然而其团队的却并未故步自封，他们希望更进一步为开发者提供一个不只有缓存功能的强大的实时数据平台，用于处理所有实时数据的应用场景。&lt;/p></description></item><item><title>流平台 Kafka</title><link>https://rifewang.github.io/kafka/</link><pubDate>Thu, 11 Apr 2019 14:49:58 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/kafka/</guid><description><![CDATA[<h2 id="简介">简介</h2>
 <p>Kafka 作为一个分布式的流平台，正在大数据相关领域得到越来越广泛的应用，本文将会介绍 kafka 的相关内容。</p>
-<p>流平台如 kafka 具备三大关键能力：</p>]]></description></item><item><title>消息队列 NSQ 入门指南</title><link>https://rifewang.github.io/nsq/</link><pubDate>Sun, 08 Jul 2018 11:17:45 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/nsq/</guid><description><![CDATA[<h1 id="一">一</h1>
+<p>流平台如 kafka 具备三大关键能力：</p>
+<ul>
+<li>发布和订阅消息流，类似于消息队列。</li>
+<li>以容错的方式存储消息流。</li>
+<li>实时处理消息流。</li>
+</ul>
+<p>kafka 通常应用于两大类应用：</p>]]></description></item><item><title>消息队列 NSQ 入门指南</title><link>https://rifewang.github.io/nsq/</link><pubDate>Sun, 08 Jul 2018 11:17:45 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/nsq/</guid><description><![CDATA[<h1 id="一">一</h1>
 <p>NSQ 是什么？使用 go 语言开发的一款开源的消息队列，具有轻量级、高性能的特点。</p>
 <h2 id="概述">概述</h2>
 <p>NSQ 组件：</p>

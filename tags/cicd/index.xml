@@ -1,4 +1,13 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>CICD - Tag - 凌虚 Blog</title><link>https://rifewang.github.io/tags/cicd/</link><description>CICD - Tag - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Sun, 27 Mar 2022 00:00:00 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/tags/cicd/" rel="self" type="application/rss+xml"/><item><title>Terraform: 基础设施即代码</title><link>https://rifewang.github.io/terraform-overview/</link><pubDate>Sun, 27 Mar 2022 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/terraform-overview/</guid><description><![CDATA[<h1 id="terraform-基础设施即代码">Terraform: 基础设施即代码</h1>
 <h2 id="问题">问题</h2>
-<p>现如今有很多 IT 系统的基础设施直接使用了云厂商提供的服务，假设我们需要构建以下基础设施：</p>]]></description></item><item><title>GitHub Actions 指南</title><link>https://rifewang.github.io/github-actions/</link><pubDate>Mon, 23 Dec 2019 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/github-actions/</guid><description>&lt;h1 id="github-actions-指南">GitHub Actions 指南&lt;/h1>
+<p>现如今有很多 IT 系统的基础设施直接使用了云厂商提供的服务，假设我们需要构建以下基础设施：</p>
+<ul>
+<li>VPC 网络</li>
+<li>虚拟主机</li>
+<li>负载均衡器</li>
+<li>数据库</li>
+<li>文件存储</li>
+<li>&hellip;</li>
+</ul>
+<p>那么在公有云的环境中，我们一般怎么做？</p>]]></description></item><item><title>GitHub Actions 指南</title><link>https://rifewang.github.io/github-actions/</link><pubDate>Mon, 23 Dec 2019 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/github-actions/</guid><description>&lt;h1 id="github-actions-指南">GitHub Actions 指南&lt;/h1>
 &lt;p>GitHub Actions 使你可以直接在你的 GitHub 库中创建自定义的工作流，工作流指的就是自动化的流程，比如构建、测试、打包、发布、部署等等，也就是说你可以直接进行 CI（持续集成）和 CD （持续部署）。&lt;/p></description></item></channel></rss>

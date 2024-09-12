@@ -3,6 +3,11 @@
 <h2 id="前言">前言</h2>
 <p>又拍图片管家当前服务了千万级用户，管理了百亿级图片。当用户的图库变得越来越庞大时，业务上急切的需要一种方案能够快速定位图像，即直接输入图像，然后根据输入的图像内容来找到图库中的原图及相似图，而以图搜图服务就是为了解决这个问题。</p>]]></description></item><item><title>以图搜图系统工程实践</title><link>https://rifewang.github.io/image-search-system2/</link><pubDate>Sat, 11 Apr 2020 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/image-search-system2/</guid><description><![CDATA[<h1 id="以图搜图系统工程实践">以图搜图系统工程实践</h1>
 <p>之前写过一篇概述: <a href="/posts/engineering/image-search-system/" rel="">以图搜图系统概述</a> 。</p>
-<p>以图搜图系统需要解决的主要问题是：</p>]]></description></item><item><title>以图搜图系统概述</title><link>https://rifewang.github.io/image-search-system/</link><pubDate>Tue, 31 Mar 2020 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/image-search-system/</guid><description><![CDATA[<h1 id="以图搜图系统概述">以图搜图系统概述</h1>
+<p>以图搜图系统需要解决的主要问题是：</p>
+<ul>
+<li>提取图像特征向量（用特征向量去表示一幅图像）</li>
+<li>特征向量的相似度计算（寻找内容相似的图像）</li>
+</ul>
+<p>对应的工程实践，具体为：</p>]]></description></item><item><title>以图搜图系统概述</title><link>https://rifewang.github.io/image-search-system/</link><pubDate>Tue, 31 Mar 2020 00:00:00 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/image-search-system/</guid><description><![CDATA[<h1 id="以图搜图系统概述">以图搜图系统概述</h1>
 <p>以图搜图指的是根据图像内容搜索出相似内容的图像。</p>
 <p>构建一个以图搜图系统需要解决两个最关键的问题：首先，提取图像特征；其次，特征数据搜索引擎，即特征数据构建成数据库并提供相似性搜索的功能。</p>]]></description></item></channel></rss>

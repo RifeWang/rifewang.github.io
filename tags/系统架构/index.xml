@@ -2,4 +2,5 @@
 <p>本文基于《Designing Data-Intensive Applications》一书（设计数据密集型应用，简称 <code>DDIA</code>），深入探讨了 <code>Redis</code>、<code>Kafka</code> 和 <code>Elasticsearch</code> 等常用组件的分区与复制机制。通过这些案例分析，我们可以更好地理解分布式系统的基本原理和实际应用。</p>]]></description></item><item><title>典型系统架构的百万并发理论分析</title><link>https://rifewang.github.io/million-qps-system/</link><pubDate>Thu, 15 Aug 2024 17:06:40 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/million-qps-system/</guid><description><![CDATA[<h2 id="引言">引言</h2>
 <p>本文将会描述一个典型的系统架构，然后分析其在理论上是否能够支撑百万并发的请求。</p>
 <h2 id="典型系统架构及分析">典型系统架构及分析</h2>
-<p>为了降低复杂性，笔者将系统简化为了下图所示：</p>]]></description></item></channel></rss>
+<p>为了降低复杂性，笔者将系统简化为了下图所示：</p>
+<p></p>]]></description></item></channel></rss>

@@ -1,7 +1,25 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Category - 凌虚 Blog</title><link>https://rifewang.github.io/categories/kubernetes/</link><description>Kubernetes - Category - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Sat, 07 Sep 2024 14:46:34 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/kubernetes/" rel="self" type="application/rss+xml"/><item><title>Kubernetes 之 kubelet 与 CRI、CNI 的交互过程</title><link>https://rifewang.github.io/kubelet-cri-cni/</link><pubDate>Sat, 07 Sep 2024 14:46:34 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/kubelet-cri-cni/</guid><description><![CDATA[<h2 id="序言">序言</h2>
 <p>当一个新的 Pod 被提交创建之后，<code>Kubelet</code>、<code>CRI</code>、<code>CNI</code> 这三个组件之间进行了哪些交互？</p>
 <h2 id="kubelet---cri---cni">Kubelet -&gt; CRI -&gt; CNI</h2>
-<p></p>]]></description></item><item><title>Kubernetes 网关流量管理：Ingress 与 Gateway API</title><link>https://rifewang.github.io/k8s-ingress-vs-gateway/</link><pubDate>Sat, 31 Aug 2024 17:09:40 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-ingress-vs-gateway/</guid><description><![CDATA[<h2 id="引言">引言</h2>
+<p></p>
+<p>如上图所示：</p>
+<ol>
+<li><code>Kubelet</code> 从 kube-api-server 处监听到有新的 pod 被调度到了自己的节点且需要创建。</li>
+<li><code>Kubelet</code> 创建 sandbox 并配置好 Pod 的环境，其中包括：
+<ul>
+<li><code>Kubelet</code> 通过 gRPC 调用 <code>CRI</code> 组件创建 sandbox。</li>
+<li><code>CRI</code> 通过命令行调用 <code>CNI</code> 设置 pod 的网络。</li>
+</ul>
+</li>
+<li><code>Kubelet</code> 创建 container 阶段：
+<ul>
+<li>调用 <code>CRI</code> 拉取镜像。</li>
+<li>调用 <code>CRI</code> 创建 container。</li>
+<li>调用 <code>CRI</code> 启动 container。</li>
+</ul>
+</li>
+</ol>
+<p>注意：</p>]]></description></item><item><title>Kubernetes 网关流量管理：Ingress 与 Gateway API</title><link>https://rifewang.github.io/k8s-ingress-vs-gateway/</link><pubDate>Sat, 31 Aug 2024 17:09:40 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-ingress-vs-gateway/</guid><description><![CDATA[<h2 id="引言">引言</h2>
 <p>随着 Kubernetes 在云原生领域的广泛使用，流量管理成为了至关重要的一环。为了有效地管理从外部流入集群的流量，Kubernetes 提供了多种解决方案，其中最常见的是 <code>Ingress</code> 和新兴的 <code>Gateway API</code>。</p>]]></description></item><item><title>Kubernetes scheduler 概述及自定义调度器</title><link>https://rifewang.github.io/k8s-custom-scheduler/</link><pubDate>Sat, 15 Jun 2024 20:04:06 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-custom-scheduler/</guid><description><![CDATA[<h2 id="kube-scheduler">kube-scheduler</h2>
 <p><code>kube-scheduler</code> 是 k8s 集群中控制平面的一个重要组件，其负责的工作简单且专一：给未分配的 pod 分配一个 node 节点。</p>
 <p>调度器的大致工作过程可以分为以下几步：</p>
@@ -17,12 +35,61 @@
 <li>对于 long-lived connection 长连接又是怎样的情况？</li>
 </ul>
 <h2 id="从-pod-到-service-再到-pod">从 pod 到 service 再到 pod</h2>
-<p></p>]]></description></item><item><title>我的 2024 年 CKA 认证两天速通攻略</title><link>https://rifewang.github.io/2024-cka-cert/</link><pubDate>Sat, 27 Jan 2024 23:23:16 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/2024-cka-cert/</guid><description>&lt;h2 id="背景说明">背景说明&lt;/h2>
-&lt;p>&lt;/p></description></item><item><title>Kubernetes 外部 HTTP 请求到达 Pod 容器的全过程</title><link>https://rifewang.github.io/http-flow-to-container/</link><pubDate>Sat, 30 Dec 2023 16:38:11 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/http-flow-to-container/</guid><description><![CDATA[<p><code>Kubernetes</code> 集群外部的 HTTP/HTTPS 请求是如何达到 Pod 中的 <code>container</code> 的？</p>
+<p></p>
+<p>如上图所示：</p>]]></description></item><item><title>我的 2024 年 CKA 认证两天速通攻略</title><link>https://rifewang.github.io/2024-cka-cert/</link><pubDate>Sat, 27 Jan 2024 23:23:16 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/2024-cka-cert/</guid><description><![CDATA[<h2 id="背景说明">背景说明</h2>
+<p></p>
+<p>如上图所示，本人于 2024 年 1 月 22 号晚上 11 点进行了 CKA 的认证考试，并以 95 分（满分100）顺利通过拿证。本文将会介绍我的 CKA 考试心得和速通攻略。</p>]]></description></item><item><title>Kubernetes 外部 HTTP 请求到达 Pod 容器的全过程</title><link>https://rifewang.github.io/http-flow-to-container/</link><pubDate>Sat, 30 Dec 2023 16:38:11 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/http-flow-to-container/</guid><description><![CDATA[<p><code>Kubernetes</code> 集群外部的 HTTP/HTTPS 请求是如何达到 Pod 中的 <code>container</code> 的？</p>
 <h2 id="http-请求流转过程概述">HTTP 请求流转过程概述</h2>
-<p></p>]]></description></item><item><title>Kubernetes Lease 及分布式选主</title><link>https://rifewang.github.io/lease/</link><pubDate>Tue, 26 Dec 2023 11:42:30 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/lease/</guid><description>&lt;h2 id="分布式选主">分布式选主&lt;/h2>
+<p></p>
+<p>如上图所示，全过程大致为：</p>
+<ol>
+<li>用户从 web/mobile/pc 等客户端发出 HTTP/HTTPS 请求。</li>
+<li>由于应用服务通常是通过域名的形式对外暴露，所以请求将会先进行 <code>DNS</code> 域名解析，得到对应的公网 <code>IP</code> 地址。</li>
+<li>公网 <code>IP</code> 地址通常会绑定一个 <code>Load Balancer</code> 负载均衡器，此时请求会进入此负载均衡器。
+<ul>
+<li><code>Load Balancer</code> 负载均衡器可以是硬件，也可以是软件，它通常会保持稳定（固定的公网 IP 地址），因为如果切换 IP 地址会因为 DNS 缓存的原因导致服务某段时间内不可达。</li>
+<li><code>Load Balancer</code> 负载均衡器是一个重要的中间层，对外承接公网流量，对内进行流量的管理和转发。</li>
+</ul>
+</li>
+<li><code>Load Balancer</code> 再将请求转发到 <code>kubernetes</code> 集群的某个流量入口点，通常是 <code>ingress</code>。
+<ul>
+<li><code>ingress</code> 负责集群内部的路由转发，可以看成是集群内部的网关。</li>
+<li><code>ingress</code> 只是配置，具体进行流量转发的是 <code>ingress-controller</code>，后者有多种选择，比如 Nginx、HAProxy、Traefik、Kong 等等。</li>
+</ul>
+</li>
+<li><code>ingress</code> 根据用户自定义的路由规则进一步转发到 <code>service</code>。
+<ul>
+<li>比如根据请求的 path 路径或 host 做转发。
+
+</li>
+</ul>
+</li>
+<li><code>service</code> 根据 selector（匹配 label 标签）将请求转发到 <code>pod</code>。
+<ul>
+<li><code>service</code> 有多种类型，集群内部最常用的类型就是 <code>ClusterIP</code>。</li>
+<li><code>service</code> 本质上也只是一种配置，这种配置最终会作用到 node 节点上的 <code>kube-proxy</code> 组件，后者会通过设置 <code>iptables/ipvs</code> 来完成实际的请求转发。</li>
+<li><code>service</code> 可能会对应多个 <code>pod</code>，但最终请求只会被随机转发到一个 <code>pod</code> 上。</li>
+</ul>
+</li>
+<li><code>pod</code> 最后将请求发送给其中的 <code>container</code> 容器。
+<ul>
+<li>同一个 <code>pod</code> 内部可能有多个 <code>container</code>，但是多个容器不能共用同一个端口，因此这里会根据具体的端口号将请求发给对应的 <code>container</code>。</li>
+</ul>
+</li>
+</ol>
+<p>以上就是一种典型的集群外部 HTTP 请求如何达到 Pod 中的 <code>container</code> 的全过程。</p>]]></description></item><item><title>Kubernetes Lease 及分布式选主</title><link>https://rifewang.github.io/lease/</link><pubDate>Tue, 26 Dec 2023 11:42:30 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/lease/</guid><description>&lt;h2 id="分布式选主">分布式选主&lt;/h2>
 &lt;p>在分布式系统中，应用服务常常会通过多个节点（或实例）的方式来保证高可用。然而在某些场景下，有些数据或者任务无法被并行操作，此时就需要由一个特定的节点来执行这些特殊的任务（或者进行协调及决策），这个特定的节点也就是领导者（Leader），而在多个节点中选择领导者的机制也就是分布式选主（Leader Election）。&lt;/p></description></item><item><title>Kubernetes 从提交 deployment 到 pod 运行的全过程</title><link>https://rifewang.github.io/k8s-from-deploy-to-pod/</link><pubDate>Sat, 23 Dec 2023 18:26:15 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-from-deploy-to-pod/</guid><description><![CDATA[<p>当用户向 <code>Kubernetes</code> 提交了一个创建 <code>deployment</code> 的请求后，<code>Kubernetes</code> 从接收请求直至创建对应的 <code>pod</code> 运行这整个过程中都发生了什么呢？</p>
 <h2 id="kubernetes-架构简述">kubernetes 架构简述</h2>
 <p>在搞清楚从 <code>deployment</code> 提交到 <code>pod</code> 运行整个过程之前，我们有先来看看 <code>Kubernetes</code> 的集群架构：</p>]]></description></item><item><title>Kubernetes CRD &amp; Operator 简介</title><link>https://rifewang.github.io/k8s-crd-operator/</link><pubDate>Tue, 19 Dec 2023 10:37:48 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-crd-operator/</guid><description><![CDATA[<h2 id="kubernetes-crd">Kubernetes CRD</h2>
 <p>在 kubernetes 中有一系列内置的资源，诸如：<code>pod</code>、<code>deployment</code>、<code>configmap</code>、<code>service</code> …… 等等，它们由 k8s 的内部组件管理。而除了这些内置资源之外，k8s 还提供了另外一种方式让用户可以随意地自定义资源，这就是 <code>CRD</code> (全称 <code>CustomResourceDefinitions</code>) 。</p>]]></description></item><item><title>容器运行时的内部结构和最新趋势（2023）</title><link>https://rifewang.github.io/the-internals-and-the-latest-trends-of-container-runtimes/</link><pubDate>Tue, 11 Jul 2023 10:07:05 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/the-internals-and-the-latest-trends-of-container-runtimes/</guid><description><![CDATA[<h1 id="容器运行时的内部结构和最新趋势2023">容器运行时的内部结构和最新趋势（2023）</h1>
-<p>原文为 Akihiro Suda 在日本京都大学做的在线讲座，完整的 PPT 可 <a href="https://github.com/AkihiroSuda/AkihiroSuda/raw/5d9f0b1cd9b8c37cb1951768a3bebdb08a3a469e/slides/2023/20230615%20%5BKyoto%20University%5D%20The%20internals%20and%20the%20latest%20trends%20of%20container%20runtimes.pdf" target="_blank" rel="noopener noreffer ">点击此处下载</a></p>]]></description></item></channel></rss>
+<p>原文为 Akihiro Suda 在日本京都大学做的在线讲座，完整的 PPT 可 <a href="https://github.com/AkihiroSuda/AkihiroSuda/raw/5d9f0b1cd9b8c37cb1951768a3bebdb08a3a469e/slides/2023/20230615%20%5BKyoto%20University%5D%20The%20internals%20and%20the%20latest%20trends%20of%20container%20runtimes.pdf" target="_blank" rel="noopener noreffer ">点击此处下载</a></p>
+<p>本文内容分为以下三个部分：</p>
+<ol>
+<li>容器简介</li>
+<li>容器运行时的内部结构</li>
+<li>容器运行时的最新趋势</li>
+</ol>
+<hr>
+<h2 id="1-容器简介">1. 容器简介</h2>
+<h3 id="什么是容器">什么是容器？</h3>
+<p>容器是一组用于隔离文件系统、CPU 资源、内存资源、系统权限等的各种轻量级方法。容器在很多意义上类似于虚拟机，但它们比虚拟机更高效，而安全性则往往低于虚拟机。</p>]]></description></item></channel></rss>

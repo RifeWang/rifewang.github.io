@@ -11,10 +11,54 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>在 Go 1.13 版本之前，有关 error 的方法只有两个：</p>]]></description></item><item><title>Go 垃圾回收</title><link>https://rifewang.github.io/gc/</link><pubDate>Wed, 25 Sep 2019 00:56:24 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/gc/</guid><description>&lt;p>Garbage Collection（ GC ）也就是垃圾回收到底是什么？内存空间是有限的，诸如变量等需要分配内存才能存储数据，而当这个变量不再使用的时候就需要释放它占用的内存，这就是垃圾回收。&lt;/p></description></item><item><title>微服务互通的桥梁: gRPC 入门示例</title><link>https://rifewang.github.io/grpc/</link><pubDate>Fri, 23 Aug 2019 00:25:31 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/grpc/</guid><description>&lt;p>RPC 是什么？Remote Procedure Call ，远程过程调用，一种通信协议。你可以理解为，在某台机器上调用另外一台机器上的服务或方法。&lt;/p>
+</div><p>在 Go 1.13 版本之前，有关 error 的方法只有两个：</p>
+<ul>
+<li><code>errors.New</code> :</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">New</span><span class="p">(</span><span class="nx">text</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>fmt.Errorf</code> :</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">Errorf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这两个方法都是用来生成一个新的 error 类型的数据。</p>]]></description></item><item><title>Go 垃圾回收</title><link>https://rifewang.github.io/gc/</link><pubDate>Wed, 25 Sep 2019 00:56:24 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/gc/</guid><description>&lt;p>Garbage Collection（ GC ）也就是垃圾回收到底是什么？内存空间是有限的，诸如变量等需要分配内存才能存储数据，而当这个变量不再使用的时候就需要释放它占用的内存，这就是垃圾回收。&lt;/p></description></item><item><title>微服务互通的桥梁: gRPC 入门示例</title><link>https://rifewang.github.io/grpc/</link><pubDate>Fri, 23 Aug 2019 00:25:31 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/grpc/</guid><description>&lt;p>RPC 是什么？Remote Procedure Call ，远程过程调用，一种通信协议。你可以理解为，在某台机器上调用另外一台机器上的服务或方法。&lt;/p>
 &lt;p>应用服务对外可以提供 REST 接口以供进行服务的调用，那么对于分布式系统内部的微服务之间的相互调用呢？REST 的方式仍然可行，但是效率不高，因此 RPC 出现了。&lt;/p></description></item><item><title>为什么你应该使用 Go module proxy</title><link>https://rifewang.github.io/why-use-go-module-proxy/</link><pubDate>Mon, 12 Aug 2019 00:45:03 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/why-use-go-module-proxy/</guid><description>&lt;p>自从 Go v1.11 版本之后 Go modules 成了官方的包管理方式，与此同时还有一个 &lt;code>Go module proxy&lt;/code> ，它到底是个什么东西？顾名思义，其实就是个代理，所有的模块和依赖库都可以从这个代理上下载。&lt;/p></description></item><item><title>Go 开发十种常犯错误【译】</title><link>https://rifewang.github.io/top-10-mistakes/</link><pubDate>Mon, 29 Jul 2019 00:11:03 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/top-10-mistakes/</guid><description><![CDATA[<p><em>文本翻译自:
 <a href="https://itnext.io/the-top-10-most-common-mistakes-ive-seen-in-go-projects-4b79d4f6cd65" target="_blank" rel="noopener noreffer ">https://itnext.io/the-top-10-most-common-mistakes-ive-seen-in-go-projects-4b79d4f6cd65</a></em></p>
 <hr>
 <p>本文将会介绍 Go 开发中十种最常犯的错误，内容不算少，请耐心观看。</p>
 <h2 id="1未知的枚举值">1、未知的枚举值</h2>
-<p>示例：</p>]]></description></item></channel></rss>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Status</span> <span class="kt">uint32</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">const</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">StatusOpen</span> <span class="nx">Status</span> <span class="p">=</span> <span class="kc">iota</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">StatusClosed</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">StatusUnknown</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>示例中使用了 iota 创建了枚举值，其结果就是：</p>]]></description></item></channel></rss>

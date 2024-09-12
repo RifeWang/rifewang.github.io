@@ -1,14 +1,34 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - 凌虚 Blog</title><link>https://rifewang.github.io/posts/</link><description>All Posts | 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Sat, 07 Sep 2024 14:46:34 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/posts/" rel="self" type="application/rss+xml"/><item><title>Kubernetes 之 kubelet 与 CRI、CNI 的交互过程</title><link>https://rifewang.github.io/kubelet-cri-cni/</link><pubDate>Sat, 07 Sep 2024 14:46:34 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/kubelet-cri-cni/</guid><description><![CDATA[<h2 id="序言">序言</h2>
 <p>当一个新的 Pod 被提交创建之后，<code>Kubelet</code>、<code>CRI</code>、<code>CNI</code> 这三个组件之间进行了哪些交互？</p>
 <h2 id="kubelet---cri---cni">Kubelet -&gt; CRI -&gt; CNI</h2>
-<p></p>]]></description></item><item><title>Kubernetes 网关流量管理：Ingress 与 Gateway API</title><link>https://rifewang.github.io/k8s-ingress-vs-gateway/</link><pubDate>Sat, 31 Aug 2024 17:09:40 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-ingress-vs-gateway/</guid><description><![CDATA[<h2 id="引言">引言</h2>
+<p></p>
+<p>如上图所示：</p>
+<ol>
+<li><code>Kubelet</code> 从 kube-api-server 处监听到有新的 pod 被调度到了自己的节点且需要创建。</li>
+<li><code>Kubelet</code> 创建 sandbox 并配置好 Pod 的环境，其中包括：
+<ul>
+<li><code>Kubelet</code> 通过 gRPC 调用 <code>CRI</code> 组件创建 sandbox。</li>
+<li><code>CRI</code> 通过命令行调用 <code>CNI</code> 设置 pod 的网络。</li>
+</ul>
+</li>
+<li><code>Kubelet</code> 创建 container 阶段：
+<ul>
+<li>调用 <code>CRI</code> 拉取镜像。</li>
+<li>调用 <code>CRI</code> 创建 container。</li>
+<li>调用 <code>CRI</code> 启动 container。</li>
+</ul>
+</li>
+</ol>
+<p>注意：</p>]]></description></item><item><title>Kubernetes 网关流量管理：Ingress 与 Gateway API</title><link>https://rifewang.github.io/k8s-ingress-vs-gateway/</link><pubDate>Sat, 31 Aug 2024 17:09:40 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-ingress-vs-gateway/</guid><description><![CDATA[<h2 id="引言">引言</h2>
 <p>随着 Kubernetes 在云原生领域的广泛使用，流量管理成为了至关重要的一环。为了有效地管理从外部流入集群的流量，Kubernetes 提供了多种解决方案，其中最常见的是 <code>Ingress</code> 和新兴的 <code>Gateway API</code>。</p>]]></description></item><item><title>图解计算机网络：一条 HTTP 请求的网络拓扑之旅</title><link>https://rifewang.github.io/http-network-travel/</link><pubDate>Sat, 24 Aug 2024 13:24:29 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/http-network-travel/</guid><description><![CDATA[<h2 id="引言">引言</h2>
 <p>常见的网络拓扑结构如下图所示：</p>
-<p></p>]]></description></item><item><title>DDIA 分布式数据的分区与复制 - 基于 Redis、Kafka、Elasticsearch 的深入分析</title><link>https://rifewang.github.io/ddia-partition-replication-redis-kafka-es/</link><pubDate>Thu, 22 Aug 2024 15:05:53 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/ddia-partition-replication-redis-kafka-es/</guid><description><![CDATA[<h2 id="引言">引言</h2>
+<p></p>
+<p>在此拓扑中，终端设备通过 WiFi 连接到路由器，路由器再连接到光猫（或终端设备通过移动网络 4G/5G 连接到基站），之后 ISP 网络服务提供商接管网络通信，将请求最终转发至应用服务器。</p>]]></description></item><item><title>DDIA 分布式数据的分区与复制 - 基于 Redis、Kafka、Elasticsearch 的深入分析</title><link>https://rifewang.github.io/ddia-partition-replication-redis-kafka-es/</link><pubDate>Thu, 22 Aug 2024 15:05:53 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/ddia-partition-replication-redis-kafka-es/</guid><description><![CDATA[<h2 id="引言">引言</h2>
 <p>本文基于《Designing Data-Intensive Applications》一书（设计数据密集型应用，简称 <code>DDIA</code>），深入探讨了 <code>Redis</code>、<code>Kafka</code> 和 <code>Elasticsearch</code> 等常用组件的分区与复制机制。通过这些案例分析，我们可以更好地理解分布式系统的基本原理和实际应用。</p>]]></description></item><item><title>典型系统架构的百万并发理论分析</title><link>https://rifewang.github.io/million-qps-system/</link><pubDate>Thu, 15 Aug 2024 17:06:40 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/million-qps-system/</guid><description><![CDATA[<h2 id="引言">引言</h2>
 <p>本文将会描述一个典型的系统架构，然后分析其在理论上是否能够支撑百万并发的请求。</p>
 <h2 id="典型系统架构及分析">典型系统架构及分析</h2>
-<p>为了降低复杂性，笔者将系统简化为了下图所示：</p>]]></description></item><item><title>Redis 全文检索及使用示例</title><link>https://rifewang.github.io/redis-full-text/</link><pubDate>Mon, 15 Jul 2024 22:11:09 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/redis-full-text/</guid><description><![CDATA[<h2 id="序言">序言</h2>
+<p>为了降低复杂性，笔者将系统简化为了下图所示：</p>
+<p></p>]]></description></item><item><title>Redis 全文检索及使用示例</title><link>https://rifewang.github.io/redis-full-text/</link><pubDate>Mon, 15 Jul 2024 22:11:09 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/redis-full-text/</guid><description><![CDATA[<h2 id="序言">序言</h2>
 <p><code>Redis</code> 除了我们所熟知的缓存功能之外，还通过 <code>RedisJSON</code>、<code>RediSearch</code>、<code>RedisTimeSeries</code>、<code>RedisBloom</code> 等模块支持了 JSON 数据、查询与搜索（包括全文检索、向量搜索、GEO 地理位置等）、时序数据、概率计算等等扩展功能。这些模块既可以按需导入，也被全部打包到了 <code>Redis Stack</code> 中方便我们直接使用。</p>]]></description></item><item><title>Redis 向量搜索</title><link>https://rifewang.github.io/redis-vector/</link><pubDate>Tue, 09 Jul 2024 20:30:47 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/redis-vector/</guid><description><![CDATA[<h2 id="序言">序言</h2>
 <p><code>Redis</code> 除了我们所熟知的缓存功能之外，还通过 <code>RedisJSON</code>、<code>RediSearch</code>、<code>RedisTimeSeries</code>、<code>RedisBloom</code> 等模块支持了 JSON 数据、查询与搜索（包括全文搜索、向量搜索、GEO 地理位置等）、时序数据、概率计算等等扩展功能。这些模块既可以按需导入，也被全部打包到了 <code>Redis Stack</code> 中方便我们直接使用。</p>]]></description></item><item><title>以图搜图架构优化：使用客户端模型提取图像特征</title><link>https://rifewang.github.io/image-search-use-client-model/</link><pubDate>Thu, 04 Jul 2024 14:44:38 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/image-search-use-client-model/</guid><description>&lt;h2 id="序言">序言&lt;/h2>
 &lt;p>以图搜图系统指的是从图像内容提取特征向量，然后使用向量数据库进行向量数据的插入、删除、相似性检索等操作，进而提供根据图像内容搜索出具有相似内容的其它图像的功能。&lt;/p></description></item><item><title>Kubernetes scheduler 概述及自定义调度器</title><link>https://rifewang.github.io/k8s-custom-scheduler/</link><pubDate>Sat, 15 Jun 2024 20:04:06 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-custom-scheduler/</guid><description><![CDATA[<h2 id="kube-scheduler">kube-scheduler</h2>
@@ -26,4 +46,5 @@
 <li>对于 long-lived connection 长连接又是怎样的情况？</li>
 </ul>
 <h2 id="从-pod-到-service-再到-pod">从 pod 到 service 再到 pod</h2>
-<p></p>]]></description></item></channel></rss>
+<p></p>
+<p>如上图所示：</p>]]></description></item></channel></rss>

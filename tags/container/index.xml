@@ -1,2 +1,12 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Container - Tag - 凌虚 Blog</title><link>https://rifewang.github.io/tags/container/</link><description>Container - Tag - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Tue, 11 Jul 2023 10:07:05 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/tags/container/" rel="self" type="application/rss+xml"/><item><title>容器运行时的内部结构和最新趋势（2023）</title><link>https://rifewang.github.io/the-internals-and-the-latest-trends-of-container-runtimes/</link><pubDate>Tue, 11 Jul 2023 10:07:05 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/the-internals-and-the-latest-trends-of-container-runtimes/</guid><description><![CDATA[<h1 id="容器运行时的内部结构和最新趋势2023">容器运行时的内部结构和最新趋势（2023）</h1>
-<p>原文为 Akihiro Suda 在日本京都大学做的在线讲座，完整的 PPT 可 <a href="https://github.com/AkihiroSuda/AkihiroSuda/raw/5d9f0b1cd9b8c37cb1951768a3bebdb08a3a469e/slides/2023/20230615%20%5BKyoto%20University%5D%20The%20internals%20and%20the%20latest%20trends%20of%20container%20runtimes.pdf" target="_blank" rel="noopener noreffer ">点击此处下载</a></p>]]></description></item></channel></rss>
+<p>原文为 Akihiro Suda 在日本京都大学做的在线讲座，完整的 PPT 可 <a href="https://github.com/AkihiroSuda/AkihiroSuda/raw/5d9f0b1cd9b8c37cb1951768a3bebdb08a3a469e/slides/2023/20230615%20%5BKyoto%20University%5D%20The%20internals%20and%20the%20latest%20trends%20of%20container%20runtimes.pdf" target="_blank" rel="noopener noreffer ">点击此处下载</a></p>
+<p>本文内容分为以下三个部分：</p>
+<ol>
+<li>容器简介</li>
+<li>容器运行时的内部结构</li>
+<li>容器运行时的最新趋势</li>
+</ol>
+<hr>
+<h2 id="1-容器简介">1. 容器简介</h2>
+<h3 id="什么是容器">什么是容器？</h3>
+<p>容器是一组用于隔离文件系统、CPU 资源、内存资源、系统权限等的各种轻量级方法。容器在很多意义上类似于虚拟机，但它们比虚拟机更高效，而安全性则往往低于虚拟机。</p>]]></description></item></channel></rss>
