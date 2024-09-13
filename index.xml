@@ -1,4 +1,12 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>凌虚 Blog</title><link>https://rifewang.github.io/</link><description>这是凌虚的博客网站</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Sat, 07 Sep 2024 14:46:34 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Kubernetes 之 kubelet 与 CRI、CNI 的交互过程</title><link>https://rifewang.github.io/kubelet-cri-cni/</link><pubDate>Sat, 07 Sep 2024 14:46:34 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/kubelet-cri-cni/</guid><description><![CDATA[<h2 id="序言">序言</h2>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>凌虚 Blog</title><link>https://rifewang.github.io/</link><description>这是凌虚的博客网站</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Fri, 13 Sep 2024 12:11:23 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Kubernetes CNI 网络模型概览：VETH &amp; Bridge / Overlay / BGP</title><link>https://rifewang.github.io/k8s-cni-network-model/</link><pubDate>Fri, 13 Sep 2024 12:11:23 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-cni-network-model/</guid><description><![CDATA[<h2 id="序言">序言</h2>
+<p>网络是容器通信的基础，Kubernetes 本身并未提供开箱即用的网络互通功能，只提出了两点基本要求：</p>
+<blockquote>
+<ul>
+<li>pods can communicate with all other pods on any other node without NAT</li>
+<li>agents on a node (e.g. system daemons, kubelet) can communicate with all pods on that node</li>
+</ul>
+</blockquote>
+<p>至于如何实现这些通信能力，通常依赖于 <code>CNI</code> 插件来完成。</p>]]></description></item><item><title>Kubernetes 之 kubelet 与 CRI、CNI 的交互过程</title><link>https://rifewang.github.io/kubelet-cri-cni/</link><pubDate>Sat, 07 Sep 2024 14:46:34 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/kubelet-cri-cni/</guid><description><![CDATA[<h2 id="序言">序言</h2>
 <p>当一个新的 Pod 被提交创建之后，<code>Kubelet</code>、<code>CRI</code>、<code>CNI</code> 这三个组件之间进行了哪些交互？</p>
 <h2 id="kubelet---cri---cni">Kubelet -&gt; CRI -&gt; CNI</h2>
 <p></p>
@@ -40,11 +48,4 @@
 <li>节点打分：给过滤出来的节点进行打分。</li>
 <li>最后选择得分最高的那个 node 与 pod 绑定（如果最高得分有多个 node 则随机选择一个）。</li>
 </ul>
-<p>更加详细的步骤则参考下图所示：</p>]]></description></item><item><title>Kubernetes Service 与 long-lived connections</title><link>https://rifewang.github.io/k8s-service-long-lived-connection/</link><pubDate>Wed, 12 Jun 2024 16:14:46 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-service-long-lived-connection/</guid><description><![CDATA[<p>本文将会介绍：</p>
-<ul>
-<li>从 pod 到 service 再到 pod，kubernetes 中的流量是怎么走的？</li>
-<li>对于 long-lived connection 长连接又是怎样的情况？</li>
-</ul>
-<h2 id="从-pod-到-service-再到-pod">从 pod 到 service 再到 pod</h2>
-<p></p>
-<p>如上图所示：</p>]]></description></item></channel></rss>
+<p>更加详细的步骤则参考下图所示：</p>]]></description></item></channel></rss>

@@ -1,4 +1,12 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Tag - 凌虚 Blog</title><link>https://rifewang.github.io/tags/kubernetes/</link><description>Kubernetes - Tag - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Sat, 07 Sep 2024 14:46:34 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/tags/kubernetes/" rel="self" type="application/rss+xml"/><item><title>Kubernetes 之 kubelet 与 CRI、CNI 的交互过程</title><link>https://rifewang.github.io/kubelet-cri-cni/</link><pubDate>Sat, 07 Sep 2024 14:46:34 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/kubelet-cri-cni/</guid><description><![CDATA[<h2 id="序言">序言</h2>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Tag - 凌虚 Blog</title><link>https://rifewang.github.io/tags/kubernetes/</link><description>Kubernetes - Tag - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Fri, 13 Sep 2024 12:11:23 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/tags/kubernetes/" rel="self" type="application/rss+xml"/><item><title>Kubernetes CNI 网络模型概览：VETH &amp; Bridge / Overlay / BGP</title><link>https://rifewang.github.io/k8s-cni-network-model/</link><pubDate>Fri, 13 Sep 2024 12:11:23 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-cni-network-model/</guid><description><![CDATA[<h2 id="序言">序言</h2>
+<p>网络是容器通信的基础，Kubernetes 本身并未提供开箱即用的网络互通功能，只提出了两点基本要求：</p>
+<blockquote>
+<ul>
+<li>pods can communicate with all other pods on any other node without NAT</li>
+<li>agents on a node (e.g. system daemons, kubelet) can communicate with all pods on that node</li>
+</ul>
+</blockquote>
+<p>至于如何实现这些通信能力，通常依赖于 <code>CNI</code> 插件来完成。</p>]]></description></item><item><title>Kubernetes 之 kubelet 与 CRI、CNI 的交互过程</title><link>https://rifewang.github.io/kubelet-cri-cni/</link><pubDate>Sat, 07 Sep 2024 14:46:34 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/kubelet-cri-cni/</guid><description><![CDATA[<h2 id="序言">序言</h2>
 <p>当一个新的 Pod 被提交创建之后，<code>Kubelet</code>、<code>CRI</code>、<code>CNI</code> 这三个组件之间进行了哪些交互？</p>
 <h2 id="kubelet---cri---cni">Kubelet -&gt; CRI -&gt; CNI</h2>
 <p></p>
@@ -81,15 +89,4 @@
 &lt;p>在分布式系统中，应用服务常常会通过多个节点（或实例）的方式来保证高可用。然而在某些场景下，有些数据或者任务无法被并行操作，此时就需要由一个特定的节点来执行这些特殊的任务（或者进行协调及决策），这个特定的节点也就是领导者（Leader），而在多个节点中选择领导者的机制也就是分布式选主（Leader Election）。&lt;/p></description></item><item><title>Kubernetes 从提交 deployment 到 pod 运行的全过程</title><link>https://rifewang.github.io/k8s-from-deploy-to-pod/</link><pubDate>Sat, 23 Dec 2023 18:26:15 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-from-deploy-to-pod/</guid><description><![CDATA[<p>当用户向 <code>Kubernetes</code> 提交了一个创建 <code>deployment</code> 的请求后，<code>Kubernetes</code> 从接收请求直至创建对应的 <code>pod</code> 运行这整个过程中都发生了什么呢？</p>
 <h2 id="kubernetes-架构简述">kubernetes 架构简述</h2>
 <p>在搞清楚从 <code>deployment</code> 提交到 <code>pod</code> 运行整个过程之前，我们有先来看看 <code>Kubernetes</code> 的集群架构：</p>]]></description></item><item><title>Kubernetes CRD &amp; Operator 简介</title><link>https://rifewang.github.io/k8s-crd-operator/</link><pubDate>Tue, 19 Dec 2023 10:37:48 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-crd-operator/</guid><description><![CDATA[<h2 id="kubernetes-crd">Kubernetes CRD</h2>
-<p>在 kubernetes 中有一系列内置的资源，诸如：<code>pod</code>、<code>deployment</code>、<code>configmap</code>、<code>service</code> …… 等等，它们由 k8s 的内部组件管理。而除了这些内置资源之外，k8s 还提供了另外一种方式让用户可以随意地自定义资源，这就是 <code>CRD</code> (全称 <code>CustomResourceDefinitions</code>) 。</p>]]></description></item><item><title>容器运行时的内部结构和最新趋势（2023）</title><link>https://rifewang.github.io/the-internals-and-the-latest-trends-of-container-runtimes/</link><pubDate>Tue, 11 Jul 2023 10:07:05 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/the-internals-and-the-latest-trends-of-container-runtimes/</guid><description><![CDATA[<h1 id="容器运行时的内部结构和最新趋势2023">容器运行时的内部结构和最新趋势（2023）</h1>
-<p>原文为 Akihiro Suda 在日本京都大学做的在线讲座，完整的 PPT 可 <a href="https://github.com/AkihiroSuda/AkihiroSuda/raw/5d9f0b1cd9b8c37cb1951768a3bebdb08a3a469e/slides/2023/20230615%20%5BKyoto%20University%5D%20The%20internals%20and%20the%20latest%20trends%20of%20container%20runtimes.pdf" target="_blank" rel="noopener noreffer ">点击此处下载</a></p>
-<p>本文内容分为以下三个部分：</p>
-<ol>
-<li>容器简介</li>
-<li>容器运行时的内部结构</li>
-<li>容器运行时的最新趋势</li>
-</ol>
-<hr>
-<h2 id="1-容器简介">1. 容器简介</h2>
-<h3 id="什么是容器">什么是容器？</h3>
-<p>容器是一组用于隔离文件系统、CPU 资源、内存资源、系统权限等的各种轻量级方法。容器在很多意义上类似于虚拟机，但它们比虚拟机更高效，而安全性则往往低于虚拟机。</p>]]></description></item></channel></rss>
+<p>在 kubernetes 中有一系列内置的资源，诸如：<code>pod</code>、<code>deployment</code>、<code>configmap</code>、<code>service</code> …… 等等，它们由 k8s 的内部组件管理。而除了这些内置资源之外，k8s 还提供了另外一种方式让用户可以随意地自定义资源，这就是 <code>CRD</code> (全称 <code>CustomResourceDefinitions</code>) 。</p>]]></description></item></channel></rss>
