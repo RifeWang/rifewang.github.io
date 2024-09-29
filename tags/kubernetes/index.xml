@@ -1,4 +1,11 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Tag - 凌虚 Blog</title><link>https://rifewang.github.io/tags/kubernetes/</link><description>Kubernetes - Tag - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Thu, 26 Sep 2024 14:30:07 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/tags/kubernetes/" rel="self" type="application/rss+xml"/><item><title>OCI 简介：Kubernetes 环境下从代码到容器的全流程</title><link>https://rifewang.github.io/oci/</link><pubDate>Thu, 26 Sep 2024 14:30:07 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/oci/</guid><description><![CDATA[<h2 id="oci-简介">OCI 简介</h2>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Tag - 凌虚 Blog</title><link>https://rifewang.github.io/tags/kubernetes/</link><description>Kubernetes - Tag - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Sun, 29 Sep 2024 17:11:31 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/tags/kubernetes/" rel="self" type="application/rss+xml"/><item><title>Kubernetes CSI 简介：工作流程和原理</title><link>https://rifewang.github.io/k8s-csi/</link><pubDate>Sun, 29 Sep 2024 17:11:31 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-csi/</guid><description><![CDATA[<p>本文将会以 <a href="https://github.com/kubernetes-csi/csi-driver-nfs" target="_blank" rel="noopener noreffer ">CSI driver - NFS</a> 为例，讲述 <code>CSI</code> 驱动的工作流程和原理。</p>
+<h2 id="csi-概述">CSI 概述</h2>
+<p><code>CSI</code> 驱动通常分为两个部分：</p>
+<ul>
+<li><code>Controller plugin</code>: 负责存储资源的管理，如卷的创建、删除、扩容、快照等。</li>
+<li><code>Node plugin</code>: 处理节点级别的存储操作，负责在具体的节点上执行卷的挂载和卸载等任务。</li>
+</ul>
+<p></p>]]></description></item><item><title>OCI 简介：Kubernetes 环境下从代码到容器的全流程</title><link>https://rifewang.github.io/oci/</link><pubDate>Thu, 26 Sep 2024 14:30:07 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/oci/</guid><description><![CDATA[<h2 id="oci-简介">OCI 简介</h2>
 <p>在容器化技术的演进中，<code>OCI</code>（Open Container Initiative）提供了一套标准化的规范，帮助统一容器的构建、分发和运行。<code>OCI</code> 规范包含三个部分：</p>]]></description></item><item><title>kubectl 执行一条命令之后发生了什么？</title><link>https://rifewang.github.io/kubectl-to-k8s/</link><pubDate>Sun, 22 Sep 2024 14:34:08 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/kubectl-to-k8s/</guid><description><![CDATA[<p><code>kubectl</code> 是与 Kubernetes 集群交互的命令行工具，用户通过它可以对集群资源进行操作和管理。你有没有想过，当我们执行一条 <code>kubectl</code> 命令之后，背后都发生了什么？</p>
 <h2 id="详细过程">详细过程</h2>
 <h3 id="kubectl---kube-api-server">kubectl -&gt; kube-api-server</h3>
@@ -51,43 +58,4 @@
 <p></p>
 <p>如上图所示：</p>]]></description></item><item><title>我的 2024 年 CKA 认证两天速通攻略</title><link>https://rifewang.github.io/2024-cka-cert/</link><pubDate>Sat, 27 Jan 2024 23:23:16 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/2024-cka-cert/</guid><description><![CDATA[<h2 id="背景说明">背景说明</h2>
 <p></p>
-<p>如上图所示，本人于 2024 年 1 月 22 号晚上 11 点进行了 CKA 的认证考试，并以 95 分（满分100）顺利通过拿证。本文将会介绍我的 CKA 考试心得和速通攻略。</p>]]></description></item><item><title>Kubernetes 外部 HTTP 请求到达 Pod 容器的全过程</title><link>https://rifewang.github.io/http-flow-to-container/</link><pubDate>Sat, 30 Dec 2023 16:38:11 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/http-flow-to-container/</guid><description><![CDATA[<p><code>Kubernetes</code> 集群外部的 HTTP/HTTPS 请求是如何达到 Pod 中的 <code>container</code> 的？</p>
-<h2 id="http-请求流转过程概述">HTTP 请求流转过程概述</h2>
-<p></p>
-<p>如上图所示，全过程大致为：</p>
-<ol>
-<li>用户从 web/mobile/pc 等客户端发出 HTTP/HTTPS 请求。</li>
-<li>由于应用服务通常是通过域名的形式对外暴露，所以请求将会先进行 <code>DNS</code> 域名解析，得到对应的公网 <code>IP</code> 地址。</li>
-<li>公网 <code>IP</code> 地址通常会绑定一个 <code>Load Balancer</code> 负载均衡器，此时请求会进入此负载均衡器。
-<ul>
-<li><code>Load Balancer</code> 负载均衡器可以是硬件，也可以是软件，它通常会保持稳定（固定的公网 IP 地址），因为如果切换 IP 地址会因为 DNS 缓存的原因导致服务某段时间内不可达。</li>
-<li><code>Load Balancer</code> 负载均衡器是一个重要的中间层，对外承接公网流量，对内进行流量的管理和转发。</li>
-</ul>
-</li>
-<li><code>Load Balancer</code> 再将请求转发到 <code>kubernetes</code> 集群的某个流量入口点，通常是 <code>ingress</code>。
-<ul>
-<li><code>ingress</code> 负责集群内部的路由转发，可以看成是集群内部的网关。</li>
-<li><code>ingress</code> 只是配置，具体进行流量转发的是 <code>ingress-controller</code>，后者有多种选择，比如 Nginx、HAProxy、Traefik、Kong 等等。</li>
-</ul>
-</li>
-<li><code>ingress</code> 根据用户自定义的路由规则进一步转发到 <code>service</code>。
-<ul>
-<li>比如根据请求的 path 路径或 host 做转发。
-
-</li>
-</ul>
-</li>
-<li><code>service</code> 根据 selector（匹配 label 标签）将请求转发到 <code>pod</code>。
-<ul>
-<li><code>service</code> 有多种类型，集群内部最常用的类型就是 <code>ClusterIP</code>。</li>
-<li><code>service</code> 本质上也只是一种配置，这种配置最终会作用到 node 节点上的 <code>kube-proxy</code> 组件，后者会通过设置 <code>iptables/ipvs</code> 来完成实际的请求转发。</li>
-<li><code>service</code> 可能会对应多个 <code>pod</code>，但最终请求只会被随机转发到一个 <code>pod</code> 上。</li>
-</ul>
-</li>
-<li><code>pod</code> 最后将请求发送给其中的 <code>container</code> 容器。
-<ul>
-<li>同一个 <code>pod</code> 内部可能有多个 <code>container</code>，但是多个容器不能共用同一个端口，因此这里会根据具体的端口号将请求发给对应的 <code>container</code>。</li>
-</ul>
-</li>
-</ol>
-<p>以上就是一种典型的集群外部 HTTP 请求如何达到 Pod 中的 <code>container</code> 的全过程。</p>]]></description></item></channel></rss>
+<p>如上图所示，本人于 2024 年 1 月 22 号晚上 11 点进行了 CKA 的认证考试，并以 95 分（满分100）顺利通过拿证。本文将会介绍我的 CKA 考试心得和速通攻略。</p>]]></description></item></channel></rss>
