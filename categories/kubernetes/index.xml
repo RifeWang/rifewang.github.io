@@ -1,4 +1,4 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Category - 凌虚 Blog</title><link>https://rifewang.github.io/categories/kubernetes/</link><description>Kubernetes - Category - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Mon, 07 Oct 2024 19:06:17 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/kubernetes/" rel="self" type="application/rss+xml"/><item><title>Kubernetes: kube-proxy 和 CNI 是如何协作的？</title><link>https://rifewang.github.io/kube-proxy-cni/</link><pubDate>Mon, 07 Oct 2024 19:06:17 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/kube-proxy-cni/</guid><description><![CDATA[<p>在 Kubernetes 中，<code>kube-proxy</code> 和 <code>CNI</code> 插件协同工作，确保集群内 Pod 之间的互联互通。</p>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Category - 凌虚 Blog</title><link>https://rifewang.github.io/categories/kubernetes/</link><description>Kubernetes - Category - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Fri, 11 Oct 2024 16:46:19 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/categories/kubernetes/" rel="self" type="application/rss+xml"/><item><title>Kubernetes：Seccomp、AppArmor、SELinux &amp; Pod 安全性标准和准入</title><link>https://rifewang.github.io/k8s-pod-security/</link><pubDate>Fri, 11 Oct 2024 16:46:19 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-pod-security/</guid><description><![CDATA[<p>在云原生环境中，为确保容器化应用的安全运行，Kubernetes 利用了 Linux 内核的三大安全机制：<code>Seccomp</code>、<code>AppArmor</code> 和 <code>SELinux</code>，并引入了 Pod 安全性标准与准入控制来增强 Pod 的安全性。</p>]]></description></item><item><title>Kubernetes: kube-proxy 和 CNI 是如何协作的？</title><link>https://rifewang.github.io/kube-proxy-cni/</link><pubDate>Mon, 07 Oct 2024 19:06:17 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/kube-proxy-cni/</guid><description><![CDATA[<p>在 Kubernetes 中，<code>kube-proxy</code> 和 <code>CNI</code> 插件协同工作，确保集群内 Pod 之间的互联互通。</p>
 <h2 id="kube-proxy--cni">Kube-proxy &amp; CNI</h2>
 <p></p>
 <p>如上图所示，假设我们有一个类型为 <code>ClusterIP</code> 的 <code>Service</code>，它对应两个位于不同节点的 Pod。</p>]]></description></item><item><title>Kubernetes CSI 简介：工作流程和原理</title><link>https://rifewang.github.io/k8s-csi/</link><pubDate>Sun, 29 Sep 2024 17:11:31 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-csi/</guid><description><![CDATA[<p>本文将会以 <a href="https://github.com/kubernetes-csi/csi-driver-nfs" target="_blank" rel="noopener noreffer ">CSI driver - NFS</a> 为例，讲述 <code>CSI</code> 驱动的工作流程和原理。</p>
@@ -52,11 +52,4 @@
 <li>节点打分：给过滤出来的节点进行打分。</li>
 <li>最后选择得分最高的那个 node 与 pod 绑定（如果最高得分有多个 node 则随机选择一个）。</li>
 </ul>
-<p>更加详细的步骤则参考下图所示：</p>]]></description></item><item><title>Kubernetes Service 与 long-lived connections</title><link>https://rifewang.github.io/k8s-service-long-lived-connection/</link><pubDate>Wed, 12 Jun 2024 16:14:46 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-service-long-lived-connection/</guid><description><![CDATA[<p>本文将会介绍：</p>
-<ul>
-<li>从 pod 到 service 再到 pod，kubernetes 中的流量是怎么走的？</li>
-<li>对于 long-lived connection 长连接又是怎样的情况？</li>
-</ul>
-<h2 id="从-pod-到-service-再到-pod">从 pod 到 service 再到 pod</h2>
-<p></p>
-<p>如上图所示：</p>]]></description></item></channel></rss>
+<p>更加详细的步骤则参考下图所示：</p>]]></description></item></channel></rss>
