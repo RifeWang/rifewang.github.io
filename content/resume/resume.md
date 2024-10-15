@@ -24,8 +24,8 @@ disableComments = true
 
 具备丰富的技术广度，涵盖 **后端**、**云原生**、**大数据** 等多项技术领域，拥有 **系统架构设计师**、**Kubernetes**、**ElasticSearch** 等官方技术认证。
 
-职场表现卓越，曾获：**年度优秀个人**、**年度创新团队** 等荣誉。
-坚持健身、学习、写作 8 年，公众号：[系统架构师Go](https://raw.githubusercontent.com/RifeWang/images/master/qrcode.jpg)，技术社区 Segmentfault 2022、2023 年度 Maintainer。
+职场表现卓越，每一段生涯都能做出优秀成绩，曾获：**年度优秀个人**、**年度创新团队** 等荣誉。
+坚持运动、学习、写作 8 年，公众号：[系统架构师Go](https://raw.githubusercontent.com/RifeWang/images/master/qrcode.jpg)，技术社区 Segmentfault 2022、2023 年度 Maintainer。
 
 ## 工作经历
 
@@ -41,7 +41,7 @@ disableComments = true
 项目成绩：从零到一的定制化产品成功交付某部战区总医院；科研云平台支撑了多次大规模临床试验及日常科研；疗法云软件投入商业化运作并持续迭代。
 
 个人职责：
-- 后端 Team Leader，推进 Scrum 敏捷开发，安排团队成员的工作内容，组织产品的上线发版。
+- Team Leader，推进 Scrum 敏捷开发，安排团队成员的工作内容，组织产品的上线发版。
 - 日常编码，实现业务需求，包括但不限于接口设计、数据建模、缓存与消息队列等中间件集成。
 - 系统优化，深入整体架构、业务流、数据流、各组件等多角度优化系统性能。
 - 架构设计和迭代，包含技术选型、制定架构演进方案、组织技术评审、追踪并确保技术落地。
@@ -97,7 +97,7 @@ disableComments = true
 
 - 8 年开发 5 年架构，较强的架构和编码能力，对高并发、高可用、高性能、分布式、微服务有深入理解和实践。
 - 具备技术团队管理经验，拥有 Scrum 敏捷开发、DevOps、云原生等实践经验。
-- 擅长 Node.js、Golang，也能写 Python。语言只是工具，我的核心竞争力是解决实际问题的能力。
+- 精通 Golang、Node.js，熟悉 Python。不同语言有各自的使用场景，我的核心竞争力是解决问题的能力。
 - 熟悉 MySQL、Redis、MQ、Elasticsearch 等常用组件原理，具备全文搜索和日志聚合分析经验。
 - 熟悉 Kafka、ClickHouse、ELK 体系，拥有数据仓库和大数据领域项目经验。
 - 熟悉 Linux，理解 Docker、Kubernetes、Argo 架构及原理，Kubernetes 文档贡献者，熟悉云原生周边工具。
@@ -105,4 +105,4 @@ disableComments = true
 
 ## 致谢
 
-感谢您阅读我的简历，期望未来能与您一起共事，谢谢～
+感谢您阅读我的简历，期望未来能与您一起共事～
