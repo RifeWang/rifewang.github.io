@@ -1,8 +1,8 @@
 +++
 draft = false
 date = 2024-10-24T22:05:38+08:00
-title = "以翻译 Kubernetes 文档为例，AI 模型 Fine-Tuning 微调探索"
-description = "以翻译 Kubernetes 文档为例，AI 模型 Fine-Tuning 微调探索"
+title = "以翻译 Kubernetes 文档为例，探索 AI 模型 Fine-Tuning 微调"
+description = "以翻译 Kubernetes 文档为例，探索 AI 模型 Fine-Tuning 微调"
 slug = ""
 authors = []
 tags = ["AI", "LLM"]
