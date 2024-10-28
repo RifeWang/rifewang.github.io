@@ -43,3 +43,16 @@ disableComments = true
 ## 总结
 
 在 node 节点上，镜像由 `CRI` 组件（如 `containerd`、`cri-o`）管理。kubelet 每 5 分钟进行一次镜像的垃圾回收。如果配置了 `imageMaximumGCAge` 镜像的最大存在时间，则不管磁盘使用率是否达到高水位线，都会删除符合条件的镜像。之后，镜像的删除将依据 `imageGCHighThresholdPercent`、`imageGCLowThresholdPercent` 高低水位线的配置来触发，具体删除操作由 CRI 组件执行，而 kubelet 仅负责发起 gRPC 调用。
+
+
+(关注我，无广告，专注技术，不煽动情绪，也欢迎与我交流)
+
+---
+
+参考资料：
+
+- *https://kubernetes.io/docs/concepts/architecture/garbage-collection*
+- *https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/*
+- *https://github.com/containerd/containerd/blob/main/docs/ops.md*
+- *https://github.com/cri-o/cri-o/blob/main/docs/crio.conf.5.md*
+- *https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/images/image_gc_manager.go*
