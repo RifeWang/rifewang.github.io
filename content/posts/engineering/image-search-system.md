@@ -29,7 +29,7 @@ disableComments = true
 
 
 比如 Average Hash 算法的计算过程：
-![Average Hash](/images/image-average-hash.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/engineering/image-average-hash.jpeg)
 
 1. Reduce size : 将原图压缩到 8 x 8 即 64 像素大小，忽略细节。
 2. Reduce color : 灰度处理得到 64 级灰度图像。
@@ -58,7 +58,7 @@ disableComments = true
 ### 传统特征
 在计算机视觉领域早期，创造了很多经典的手工设计的特征算法，比如 `SIFT`
 
-![](/images/image-sift.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/engineering/image-sift.jpeg)
 
 如上图所示，通过 `SIFT` 算法提取出来的一系列的特征点。
 
@@ -71,7 +71,7 @@ disableComments = true
 ### CNN 特性
 人工智能兴起之后，基于 CNN 卷积神经网络提取图像特征越来越主流。
 
-![](/images/cnn.jpg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/engineering/cnn.jpg)
 
 通过 CNN 提取出来的图像特征其实也是一个多维向量，比如使用 VGG16 模型提取特征可参考: https://keras.io/applications/#extract-features-with-vgg16
 

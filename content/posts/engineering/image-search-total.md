@@ -33,13 +33,13 @@ disableComments = true
 
 比如：
 
-![image-pixel-example](/images/pixel-example.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/engineering/pixel-example.png)
 
 左图红色圈中的部分其实就是右图中一系列的像素点。
 
 再举例：
 
-![image-pixel2](/images/pixel2.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/engineering/pixel2.png)
 
 假设上图红色圈的部分是一幅图像，其中每一个独立的小方格就是一个像素点（简称像素），像素是最基本的信息单元，而这幅图像的大小就是 11 x 11 px 。
 
@@ -96,7 +96,7 @@ disableComments = true
 
 第一代搜图系统在特征提取上使用的是 `Perceptual hash` 即 `pHash` 算法，这个算法的基本原理是什么？
 
-![pHash](/images/phash.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/engineering/phash.png)
 
 如上图所示，`pHash` 算法就是对图像整体进行一系列变换最后构造 hash 值，而变换的过程可以理解为对图像进行不断的抽象，此时如果对另外一张相似内容的图像进行同样的整体抽象，那么其结果一定是非常接近的。
 
