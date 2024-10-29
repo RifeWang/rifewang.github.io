@@ -66,30 +66,30 @@ disableComments = true
 - `UV` : 访问的用户人数，很多网站用户无序登录也能访问，这时可以根据 IP + user_agent 的唯一性确定用户
 - `IP` 数 : 访问来源有多少个 IP 地址
 
-![](/images/pv-uv-ip.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/pv-uv-ip.png)
 <br/>
 
 - 网络流量 : 根据 `request_size` 请求的大小计数网络流入流量，`bytes_sent` 响应大小计算网络流出流量
 
-![](/images/netflow.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/netflow.png)
 <br/>
 
 - `referer` 来源分析
 
-![](/images/referer.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/referer.png)
 <br/>
 
 
 - 客户请求的地理位置分析：根据 IP 地址衍生的 `geo` 数据
 
-![](/images/clientmap.png)
-![](/images/clientgeo.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/clientmap.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/clientgeo.png)
 <br/>
 
 
 - 客户设备分析：根据 `user_agent` 提取数据
 
-![](/images/clientdevice.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/clientdevice.png)
 <br/>
 
 
@@ -112,6 +112,6 @@ disableComments = true
 
 ## 通用架构
 
-![](/images/log-system.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/log-system.png)
 
 日志系统使用 ELK + kafka 构建是业界比较主流的方案，beats、 logstash 进行日志采集搬运，kafka 存储日志等待消费，elasticsearch 进行数据的聚合分析，grafana 和 kibana 进行图形化展示。
