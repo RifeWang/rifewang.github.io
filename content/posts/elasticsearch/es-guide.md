@@ -65,7 +65,7 @@ Mapping （映射）在 ES 中的作用至关重要，数据结构、存储和�
 
 数据类型的判断及定义规则如下：
 
-![](/images/es/dynamic-mapping.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/es/dynamic-mapping.jpeg)
 
 然而，仅仅依赖于 ES 自身去判断并定义数据类型显然是比较受限的，我们仍然需要对数据类型进行密切关注。
 
@@ -75,29 +75,29 @@ Mapping （映射）在 ES 中的作用至关重要，数据结构、存储和�
 
 ES 中的 filed（字段）如同 mysql 表中的列一样，其数据类型也有很多种：
 
-![](/images/es/field-datatypes.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/es/field-datatypes.jpeg)
 
 
 ### Meta-fields（元字段）
 
 每一个 document 都有一些与之关联的元数据：
 
-![](/images/es/meta-fields.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/es/meta-fields.jpeg)
 
 
 ### Mapping parameters（映射参数）
 
 设置 mapping 时的各种参数及其含义：
 
-![](/images/es/mapping-parameters-1.jpeg)
-![](/images/es/mapping-parameters-2.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/es/mapping-parameters-1.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/es/mapping-parameters-2.jpeg)
 
 
 ### Dynamic templates（动态模板）
 
 应用于动态添加字段时设置自定义 mapping 映射，通过在模板中设置匹配及映射的规则，匹配命中则会被设置为对应的 mapping ，匹配参数设置如下：
 
-![](/images/es/dynamic-templates.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/es/dynamic-templates.jpeg)
 
 Mapping 的设置其实是一个不断循环改进的过程，同时其与具体业务又有着密切的联系。理解了 Mapping 更有助于理解数据在 ES 中的搜索行为表现。
 
@@ -124,7 +124,7 @@ Analyzer（分析器）的作用前文已经说过了：拆分文本。
 
 一个完整的包含以上三个部分的分析流程如下图所示：
 
-![](/images/es/analyzer.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/es/analyzer.jpeg)
 
 注意：并不是每一个 Analyzer 分析器都需要同时具备以上三种基础构建块。
 
@@ -139,7 +139,7 @@ Character filter 的作用就是对字符进行处理，比如移除 HTML 中的
 
 ES 内置了以下三种 Character filters ：
 
-![](/images/es/character-filter.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/es/character-filter.jpeg)
 
 
 ### Tokenizer
@@ -167,15 +167,15 @@ ES 内置了十五种 Tokenizer ，并划分为三类：
 
 1、面向字词：
 
-![](/images/es/tokenizer-1.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/es/tokenizer-1.jpeg)
 
 2、以字词的某部分为粒度：
 
-![](/images/es/tokenizer-2.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/es/tokenizer-2.jpeg)
 
 3、结构化文本：
 
-![](/images/es/tokenizer-3.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/es/tokenizer-3.jpeg)
 
 
 ### Token Filter
@@ -184,7 +184,7 @@ Token Filter 的作用就是把 Tokenizer 处理完生成的 token 流进行增�
 
 ES 内置的 token filter 数量多达四五十种：
 
-![](/images/es/token-filter.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/es/token-filter.jpeg)
 
 上图只是简单罗列说明，此处不进行展开说明，更多细节还是查阅官方文档好了。
 
@@ -193,7 +193,7 @@ ES 内置的 token filter 数量多达四五十种：
 
 ES 内置了以下 Analyzer ：
 
-![](/images/es/analyzer-built-in.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/elasticsearch/es/analyzer-built-in.jpeg)
 
 可以看到每一个 Analyzer 都紧紧围绕 Character filters 、Tokenizer、Token filters 三个部分。
 

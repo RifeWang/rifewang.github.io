@@ -22,7 +22,7 @@ memcached 本身并不支持集群，为了使用集群，我们可以自己在�
 
 一致性哈希算法的原理：
 
-![consistent-hash](/images/consistent-hash.png)
+![consistent-hash](https://raw.githubusercontent.com/RifeWang/images/master/consistent-hash.png)
 
 
 一致性哈希算法已经有开源库 [`hashring`](https://github.com/3rd-Eden/node-hashring) 实现，基本用法：

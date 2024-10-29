@@ -20,7 +20,7 @@ disableComments = true
 
 答案是像素点的集合。
 
-![image-pixel2](/images/pixel2.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/engineering/pixel2.png)
 
 如上图所示，假设红色圈的部分是一幅图像，其中每一个独立的小方格就是一个像素点（简称像素），像素是最基本的信息单元，而这幅图像的大小就是 11 x 11 px 。
 
