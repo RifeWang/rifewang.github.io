@@ -39,11 +39,11 @@ STW 是 Stop The World 的缩写，意思是 GC 的时候会暂停其它所有�
 
 假设应用程序当前运行了四个 goroutine :
 
-![](/images/go/gc1.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/go/gc1.png)
 
 我们需要等待所有 goroutine 暂停，而暂停操作是需要出现一次函数调用才能完成，如果某个 goroutine 始终没有发生函数调用（比如一直在执行某个非常长的循环操作）而其它 goroutine 却完成了会怎样，就会如下图：
 
-![](/images/go/gc2.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/go/gc2.png)
 
 然而，必须所有的 goroutine 全部都暂停，垃圾回收才能继续进行，不然就会卡在这里一直等待，结果就是延迟越来越高。这个问题官方团队计划将在 1.14 版本通过优先策略进行优化。
 
@@ -54,14 +54,14 @@ STW 是 Stop The World 的缩写，意思是 GC 的时候会暂停其它所有�
 
 进行标记，Concurrent 表示这个过程是并发进行的，不会 STW ，GC 会先征用 25% 的 CPU 资源，如下图：
 
-![](/images/go/gc3.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/go/gc3.png)
 
 GC 占用了 P1 逻辑处理器，而其它 goroutine 正常的并发运行。
 
 
 但是，有些时候 GC 的任务特别繁重，需要更多的资源，这个时候怎么办？开启 Mark Assit 协助工作，如下图中的 MA ：
 
-![](/images/go/gc4.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/go/gc4.png)
 
 标记完成，进行下一个阶段。
 
@@ -71,12 +71,12 @@ GC 占用了 P1 逻辑处理器，而其它 goroutine 正常的并发运行。
 
 标记终止。关闭 Write Barrier（写屏障），执行各种清理任务，然后计算下一次 GC 的目标，这个阶段也是需要 STW 的，平均 60 - 90 微秒：
 
-![](/images/go/gc5.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/go/gc5.png)
 
 
 一旦 GC 完成，goroutine 继续执行：
 
-![](/images/go/gc6.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/go/gc6.png)
 
 ### Sweeping - Concurrent
 
@@ -99,7 +99,7 @@ GODEBUG=gctrace=1
 
 通过指标数据可以看到各个过程及耗时情况，比如：
 
-![](/images/go/gc7.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/go/gc7.jpeg)
 
 
 2、使用 pprof

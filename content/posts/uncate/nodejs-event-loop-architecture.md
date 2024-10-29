@@ -17,7 +17,7 @@ disableComments = true
 https://medium.com/preezma/node-js-event-loop-architecture-go-deeper-node-core-c96b4cec7aa4*
 
 
-![](/images/uncate/node-event-loop1.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/node-event-loop1.jpeg)
 
 关于 Node.js ，相信你已经了解过不少内容，诸如 Node.js 内核、事件循环、单线程、setTimeout 或 setImmediate 函数的执行机制等等。
 
@@ -51,7 +51,7 @@ Node.js 是单线程？
 
 Unix 系统中的工作基于 sockets 套接字。Socket 就是一个整数，返回一个 Socket() 系统调用，它被称为 socket descriptor（套接字描述符）或者 file descriptor（文件描述符）。
 
-![](/images/uncate/node-event-loop2.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/node-event-loop2.jpeg)
 
 Sockets 通过虚拟的接口（ read / write / pool / close 等）指向系统内核中的对象。
 
@@ -81,7 +81,7 @@ C++ 在后台执行 JavaScript 代码并且拥有访问线程的权限。如果�
 
 但是如果在同一个 CPU（2核）中执行这个方法的异步版本，总耗时则为 2 * 2 ms = 4 ms ，因为处理器将使用默认 4 个线程（下文将会说明），将它托管到两个进程中并执行。
 
-![](/images/uncate/node-event-loop3.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/node-event-loop3.jpeg)
 
 这也就是：Node.js 并发地执行异步方法。
 
@@ -100,15 +100,15 @@ Node.js 使用一组预先分配的线程，称之为线程池，如果我们没
 
 Thread per connection ：
 
-![](/images/uncate/node-event-loop4.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/node-event-loop4.png)
 
 创建一个 TCP server 最简单的方式就是创建一个 socket ，绑定这个 socket 到某个端口上然后 listen 监听。
 
-![](/images/uncate/node-event-loop5.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/node-event-loop5.png)
 
 在我们调用 listen 之前，该 socket 可用于建立连接或接受连接。当我们调用 listen 时，我们准备接受连接。
 
-![](/images/uncate/node-event-loop6.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/node-event-loop6.png)
 
 当连接到达并且我们需要写入它时，直到我们完成写入之前，我们都无法接受另一个连接，这就是我们将它推入另一个线程的原因。所以我们将 socket descriptor 和 function pointer 传递给线程。
 
@@ -121,7 +121,7 @@ Epoll 是 unix 系统相关底层知识。
 
 Epoll 循环：
 
-![](/images/uncate/node-event-loop7.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/node-event-loop7.png)
 
 Epoll 能为我们带来什么，为什么要使用它。使用 Epoll 允许我们告诉 Kernel（系统内核）我们关注的事件，并且 Kernel 将会告诉我们这些事件何时发生。在上面的例子中，我们关注的是传入的 TCP 连接，因此，我们创建一个 Epoll 描述符并将其添加到 Epoll 循环中，并调用 wait 。每当有 TCP 连接传入时便会唤醒，然后将它添加到 Epoll 循环中并等待来自它的数据。这就是事件循环为我们做的事情。
 
@@ -174,7 +174,7 @@ Event loop
 
 事件循环的一次迭代称之为 Tick，它有自己的 phases（阶段）。
 
-![](/images/uncate/node-event-loop8.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/node-event-loop8.jpeg)
 
 更多关于 event loop 的 phases、Timers、process.nextTick() 等请查阅官方文档。
 

@@ -21,7 +21,7 @@ InfluxDB 开源的社区版本面临的最大的问题就是单点故障和容�
 既然有单点故障的可能，那么索性写入多个节点，同时也解决了容灾备份的问题：
 
 
-![double write](/images/influxdb/double-write.png)
+![double write](https://raw.githubusercontent.com/RifeWang/images/master/influxdb/double-write.png)
 
 1、在不同的机器上配置多个 InfluxDB 实例，写入数据时，直接由客户端并发写入多个实例。（为什么不用代理，因为代理自身就是个单点）。
 
@@ -46,10 +46,10 @@ InfluxDB 开源的社区版本面临的最大的问题就是单点故障和容�
 
 ---
 相关文章：
-- [时序数据库 InfluxDB（一）](/posts/influxdb/1/)
-- [时序数据库 InfluxDB（二）](/posts/influxdb/2/)
-- [时序数据库 InfluxDB（三）](/posts/influxdb/3/)
-- [时序数据库 InfluxDB（四）](/posts/influxdb/4/)
-- [时序数据库 InfluxDB（五）](/posts/influxdb/5/)
-- [时序数据库 InfluxDB（六）](/posts/influxdb/6/)
-- [时序数据库 InfluxDB（七）](/posts/influxdb/7/)
+- [时序数据库 InfluxDB（一）](/influxdb-1/)
+- [时序数据库 InfluxDB（二）](/influxdb-2/)
+- [时序数据库 InfluxDB（三）](/influxdb-3/)
+- [时序数据库 InfluxDB（四）](/influxdb-4/)
+- [时序数据库 InfluxDB（五）](/influxdb-5/)
+- [时序数据库 InfluxDB（六）](/influxdb-6/)
+- [时序数据库 InfluxDB（七）](/influxdb-7/)

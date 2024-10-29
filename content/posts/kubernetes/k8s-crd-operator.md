@@ -75,7 +75,7 @@ spec:
 
 执行 `kubectl apply -f my-crontab.yaml` 就可以创建我们自定义的 CronTab，执行 `kubectl get crontab` 就可以查询到我们自定义的 CronTab 列表。
 
-![](/images/k8s/crd-operator/crd.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/crd-operator/crd.png)
 
 通过 `CRD` 自定义资源的优点是，我们无需操心自定义资源的数据存储，也无需再额外实现一个 http server 去对外暴露操作这些自定义资源的 API 接口，因为这些 k8s 都帮我们做好了，我们只需要像其它内置资源一样使用自定义资源即可。
 
@@ -85,7 +85,7 @@ spec:
 
 `Operator` 其实就是 custom resource controller（自定义资源的控制器），它干的事情就是监听自定义资源的变更，然后针对性地做一些操作。例如，监听到某个自定义资源被创建后，`Operator` 可以读取这个自定义资源的属性然后创建一个 pod 去运行具体的程序，并将这个 pod 绑定到自定义资源对象上。
 
-![](/images/k8s/crd-operator/k8s-operator-1800x1013.webp)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/crd-operator/k8s-operator.png)
 
 那 `Operator` 以何种方式存在呢？其实它跟普通的服务一样，可以是 `deployment`，也可以是 `statefuleSet`。
 

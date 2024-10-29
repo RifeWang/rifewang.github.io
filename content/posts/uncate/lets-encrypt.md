@@ -43,11 +43,11 @@ acme.sh --issue --force --dns -d <二级域名> -d <泛域名> \
 
 issue 之后的结果如图所示：
 
-![](/images/uncate/lets-encrypt1.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/lets-encrypt1.jpeg)
 
 按照说明你需要分别添加 _acme-challenge.<二级域名> 和  _acme-challenge.<泛域名>  这两个域名的 TXT 类型的域名解析：
 
-![](/images/uncate/lets-encrypt2.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/lets-encrypt2.jpeg)
 
 之所以要添加域名解析是为了验证你对此域名的所有权。
 
@@ -61,7 +61,7 @@ acme.sh --renew --force --dns -d <二级域名> -d <泛域名> \   --yes-I-know-
 
 示例结果如图所示：
 
-![](/images/uncate/lets-encrypt3.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/lets-encrypt3.jpeg)
 
 输出结果除了会告诉你证书签发成功之外，还会在最后说明证书的存放位置，默认是 `~/.acme.sh/<二级域名>/` 这个目录。
 

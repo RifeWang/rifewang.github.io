@@ -30,7 +30,7 @@ NSQ 组件：
 
 如下图所示：
 
-![](/images/middleware/nsq1-1.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/nsq1-1.jpeg)
 
 1、生产者 producer 将消息投递到指定的 nsqd 中指定的 topic 主题。
 
@@ -42,7 +42,7 @@ NSQ 组件：
 
 再看下图：
 
-![](/images/middleware/nsq1-2.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/nsq1-2.jpeg)
 
 通过 nsqadmin 可以看到整个集群的统计信息并进行管理，多个 nsqd 节点组成集群并将其基本信息注册到 nsqlookupd 中，通过 nsqlookupd 可以寻址到具体的 nsqd 节点，而不论是消息的生产者还是消费者，其本质上都是与 nsqd 进行通信（如第一张图所示）。
 
@@ -79,7 +79,7 @@ NSQ 组件：
 
 NSQ 也不例外，如下图所示：
 
-![](/images/middleware/nsq2-1.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/nsq2-1.jpeg)
 
 nsqd 是接受、排队、传递消息的守护进程，消息队列中的核心。
 
@@ -89,7 +89,7 @@ nsqd 是接受、排队、传递消息的守护进程，消息队列中的核心
 
 生产者包装消息，将消息传递到 nsqd 中指定的 topic 。在 NSQ 中这一个步骤相当简单，通过 HTTP 接口就能完成：
 
-![](/images/middleware/nsq2-2.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/nsq2-2.jpeg)
 
 发送消息必须指定 topic ，而 topic 的作用其实就是对消息进行逻辑上的分区。
 
@@ -102,7 +102,7 @@ nsqd 是接受、排队、传递消息的守护进程，消息队列中的核心
 
 上面已经说过，topic 只是用来将消息进行逻辑划分，channel 才是真正存放消息的地方，而 nsqd 在接受到消息后，会将消息复制给所有与这个 topic 相连的 channel 并存放。
 
-![](/images/middleware/nsq2-3.gif)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/nsq2-3.gif)
 
 
 ### nsqd  >>  consumer
@@ -119,7 +119,7 @@ nsqd 是接受、排队、传递消息的守护进程，消息队列中的核心
 
 先来看看详细的过程：
 
-![](/images/middleware/nsq2-4.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/nsq2-4.jpeg)
 
 如上图所示，consumer 需要先连接到 nsqd，并且订阅指定的 topic 和 channel ，在一切准备就绪之后发送 RDY 状态表示可以接受消息，并指明一次可以处理的最大消息数量 max-in-flight 为 2 ，随后 nsqd 向 consumer 投递消息，consumer 消费者在接受到消息后进行业务处理，并且需要向 nsqd 响应 FIN（消息处理成功）或者 REQ（ re-queue 重新排队），投递完成但未响应的这段时间内的消息状态为 in-flight 。
 
@@ -147,7 +147,7 @@ nsqd 是接受、排队、传递消息的守护进程，消息队列中的核心
 
 有时候 consumer 处理消息面临很大的压力，随时有崩溃的风险，这种情况下可以主动向 nsq 发送 RDY 0 实现 backoff ，换句话说就是消费端暂停接受等多消息，以减轻自身压力避免崩溃，等到有更多处理能力时再取消暂停状态慢慢接收更多消息。当然进入 backoff 然后慢慢恢复是一个需要动态调节的过程。
 
-![](/images/middleware/nsq2-5.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/nsq2-5.png)
 
 事实上加快消息的处理才是我们需要关注的重中之重。
 
@@ -174,7 +174,7 @@ nsqlookupd 提供服务发现的功能，用来寻址特定主题的 nsqd。如�
 
 NSQ 是一个分布式的设计，可以有效的避免 SPOF 单点故障。
 
-![](/images/middleware/nsq2-6.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/nsq2-6.jpeg)
 
 如图所示，我们可以轻松的部署足够多的 nsqd 到多台机器上，并让消费者与之连接（这个图简化处理了，我们仍应该使用 nsqlookupd ）。每一个 nsqd 之间是相互独立的，没有任何关联。这就是说如果三个 nsqd 具有相同的 topic 和 channel ，我们向它们发送同一条消息，本质上就是分别发送了三条消息，结果就是连接这三个 nsqd 的 consumer 将会收到三条消息。这样做显然有效的提高了可靠性，但是在消费端一定要做好重复消息的处理问题。
 

@@ -92,12 +92,12 @@ field key = field value  键值对也是存储具体的数据，但不会被索�
 
 示例：
 
-![image](/images/influxdb/line-protocol.png)
+![image](https://raw.githubusercontent.com/RifeWang/images/master/influxdb/line-protocol.png)
 
 
 怎么去理解 series 和 point ？先看下图：
 
-![image](/images/influxdb/series-point.webp)
+![image](https://raw.githubusercontent.com/RifeWang/images/master/influxdb/series-point.webp)
 
 
 这张图选取了三种时序数据库的历年排名得分情况。首先，整个图表可以看成是一个 measurement ，它包含了许多数据；然后我们根据 db 名称构建 tag ，把 score 排名得分作为 field ，那么所有数据行就类似于：
@@ -187,10 +187,10 @@ InfluxDB 为了更高的性能做了一些设计与权衡之道：
 
 ---
 相关文章：
-- [时序数据库 InfluxDB（一）](/posts/influxdb/1/)
-- [时序数据库 InfluxDB（二）](/posts/influxdb/2/)
-- [时序数据库 InfluxDB（三）](/posts/influxdb/3/)
-- [时序数据库 InfluxDB（四）](/posts/influxdb/4/)
-- [时序数据库 InfluxDB（五）](/posts/influxdb/5/)
-- [时序数据库 InfluxDB（六）](/posts/influxdb/6/)
-- [时序数据库 InfluxDB（七）](/posts/influxdb/7/)
+- [时序数据库 InfluxDB（一）](/influxdb-1/)
+- [时序数据库 InfluxDB（二）](/influxdb-2/)
+- [时序数据库 InfluxDB（三）](/influxdb-3/)
+- [时序数据库 InfluxDB（四）](/influxdb-4/)
+- [时序数据库 InfluxDB（五）](/influxdb-5/)
+- [时序数据库 InfluxDB（六）](/influxdb-6/)
+- [时序数据库 InfluxDB（七）](/influxdb-7/)

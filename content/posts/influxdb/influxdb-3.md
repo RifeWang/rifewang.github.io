@@ -109,10 +109,10 @@ series-id-set-cache-size ：使用内存缓存的 series 集的大小，由于 T
 
 ---
 相关文章：
-- [时序数据库 InfluxDB（一）](/posts/influxdb/1/)
-- [时序数据库 InfluxDB（二）](/posts/influxdb/2/)
-- [时序数据库 InfluxDB（三）](/posts/influxdb/3/)
-- [时序数据库 InfluxDB（四）](/posts/influxdb/4/)
-- [时序数据库 InfluxDB（五）](/posts/influxdb/5/)
-- [时序数据库 InfluxDB（六）](/posts/influxdb/6/)
-- [时序数据库 InfluxDB（七）](/posts/influxdb/7/)
+- [时序数据库 InfluxDB（一）](/influxdb-1/)
+- [时序数据库 InfluxDB（二）](/influxdb-2/)
+- [时序数据库 InfluxDB（三）](/influxdb-3/)
+- [时序数据库 InfluxDB（四）](/influxdb-4/)
+- [时序数据库 InfluxDB（五）](/influxdb-5/)
+- [时序数据库 InfluxDB（六）](/influxdb-6/)
+- [时序数据库 InfluxDB（七）](/influxdb-7/)

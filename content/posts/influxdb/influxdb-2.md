@@ -32,7 +32,7 @@ shard 是什么？
 
 先来看数据的层次结构：
 
-![image](/images/influxdb/shard.webp)
+![image](https://raw.githubusercontent.com/RifeWang/images/master/influxdb/shard.webp)
 
 如果所示，一个 database 对应一个实际的磁盘上的文件夹，该数据库下不同的 RP 策略对应不同的文件夹。
 
@@ -65,7 +65,7 @@ shard 从属于唯一一个 shard group ，shard duration 和 shard group durati
 
 默认情况下，shard group duration 根据 RP duration 的值来确定，对应关系如下图：
 
-![image](/images/influxdb/rp-duration.png)
+![image](https://raw.githubusercontent.com/RifeWang/images/master/influxdb/rp-duration.png)
 
 
 
@@ -80,7 +80,7 @@ shard group duration 设置为多久才最好？
 
 默认配置对于大多数场景都运行的很好，然而，高吞吐量或长时间运行的实例将受益于更长的 shard group duration ，官方建议的配置如下：
 
-![image](/images/influxdb/rp-duration-config.webp)
+![image](https://raw.githubusercontent.com/RifeWang/images/master/influxdb/rp-duration-config.webp)
 
 
 
@@ -96,10 +96,10 @@ RP 策略可以动态调整，删除一个 RP 将会删除其下的所有数据�
 
 ---
 相关文章：
-- [时序数据库 InfluxDB（一）](/posts/influxdb/1/)
-- [时序数据库 InfluxDB（二）](/posts/influxdb/2/)
-- [时序数据库 InfluxDB（三）](/posts/influxdb/3/)
-- [时序数据库 InfluxDB（四）](/posts/influxdb/4/)
-- [时序数据库 InfluxDB（五）](/posts/influxdb/5/)
-- [时序数据库 InfluxDB（六）](/posts/influxdb/6/)
-- [时序数据库 InfluxDB（七）](/posts/influxdb/7/)
+- [时序数据库 InfluxDB（一）](/influxdb-1/)
+- [时序数据库 InfluxDB（二）](/influxdb-2/)
+- [时序数据库 InfluxDB（三）](/influxdb-3/)
+- [时序数据库 InfluxDB（四）](/influxdb-4/)
+- [时序数据库 InfluxDB（五）](/influxdb-5/)
+- [时序数据库 InfluxDB（六）](/influxdb-6/)
+- [时序数据库 InfluxDB（七）](/influxdb-7/)

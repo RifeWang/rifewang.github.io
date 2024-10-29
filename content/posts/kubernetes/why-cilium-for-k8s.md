@@ -62,7 +62,7 @@ disableComments = true
 
 使用 bpfilter（而不是 iptables）进行路由[意味着](https://www.admin-magazine.com/Archive/2019/50/Bpfilter-offers-a-new-approach-to-packet-filtering-in-Linux)将过滤任务转移到内核空间，这会产生令人印象深刻的性能提升。这正是项目设计、大量文章和第三方基准测试所承诺的。我们自己的测试证实，与我们之前使用的 Flannel + kube-proxy 相比，处理流量速度有显着提升。
 
-![](https://blog.palark.com/wp-content/uploads/2023/03/ebpf-host-routing-diagram.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/ebpf-host-routing-diagram.png)
 *eBPF host-routing compared to using iptables. source: [“CNI Benchmark: Understanding Cilium Network Performance”](https://cilium.io/blog/2021/05/11/cni-benchmark/)*
 
 
@@ -92,11 +92,11 @@ disableComments = true
 
 现在举几个例子，说明如何在我的 Kubernetes 沙箱中使用 Hubble。首先，这里我们有带有 Ingress-NGINX 控制器的命名空间。我们可以看到一个外部用户通过 Dex 授权后进入了 Hubble UI。会是谁呢？...
 
-![](https://blog.palark.com/wp-content/uploads/2023/03/cilium-hubble-dex-ingress.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/cilium-hubble-dex-ingress.png)
 
 现在，这里有一个更有趣的例子：Hubble 花了大约一分钟的时间可视化 Prometheus 命名空间如何与集群的其余部分通信。您可以看到 Prometheus 从众多服务中抓取了指标。多么棒的功能！在您花费数小时为您的项目绘制所有这些基础架构图之前，您应该已经知道了！
 
-![](https://blog.palark.com/wp-content/uploads/2023/03/cilium-hubble-prometheus-services.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/cilium-hubble-prometheus-services.png)
 
 ### 6. 可视化策略编辑器
 

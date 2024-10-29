@@ -30,7 +30,7 @@ gRPC 是谷歌开源的一套 RPC 实现机制，低延迟、高性能，其基�
 
 示例：
 
-![](/images/middleware/grpc1.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/grpc1.png)
 
 1、`syntax` 声明使用的 protocol buffers 协议版本，现行的是第三版。
 2、`package` 声明自定义的包名，这里的 package 可以理解为 go 中的包，或者 node.js 中的 module 。
@@ -50,7 +50,7 @@ gRPC 是谷歌开源的一套 RPC 实现机制，低延迟、高性能，其基�
 
 1、构建 gRPC 服务端：
 
-![](/images/middleware/grpc2.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/grpc2.jpeg)
 
 如图所示，我们需要导入前面定义好的 .proto 文件，同时由于语言本身数据类型的不同，可以设置类型转换，比如将 .proto 中定义的枚举类型转换为 node.js 中的 string 类型。
 
@@ -75,18 +75,18 @@ https://github.com/protocolbuffers/protobuf/releases
 
 1、执行 protoc 指令：
 
-![](/images/middleware/grpc3.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/grpc3.png)
 
 编译 .proto 文件生成 .pb.go 代码包，在后续的使用中需要导入这个代码包。
 
 
 2、构造 gRPC 服务端：
 
-![](/images/middleware/grpc4.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/grpc4.jpeg)
 
 3、构建 gRPC 客户端发起 RPC 调用：
 
-![](/images/middleware/grpc5.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/grpc5.png)
 
 `protoc` 编译 `.proto` 文件生成的 `.pb.go` 代码包里面包含了所有的服务、方法、数据结构等等，在我们的 go 代码中引用它们即可。
 

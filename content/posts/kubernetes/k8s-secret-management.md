@@ -40,7 +40,7 @@ Kubernetes 已经成为现代软件基础设施中不可或缺的一部分。因
 
 `Sealed Secrets` 是一个开源的 Kubernetes 控制器和来自 Bitnami 的客户端 CLI 工具，旨在使用非对称密码加密解决“在 Git 中存储 secret ”问题的一部分。具有 RBAC 配置的 Sealed Secrets 防止非管理员读取 secret 是解决整个问题的绝佳解决方案。
 
-![Sealed Secrets](/images/k8s/sealed-secrets-architecture.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/sealed-secrets-architecture.jpeg)
 
 它的工作原理如下：
 
@@ -147,7 +147,7 @@ kubectl describe secret mysecret
 
 Sealed Secrets 是保护 secret 的方式之一，但除此之外还有更好的方法。使用 [External Secrets Operator (ESO)](https://external-secrets.io/v0.8.1/) 和外部 secret 管理系统，如 [HashiCorp Vault](https://www.vaultproject.io/)、[AWS Secrets Manager](https://aws.amazon.com/cn/secrets-manager/)、[Google Secrets Manager](https://cloud.google.com/secret-manager?hl=zh-cn) 或 [Azure Key Vault](https://azure.microsoft.com/en-us/products/key-vault/)。虽然设置起来有点复杂，但如果您使用云提供商来托管您的 Kubernetes 集群，这是一种更好的方法。ESO 支持许多这样的 secret 管理器并监视外部 secret 存储的变化，并使 Kubernetes secret 保持同步。
 
-![ESO](/images/k8s/external-secrets-operator-architecture.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/external-secrets-operator-architecture.jpeg)
 
 ESO 提供了四个 CRD 来管理 secret。`ExternalSecret` 和 `ClusterExternalSecret` CRD 定义需要获取哪些数据以及如何转换这些数据。`SecretStore` 和 `ClusterSecretStore` CRD 定义了与外部 secret 存储的连接细节。`Cluster` 前缀的 CRD 表示作用范围是集群。
 
@@ -300,7 +300,7 @@ kubectl describe externalsecret vault-example
 
 [Secrets Store CSI Driver](https://secrets-store-csi-driver.sigs.k8s.io/) 是一个原生的上游 Kubernetes 驱动程序，可用于从工作负载中抽象出 secret 的存储位置。如果您想使用云提供商的 secret 管理器而不将 secret 公开为 Kubernetes secret 对象，您可以使用 CSI 驱动程序将 secret 作为卷安装在您的 pod 中。如果您使用云提供商来托管您的 Kubernetes 集群，这是一个很好的选择。该驱动程序支持许多云提供商，并且可以与不同的 secret 管理器一起使用。
 
-![Secrets Store CSI Driver](/images/k8s/secret-csi-driver.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/k8s/secret-csi-driver.jpeg)
 
 Secrets Store CSI Driver 是一个 daemonset 守护进程，它与 secret 提供者通信以检索 `SecretProviderClass` 自定义资源中指定的 secret 。
 

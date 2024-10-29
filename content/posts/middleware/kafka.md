@@ -42,7 +42,7 @@ kafka 的流处理，可以持续获取输入流的数据，然后进行加工�
 
 kafka 中的相关概念如下图所示：
 
-![](/images/middleware/kafka1.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/kafka1.jpeg)
 
 
 1、Producer ：生产者，投递消息。
@@ -90,7 +90,7 @@ Leader 和 follower 指的都是 broker 对象。
 
 Topic 只是逻辑上的概念，partition 才是实际存储消息的地方，每个 topic 拥有多个 partition 分区。
 
-![](/images/middleware/kafka2.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/kafka2.png)
 
 每个 partition 分区都是一个有序的不可变的记录序列，消息一定是以顺序化的方式追加写入的，也正是这种方式保证了 kafka 的高吞吐量。而每个 partition 分区中的消息都有一个 offset 偏移量作为其唯一标识。
 
@@ -103,7 +103,7 @@ Topic 只是逻辑上的概念，partition 才是实际存储消息的地方，�
 
 Consumer 消费消息。
 
-![](/images/middleware/kafka3.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/middleware/kafka3.jpeg)
 
 每个 consumer 一定从属于一个 consumer group 消费组。
 

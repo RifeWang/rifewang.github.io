@@ -20,7 +20,7 @@ disableComments = true
 
 InfluxDB 数据的写入如下图所示：
 
-![write data](/images/influxdb/write-data.png)
+![write data](https://raw.githubusercontent.com/RifeWang/images/master/influxdb/write-data.png)
 
 所有数据先写入到 WAL（ Write Ahead Log ）预写日志文件，并同步到 Cache 缓存中，当 Cache 缓存的数据达到了一定的大小，或者达到一定的时间间隔之后，数据会被写入到 TSM 文件中。
 
@@ -36,7 +36,7 @@ Compactor 压缩器则负责具体的 Compression 压缩工作。
 
 为了处理文件，存储引擎通过 Writers/Readers 处理数据的写和读。另外存储引擎还会使用 In-Memory Index 内存索引快速访问 measurements、tags、series 等数据。
 
-![in-memory index](/images/influxdb/in-memory-index.png)
+![in-memory index](https://raw.githubusercontent.com/RifeWang/images/master/influxdb/in-memory-index.png)
 
 
 存储引擎的组成部分：
@@ -92,7 +92,7 @@ IOPS（ Input/Output Operations Per Second ）：每秒读写数，衡量存储�
 
 不同负载情况下的硬件配置参考如下：
 
-![hard config](/images/influxdb/hard-config.png)
+![hard config](https://raw.githubusercontent.com/RifeWang/images/master/influxdb/hard-config.png)
 
 由于 SSD 固态硬盘的性能更高，官方也建议使用 SSD ，上图也是使用 SSD 的情况。
 
@@ -110,10 +110,10 @@ IOPS（ Input/Output Operations Per Second ）：每秒读写数，衡量存储�
 
 ---
 相关文章：
-- [时序数据库 InfluxDB（一）](/posts/influxdb/1/)
-- [时序数据库 InfluxDB（二）](/posts/influxdb/2/)
-- [时序数据库 InfluxDB（三）](/posts/influxdb/3/)
-- [时序数据库 InfluxDB（四）](/posts/influxdb/4/)
-- [时序数据库 InfluxDB（五）](/posts/influxdb/5/)
-- [时序数据库 InfluxDB（六）](/posts/influxdb/6/)
-- [时序数据库 InfluxDB（七）](/posts/influxdb/7/)
+- [时序数据库 InfluxDB（一）](/influxdb-1/)
+- [时序数据库 InfluxDB（二）](/influxdb-2/)
+- [时序数据库 InfluxDB（三）](/influxdb-3/)
+- [时序数据库 InfluxDB（四）](/influxdb-4/)
+- [时序数据库 InfluxDB（五）](/influxdb-5/)
+- [时序数据库 InfluxDB（六）](/influxdb-6/)
+- [时序数据库 InfluxDB（七）](/influxdb-7/)

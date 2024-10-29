@@ -150,7 +150,7 @@ resize = cv.resize(img, None, fx = 2, fy = 2, interpolation = cv.INTER_LINEAR)
 
 OpenCV 提供的 resize 缩放算法包括：
 
-![](/images/uncate/opencv-resize.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/opencv-resize.jpeg)
 
 根据官方的文档，缩小图像时建议使用 INTER_AREA 算法，放大图像时建议使用 INTER_CUBIC（较慢）算法或者 INTER_LINEAR（更快效果也不错）算法。
 

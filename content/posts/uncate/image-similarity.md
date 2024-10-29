@@ -26,7 +26,7 @@ disableComments = true
 
 下面以 Average Hash 算法为例描述这一基本过程：
 
-![](/images/uncate/image-ahash.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/image-ahash.jpeg)
 
 1、Reduce size : 将原图压缩到 8 x 8 即 64 像素大小，忽略细节。
 
@@ -56,7 +56,7 @@ disableComments = true
 
 这些哈希算法的具体实现过程不在本文的讲述范围内，我们重点关注的是他们的实际表现。
 
-![](/images/uncate/image-hash/jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/image-hash/jpeg)
 
 如上图所示，左下角标明了如水印、椒盐噪声、旋转、缩放、jpeg压缩、高斯噪声、高斯模糊、对比度等对抗影响，右下角则是各种哈希算法，圆锥体的高度则代表哈希算法对各种影响的抗性，高度越高说明抗性越高、越能成功匹配。
 
@@ -64,7 +64,7 @@ disableComments = true
 
 下面运用这些哈希算法对某张图分别计算其哈希值，观察他们的输出结果：
 
-![](/images/uncate/image-hash-result.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/image-hash-result.jpeg)
 
 从上图中可以看到，ColorMomentHash 比较特别，输出的是浮点数，它也是唯一一个能够对抗旋转的哈希算法，但是也局限于 -90 ~ 90 度。
 
@@ -99,19 +99,19 @@ Hamming distance 汉明距离，指的是两个等长字符串对应位置不同
 
 「一双丹凤双角眼，两弯柳叶吊梢眉」，人脸可以有特征，那么图像呢？当然也有，只要图像具有类似的特征，那么就可以认为他们是相似的，这也就是局部相似性：
 
-![](/images/uncate/image3-1.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/image3-1.jpeg)
 
 例如上面左右两张图，特征匹配，局部相似。
 
 什么是特征？特征一定是图片的低频部分。
 
-![](/images/uncate/image3-2.png)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/image3-2.png)
 
 上图三个部分，显然蓝色圈能匹配更多，黑色圈次之，红色圈最不易匹配，如果要选择一个作为特征，当然就是红色圈。
 
 Corner Detection : 图像特征提取的基础算法，目的在于提取图像中的 corner ，这里的 corner 可并不是四个边框角，而是图像中的具有突变特征的点，例如：
 
-![](/images/uncate/image3-3.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/image3-3.jpeg)
 
 Corner detectors 最大的缺点在于无法应对伸缩情况，为了解决这个问题 SIFT 特征提取算法问世，SIFT 的全称即 Scale Invariant Feature Transform 。
 
@@ -119,7 +119,7 @@ Keypoint 和 Descriptor ：keypoint 也就是图像的特征点，descriptor 则
 
 SIFT 提取特征点示例：
 
-![](/images/uncate/image-sift.jpeg)
+![](https://raw.githubusercontent.com/RifeWang/images/master/uncate/image-sift.jpeg)
 
 需要注意的是一张图像的特征点是有多个的。
 
