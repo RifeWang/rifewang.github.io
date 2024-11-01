@@ -1,8 +1,8 @@
 +++
 draft = false
 date = 2024-11-01T20:42:58+08:00
-title = "Kubernetes Node 节点的生命周期"
-description = "Kubernetes Node 节点的生命周期"
+title = "Kubernetes Node 节点的生命周期简述"
+description = "Kubernetes Node 节点的生命周期简述"
 slug = ""
 authors = []
 tags = ["Kubernetes"]
