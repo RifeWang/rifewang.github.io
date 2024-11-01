@@ -47,7 +47,7 @@ disableComments = true
 - 日常编码，实现业务需求，包括接口设计、数据库建模、缓存、消息队列、对象存储、serverless 集成，以及医学影像处理系统和自研算法集成。
 - 构建可观测性系统，采集日志、追踪、指标，搭建数据报表与可视化数据分析大屏。
 - 系统优化，深入整体架构、业务流、数据流、各组件等多角度优化系统，保障系统的高性能、可扩展、高质量。
-- 实施 DevOps 和云原生，负责 Kubernetes 基础设施、Argo-workflows 任务编排引擎、及其它云原生工具。
+- 实施 DevOps 和云原生，负责 Kubernetes 基础设施、Argo-workflows 任务编排引擎、 Terraform IaC、以及等其它云原生工具。
 
 <h3 style="background-color: #87CEFA; padding: 10px;">
   杭州又拍云科技有限公司
@@ -102,6 +102,7 @@ disableComments = true
 - 熟悉 MySQL、Redis、MQ、Elasticsearch 等常用组件原理，具备全文搜索和日志聚合分析经验。
 - 熟悉 Kafka、ClickHouse、ELK、Prometheus、Grafana，拥有数据仓库、BI 和大数据领域项目经验。
 - 熟悉 Linux，理解 Docker、Kubernetes、Argo 架构及原理，Kubernetes 文档贡献者，熟悉云原生周边工具。
+- 熟悉 CICD，包括 ArgoCD、GitHub Actions、Terraform 等工具。
 - 了解医学影像处理、熟悉计算机视觉、Milvus 向量检索。理解 AI 基本原理，日常深度使用 AI 以提升效率。
 
 ## 致谢
