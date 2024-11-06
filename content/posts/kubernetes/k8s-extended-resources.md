@@ -40,7 +40,7 @@ Kubernetes 除了提供基于 CPU 和内存的传统计算资源调度外，还�
 
 因此，在实际应用中，为了更好地管理和使用扩展资源，通常会借助 `Device Plugin` 和 `Operator`。`Device Plugin` 是 Kubernetes 提供的设备管理机制，通过它可以自动检测和管理扩展资源，如 GPU 等特殊硬件。`Operator` 则进一步简化了资源部署和配置管理流程，自动执行资源的配置和调度。
 
-想深入了解这方面内容，可以参考我之前的文章《Kubernetes GPU 调度和 Device Plugin、CDI、NFD、GPU Operator 概述》。
+想深入了解这方面内容，可以参考我之前的文章 *《Kubernetes GPU 调度和 Device Plugin、CDI、NFD、GPU Operator 概述》*。
 
 ## 总结
 
