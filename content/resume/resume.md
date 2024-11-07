@@ -44,8 +44,8 @@ disableComments = true
 - Team Leader，实施 Scrum 敏捷开发，协调团队成员工作，组织产品的上线发版。
 - 优化研发流程，组织 code review，关注团队成员的发展，结合公司发展方向组织对团队成员的技术培训。
 - 架构设计和演化，包含技术选型、制定架构演进方案、组织技术评审、追踪并确保技术落地。
-- 日常编码，实现业务需求，包括接口设计、数据库建模、缓存、消息队列、对象存储、serverless 集成，以及医学影像处理系统和自研算法集成。
-- 构建可观测性系统，采集日志、追踪、指标，搭建数据报表与可视化数据分析大屏。
+- 日常编码实现业务需求，包括 RESTful API、MySQL 建模、Redis 缓存、MQ 消息队列、S3/Minio 对象存储、NAS/Ceph 文件存储、Serverless 集成、Puppeteer 无头浏览器截图，以及医学影像处理系统和算法集成。
+- 构建 Prometheus、Grafana 可观测性系统，采集日志、追踪、指标，搭建数据报表与可视化数据分析大屏。
 - 系统优化，深入整体架构、业务流、数据流、各组件等多角度优化系统，保障系统的高性能、可扩展、高质量。
 - 实施 DevOps 和云原生，负责 Kubernetes 基础设施、Argo-workflows 任务编排引擎、 Terraform IaC、以及等其它云原生工具。
 
@@ -61,10 +61,12 @@ disableComments = true
 
 个人职责：
 - 负责 Web 主站的架构迭代和后端研发工作，处理每日千万级 PV 访问、管理十亿级图片资源。
-- 确保系统应对高并发等挑战，保障系统的高可用和高性能。
-- 日常编码，负责 REST API 设计实现、MySQL 数据建模、Redis 缓存、MQ 集成、系统优化。
-- 推动系统架构向微服务的演进，利用消息队列 NSQ / Kafka 解耦服务。
-- 基于 ElasticSearch 重构全文搜索服务与日志分析系统，搭建可视化数据报表系统。
+- 确保系统应对高并发挑战，保障系统的高可用和高性能。
+- 设计并实现 RESTful API 接口，使用 Cache Aside Pattern 构建分布式 Redis 集群缓存。
+- MySQL 数据建模及优化，分库分表拆分 2 亿行数据大单表，调整索引优化数据库性能。
+- 推动系统架构向微服务演进，利用消息队列 NSQ / Kafka 削峰填谷、解耦并异构服务，保障系统稳定性。
+- 引入 InfluxDB 分流存储时序数据，构建 ClickHouse 数据仓库，搭建 OLAP 日志分析系统。
+- 构建 ElasticSearch 全文搜索服务、Milvus 向量搜索服务，搭建 Grafana 可视化数据报表系统。
 
 #### 以图搜图系统
 项目概述：提供相似性图像内容的快速搜索功能。
@@ -97,13 +99,13 @@ disableComments = true
 ## 专业技能
 
 - 8 年开发 5 年架构，较强的架构和编码能力，对高并发、高可用、高性能、分布式、微服务有深入理解和实践。
-- 具备技术团队管理经验，拥有 Scrum 敏捷开发、DevOps、云原生等实践经验。
+- 具备技术团队管理经验，拥有 Scrum 敏捷开发、DevOps、CICD、云原生等实践经验。
 - 精通 Golang、Node.js，熟悉 Python，能够快速上手其它语言，并灵活运用多种语言解决挑战性难题。
 - 熟悉 MySQL、Redis、MQ、Elasticsearch 等常用组件原理，具备全文搜索和日志聚合分析经验。
 - 熟悉 Kafka、ClickHouse、ELK、Prometheus、Grafana，拥有数据仓库、BI 和大数据领域项目经验。
 - 熟悉 Linux，理解 Docker、Kubernetes、Argo 架构及原理，Kubernetes 文档贡献者，熟悉云原生周边工具。
 - 熟悉 CICD，包括 ArgoCD、GitHub Actions、Terraform 等工具。
-- 了解医学影像处理、熟悉计算机视觉、Milvus 向量检索。理解 AI 基本原理，日常深度使用 AI 以提升效率。
+- 熟悉医学影像处理、计算机视觉、Milvus 向量搜索。理解 LLM 等 AI 基本原理，日常深度使用 AI 以提升效率。
 
 ## 致谢
 
