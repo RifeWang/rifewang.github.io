@@ -19,13 +19,14 @@ disableComments = true
 |:---- |:---- |:-------- |:------------ |:---------------- |
 | 男   | 本科 | 1993年   | 187-7296-4832  | rifewang@gmail.com |
 
-主导过的互联网 SaaS 项目处理**日均千万级** PV 流量、管理**数十亿**图片。
+主导过的互联网 SaaS 项目处理**日均千万级** PV 流量、管理**数十亿**图片资源。
 负责研发的脑科学云平台及医疗器械项目服务于几十家头部医院、科研机构和诊所。
 
-具备丰富的技术广度，涵盖 **后端**、**云原生**、**大数据** 等多项技术领域，拥有 **系统架构设计师**、**Kubernetes**、**ElasticSearch** 等官方技术认证。
+丰富的技术广度，拥有 **系统架构设计师**、**Kubernetes**、**ElasticSearch** 等官方技术认证，涵盖 **后端**、**容器与云原生**、**搜索**、**大数据** 等多项技术领域。
 
 职场表现卓越，每一段生涯都能做出优秀成绩，曾获：**年度优秀个人**、**年度创新团队** 等荣誉。
 坚持运动、学习、写作 8 年，公众号：[系统架构师Go](https://raw.githubusercontent.com/RifeWang/images/master/qrcode.jpg)，技术社区 Segmentfault 2022、2023 年度 Maintainer。
+在掘金创作有：[Kubernetes 云原生](https://juejin.cn/column/7314642642869403682)、[AI 人工智能](https://juejin.cn/column/7425885062921928738)、[ELK 搜索与大数据](https://juejin.cn/column/7314860085930180623) 等多个专栏。
 
 ## 工作经历
 
@@ -41,12 +42,11 @@ disableComments = true
 项目成绩：定制化的多模态阅片产品成功交付某部战区总医院；科研云平台支撑了多次大规模临床试验及日常科研；疗法云软件投入商业化运作并持续迭代。
 
 个人职责：
-- Team Leader，实施 Scrum 敏捷开发，协调团队成员工作，组织产品的上线发版。
-- 优化研发流程，组织 code review，关注团队成员的发展，结合公司发展方向组织对团队成员的技术培训。
+- Team Leader，实施 Scrum 敏捷开发，组织 code review，协调团队成员工作，安排产品的上线发版。
 - 架构设计和演化，包含技术选型、制定架构演进方案、组织技术评审、追踪并确保技术落地。
 - 日常编码实现业务需求，包括 RESTful API、MySQL 建模、Redis 缓存、MQ 消息队列、S3/Minio 对象存储、NAS/Ceph 文件存储、Serverless 集成、Puppeteer 无头浏览器截图，以及医学影像处理系统和算法集成。
-- 构建 Prometheus、Grafana 可观测性系统，采集日志、追踪、指标，搭建数据报表与可视化数据分析大屏。
 - 系统优化，深入整体架构、业务流、数据流、各组件等多角度优化系统，保障系统的高性能、可扩展、高质量。
+- 构建 Prometheus、Grafana 可观测性系统，采集日志、追踪、指标，搭建数据报表与可视化数据分析大屏。
 - 实施 DevOps 和云原生，负责 Kubernetes 基础设施、Argo-workflows 任务编排引擎、 Terraform IaC、以及等其它云原生工具。
 
 <h3 style="background-color: #87CEFA; padding: 10px;">
