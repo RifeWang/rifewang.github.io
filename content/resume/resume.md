@@ -44,10 +44,12 @@ disableComments = true
 个人职责：
 - Team Leader，实施 Scrum 敏捷开发，组织 code review，协调团队成员工作，安排产品的上线发版。
 - 架构设计和演化，包含技术选型、制定架构演进方案、组织技术评审、追踪并确保技术落地。
-- 日常编码实现业务需求，包括 RESTful API、MySQL 建模、Redis 缓存、MQ 消息队列、S3/Minio 对象存储、NAS/Ceph 文件存储、Serverless 集成、Puppeteer 无头浏览器截图，以及医学影像处理系统和算法集成。
+- 日常编码实现业务需求，包括 RESTful API、MySQL 建模、Redis 缓存、MQ 消息队列、S3/Minio 对象存储。
+- 集成 NAS/Ceph 文件存储、Serverless、Puppeteer 无头浏览器截图、医学影像处理系统和算法。
+- 使用 ElasticSearch 构建站内搜索系统。
 - 系统优化，深入整体架构、业务流、数据流、各组件等多角度优化系统，保障系统的高性能、可扩展、高质量。
 - 构建 Prometheus、Grafana 可观测性系统，采集日志、追踪、指标，搭建数据报表与可视化数据分析大屏。
-- 实施 DevOps 和云原生，负责 Kubernetes 基础设施、Argo-workflows 任务编排引擎、 Terraform IaC、以及等其它云原生工具。
+- 实施 DevOps 和云原生，负责 Kubernetes 基础设施、Argo-workflows 任务编排引擎及等其它云原生工具。
 
 <h3 style="background-color: #87CEFA; padding: 10px;">
   杭州又拍云科技有限公司
