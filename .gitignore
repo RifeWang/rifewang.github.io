@@ -1,3 +1,4 @@
 argo-workflows
 public
 ignoredir
+.DS_Store
