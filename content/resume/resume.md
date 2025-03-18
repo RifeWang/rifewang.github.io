@@ -31,6 +31,16 @@ disableComments = true
 ## 工作经历
 
 <h3 style="background-color: #87CEFA; padding: 10px;">
+  北京银河智学教育科技有限公司
+  <span style="float: right;">2025.02 ~ 至今</span>
+</h3>
+
+#### 教育 + AI
+
+项目概述：保密
+
+
+<h3 style="background-color: #87CEFA; padding: 10px;">
   优脑银河（浙江）科技有限公司
   <span style="float: right;">2021.07 ~ 2023.12</span>
 </h3>

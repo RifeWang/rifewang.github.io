@@ -14,7 +14,7 @@ draft: false
 - 🌐 曾主导的互联网项目处理日均千万级 PV 流量，管理数十亿级别的图片。
 - 🔥 曾负责研发的前沿脑科学和医疗仪器项目服务于数十家医疗和科研机构。
 - ❤️ 丰富的技术广度，擅长 `Node.js`、`Golang`，后端、大数据、`Kubernetes` 云原生等诸多领域。
-- 🏠 目前生活在杭州，欢迎向我推荐新的工作机会。
+- 🏠 目前生活在杭州/北京，欢迎向我推荐新的工作机会。
 - 💬 欢迎与我微信 [rifewang](./Wechat-rifewang.jpeg) 交流。
 
 ## 🛠 我的技术栈
@@ -24,9 +24,9 @@ draft: false
 - 🌐 &#160; ![Linux](https://img.shields.io/badge/-Linux-333333?style=flat&logo=Linux)  ![Docker](https://img.shields.io/badge/-Docker-333333?style=flat&logo=Docker)  ![Kubernetes](https://img.shields.io/badge/-Kubernetes-333333?style=flat&logo=Kubernetes)
 - 🛢 &#160; ![MySQL](https://img.shields.io/badge/-MySQL-333333?style=flat&logo=mysql)  ![Redis](https://img.shields.io/badge/-Redis-333333?style=flat&logo=redis)  ![Elasticsearch](https://img.shields.io/badge/-Elasticsearch-333333?style=flat&logo=Elasticsearch)  ![ClickHouse](https://img.shields.io/badge/-ClickHouse-333333?style=flat&logo=ClickHouse)
 
-## 我的完整简历
+<!-- ## 我的完整简历
 
-[点击查看我的简历](/resume/resume)，欢迎向我推荐新的工作机会😁
+[点击查看我的简历](/resume/resume)，欢迎向我推荐新的工作机会😁 -->
 
 ---
 欢迎关注我的微信公众号，并与我交流：
