@@ -2,6 +2,5 @@
 <p><em>文本翻译自: <a href="https://blog.palark.com/why-cilium-for-kubernetes-networking/" target="_blank" rel="noopener noreffer ">https://blog.palark.com/why-cilium-for-kubernetes-networking/</a></em></p>
 <hr>
 <blockquote>
-<p>原文作者是 Palark 平台工程师 Anton Kuliashov，其说明了选择 Cilium 作为 Kubernetes 网络接口的原因以及喜爱 Cilium 的地方。</p>
-</blockquote>
+<p>原文作者是 Palark 平台工程师 Anton Kuliashov，其说明了选择 Cilium 作为 Kubernetes 网络接口的原因以及喜爱 Cilium 的地方。</p></blockquote>
 <p>多亏了 CNI（容器网络接口），Kubernetes 提供了大量选项来满足您的网络需求。在多年依赖简单的解决方案之后，我们面临着对高级功能日益增长的客户需求。Cilium 将我们 K8s 平台中的网络提升到了一个新的水平。</p>]]></description></item></channel></rss>

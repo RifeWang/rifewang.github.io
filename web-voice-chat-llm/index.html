@@ -1,0 +1,338 @@
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Web 端语音对话 AI 示例：使用 Whisper 和 llama.cpp 构建语音聊天机器人 - 凌虚 Blog</title><meta name=Description content="Web 端语音对话 AI 示例：使用 Whisper 和 llama.cpp 构建语音聊天机器人"><meta property="og:url" content="https://rifewang.github.io/web-voice-chat-llm/">
+<meta property="og:site_name" content="凌虚 Blog"><meta property="og:title" content="Web 端语音对话 AI 示例：使用 Whisper 和 llama.cpp 构建语音聊天机器人"><meta property="og:description" content="Web 端语音对话 AI 示例：使用 Whisper 和 llama.cpp 构建语音聊天机器人"><meta property="og:locale" content="zh_CN"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-11-24T16:32:58+08:00"><meta property="article:modified_time" content="2024-11-24T18:06:48+08:00"><meta property="article:tag" content="AI"><meta property="article:tag" content="LLM"><meta property="og:image" content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://rifewang.github.io/images/avatar.png"><meta name=twitter:title content="Web 端语音对话 AI 示例：使用 Whisper 和 llama.cpp 构建语音聊天机器人"><meta name=twitter:description content="Web 端语音对话 AI 示例：使用 Whisper 和 llama.cpp 构建语音聊天机器人"><meta name=application-name content="凌虚的博客"><meta name=apple-mobile-web-app-title content="凌虚的博客"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=canonical href=https://rifewang.github.io/web-voice-chat-llm/><link rel=prev href=https://rifewang.github.io/technology-selection/><link rel=next href=https://rifewang.github.io/audio-asr-tts/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Web 端语音对话 AI 示例：使用 Whisper 和 llama.cpp 构建语音聊天机器人","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/rifewang.github.io\/web-voice-chat-llm\/"},"image":["https:\/\/rifewang.github.io\/images\/avatar.png"],"genre":"posts","keywords":"AI, LLM","wordcount":1502,"url":"https:\/\/rifewang.github.io\/web-voice-chat-llm\/","datePublished":"2024-11-24T16:32:58+08:00","dateModified":"2024-11-24T18:06:48+08:00","license":"Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)","publisher":{"@type":"Organization","name":"凌虚","logo":"https:\/\/rifewang.github.io\/images\/avatar.png"},"author":{"@type":"Person","name":"凌虚"},"description":"Web 端语音对话 AI 示例：使用 Whisper 和 llama.cpp 构建语音聊天机器人"}</script></head><script async src="https://www.googletagmanager.com/gtag/js?id=G-VRMQFEVL7J"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-VRMQFEVL7J")</script><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"light"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"light"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/about>作者 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder="Search titles or contents..." id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i>
+</span></span><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="凌虚 Blog">凌虚的博客</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder="Search titles or contents..." id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=Search><i class="fas fa-search fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=Clear><i class="fas fa-times-circle fa-fw" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>Cancel</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/about title>作者</a><a href=javascript:void(0); class="menu-item theme-switch" title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contents</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Web 端语音对话 AI 示例：使用 Whisper 和 llama.cpp 构建语音聊天机器人</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>凌虚</a></span>&nbsp;<span class=post-category>included in <a href=/categories/ai/><i class="far fa-folder fa-fw" aria-hidden=true></i>AI</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2024-11-24>2024-11-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;1502 words&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;3 minutes&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contents</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#系统概览>系统概览</a></li><li><a href=#系统实现>系统实现</a><ul><li><a href=#web-端>Web 端</a></li><li><a href=#websocket-服务端>WebSocket 服务端</a></li></ul></li><li><a href=#总结>总结</a></li></ul></nav></div></div><div class=content id=content><p>大语言模型（<code>LLM</code>）为基于文本的对话提供了强大的能力。那么，能否进一步扩展，将其转化为语音对话的形式呢？本文将展示如何使用 <code>Whisper</code> 语音识别和 <code>llama.cpp</code> 构建一个 Web 端语音聊天机器人。</p><h2 id=系统概览>系统概览</h2><p><img class=lazyload src=/svg/loading.min.svg data-src=https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-llm-flow.png data-srcset="https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-llm-flow.png, https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-llm-flow.png 1.5x, https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-llm-flow.png 2x" data-sizes=auto alt=https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-llm-flow.png title=https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-llm-flow.png></p><p>如上图所示，系统的工作流程如下：</p><ol><li>用户通过语音输入。</li><li>语音识别，转换为文本。</li><li>文本通过大语言模型（<code>LLM</code>）生成文本响应。</li><li>最后，文本转语音播放结果。</li></ol><h2 id=系统实现>系统实现</h2><p>端侧的具体形态（如 web 端、桌面端、手机端）直接影响了第一步用户语言的输入，以及最后一步响应结果的语音播放。
+在本文中，我们选择使用 Web 端作为示例，利用浏览器本身的语言采集和语音播放功能，来实现用户与系统的互动。</p><p>下图展示了系统架构：</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-llm-system.png data-srcset="https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-llm-system.png, https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-llm-system.png 1.5x, https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-llm-system.png 2x" data-sizes=auto alt=https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-llm-system.png title=https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-llm-system.png></p><p>用户通过 Web 端与系统交互，语音数据通过 <code>WebSocket</code> 传输到后端服务，后端服务使用 <code>Whisper</code> 将语音转换为文本，接着通过 <code>llama.cpp</code> 调用 <code>LLM</code> 生成文本响应，最后，文本响应通过 <code>WebSocket</code> 发送回前端，并利用浏览器的语音播放功能将其朗读出来。</p><h3 id=web-端>Web 端</h3><p>Web 端的实现主要依赖 HTML5 和 JavaScript。我们使用浏览器的 Web API 进行语音采集和语音播放。以下是简化的 Web 端代码示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-html data-lang=html><span class=line><span class=cl><span class=cp>&lt;!DOCTYPE html&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>html</span> <span class=na>lang</span><span class=o>=</span><span class=s>&#34;en&#34;</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>head</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nt>meta</span> <span class=na>charset</span><span class=o>=</span><span class=s>&#34;UTF-8&#34;</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nt>meta</span> <span class=na>name</span><span class=o>=</span><span class=s>&#34;viewport&#34;</span> <span class=na>content</span><span class=o>=</span><span class=s>&#34;width=device-width, initial-scale=1.0&#34;</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nt>title</span><span class=p>&gt;</span>Voice Chat AI<span class=p>&lt;/</span><span class=nt>title</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nt>style</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>        <span class=p>#</span><span class=nn>loading</span> <span class=p>{</span> <span class=k>display</span><span class=p>:</span> <span class=kc>none</span><span class=p>;</span> <span class=k>font-weight</span><span class=p>:</span> <span class=kc>bold</span><span class=p>;</span> <span class=k>color</span><span class=p>:</span> <span class=kc>blue</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>#</span><span class=nn>response</span> <span class=p>{</span> <span class=k>white-space</span><span class=p>:</span> <span class=kc>pre-wrap</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;/</span><span class=nt>style</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;/</span><span class=nt>head</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>body</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nt>h1</span><span class=p>&gt;</span>Voice Chat AI<span class=p>&lt;/</span><span class=nt>h1</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nt>button</span> <span class=na>id</span><span class=o>=</span><span class=s>&#34;start&#34;</span><span class=p>&gt;</span>Start Recording<span class=p>&lt;/</span><span class=nt>button</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nt>button</span> <span class=na>id</span><span class=o>=</span><span class=s>&#34;stop&#34;</span> <span class=na>disabled</span><span class=p>&gt;</span>Stop Recording<span class=p>&lt;/</span><span class=nt>button</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nt>p</span> <span class=na>id</span><span class=o>=</span><span class=s>&#34;loading&#34;</span><span class=p>&gt;</span>Loading...<span class=p>&lt;/</span><span class=nt>p</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nt>p</span><span class=p>&gt;</span>AI Response: <span class=p>&lt;</span><span class=nt>span</span> <span class=na>id</span><span class=o>=</span><span class=s>&#34;response&#34;</span><span class=p>&gt;&lt;/</span><span class=nt>span</span><span class=p>&gt;&lt;/</span><span class=nt>p</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nt>script</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>let</span> <span class=nx>audioContext</span><span class=p>,</span> <span class=nx>mediaRecorder</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kr>const</span> <span class=nx>startButton</span> <span class=o>=</span> <span class=nb>document</span><span class=p>.</span><span class=nx>getElementById</span><span class=p>(</span><span class=s2>&#34;start&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=kr>const</span> <span class=nx>stopButton</span> <span class=o>=</span> <span class=nb>document</span><span class=p>.</span><span class=nx>getElementById</span><span class=p>(</span><span class=s2>&#34;stop&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=kr>const</span> <span class=nx>responseElement</span> <span class=o>=</span> <span class=nb>document</span><span class=p>.</span><span class=nx>getElementById</span><span class=p>(</span><span class=s2>&#34;response&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=kr>const</span> <span class=nx>loadingElement</span> <span class=o>=</span> <span class=nb>document</span><span class=p>.</span><span class=nx>getElementById</span><span class=p>(</span><span class=s2>&#34;loading&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>let</span> <span class=nx>socket</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>WebSocket</span><span class=p>(</span><span class=s2>&#34;ws://localhost:8765/ws&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=nx>socket</span><span class=p>.</span><span class=nx>onmessage</span> <span class=o>=</span> <span class=p>(</span><span class=nx>event</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kr>const</span> <span class=nx>data</span> <span class=o>=</span> <span class=nx>JSON</span><span class=p>.</span><span class=nx>parse</span><span class=p>(</span><span class=nx>event</span><span class=p>.</span><span class=nx>data</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kr>const</span> <span class=nx>inputText</span> <span class=o>=</span> <span class=nx>data</span><span class=p>.</span><span class=nx>input</span> <span class=o>||</span> <span class=s2>&#34;No input detected&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=nx>responseElement</span><span class=p>.</span><span class=nx>textContent</span> <span class=o>+=</span> <span class=sb>`\nUser said: </span><span class=si>${</span><span class=nx>inputText</span><span class=si>}</span><span class=sb>`</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=kr>const</span> <span class=nx>aiResponse</span> <span class=o>=</span> <span class=nx>data</span><span class=p>.</span><span class=nx>response</span> <span class=o>||</span> <span class=s2>&#34;No response from AI&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=nx>responseElement</span><span class=p>.</span><span class=nx>textContent</span> <span class=o>+=</span> <span class=sb>`\nAI says: </span><span class=si>${</span><span class=nx>aiResponse</span><span class=si>}</span><span class=sb>\n`</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=nx>loadingElement</span><span class=p>.</span><span class=nx>style</span><span class=p>.</span><span class=nx>display</span> <span class=o>=</span> <span class=s2>&#34;none&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=kr>const</span> <span class=nx>utterance</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>SpeechSynthesisUtterance</span><span class=p>(</span><span class=nx>aiResponse</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=nx>speechSynthesis</span><span class=p>.</span><span class=nx>speak</span><span class=p>(</span><span class=nx>utterance</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=nx>socket</span><span class=p>.</span><span class=nx>onerror</span> <span class=o>=</span> <span class=p>(</span><span class=nx>error</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>console</span><span class=p>.</span><span class=nx>error</span><span class=p>(</span><span class=s2>&#34;WebSocket error:&#34;</span><span class=p>,</span> <span class=nx>error</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=nx>loadingElement</span><span class=p>.</span><span class=nx>style</span><span class=p>.</span><span class=nx>display</span> <span class=o>=</span> <span class=s2>&#34;none&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=nx>startButton</span><span class=p>.</span><span class=nx>addEventListener</span><span class=p>(</span><span class=s2>&#34;click&#34;</span><span class=p>,</span> <span class=kr>async</span> <span class=p>()</span> <span class=p>=&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>audioContext</span> <span class=o>=</span> <span class=k>new</span> <span class=p>(</span><span class=nb>window</span><span class=p>.</span><span class=nx>AudioContext</span> <span class=o>||</span> <span class=nb>window</span><span class=p>.</span><span class=nx>webkitAudioContext</span><span class=p>)();</span>
+</span></span><span class=line><span class=cl>            <span class=kr>const</span> <span class=nx>stream</span> <span class=o>=</span> <span class=kr>await</span> <span class=nx>navigator</span><span class=p>.</span><span class=nx>mediaDevices</span><span class=p>.</span><span class=nx>getUserMedia</span><span class=p>({</span> <span class=nx>audio</span><span class=o>:</span> <span class=kc>true</span> <span class=p>});</span>
+</span></span><span class=line><span class=cl>            <span class=nx>mediaRecorder</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>MediaRecorder</span><span class=p>(</span><span class=nx>stream</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=kr>const</span> <span class=nx>audioChunks</span> <span class=o>=</span> <span class=p>[];</span>
+</span></span><span class=line><span class=cl>            <span class=nx>mediaRecorder</span><span class=p>.</span><span class=nx>ondataavailable</span> <span class=o>=</span> <span class=p>(</span><span class=nx>event</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nx>audioChunks</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=nx>event</span><span class=p>.</span><span class=nx>data</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=nx>mediaRecorder</span><span class=p>.</span><span class=nx>onstop</span> <span class=o>=</span> <span class=p>()</span> <span class=p>=&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kr>const</span> <span class=nx>audioBlob</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Blob</span><span class=p>(</span><span class=nx>audioChunks</span><span class=p>,</span> <span class=p>{</span> <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;audio/webm&#34;</span> <span class=p>});</span>
+</span></span><span class=line><span class=cl>                <span class=nx>loadingElement</span><span class=p>.</span><span class=nx>style</span><span class=p>.</span><span class=nx>display</span> <span class=o>=</span> <span class=s2>&#34;block&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>                <span class=nx>socket</span><span class=p>.</span><span class=nx>send</span><span class=p>(</span><span class=nx>audioBlob</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=nx>mediaRecorder</span><span class=p>.</span><span class=nx>start</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>            <span class=nx>startButton</span><span class=p>.</span><span class=nx>disabled</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=nx>stopButton</span><span class=p>.</span><span class=nx>disabled</span> <span class=o>=</span> <span class=kc>false</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>});</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=nx>stopButton</span><span class=p>.</span><span class=nx>addEventListener</span><span class=p>(</span><span class=s2>&#34;click&#34;</span><span class=p>,</span> <span class=p>()</span> <span class=p>=&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>mediaRecorder</span><span class=p>.</span><span class=nx>stop</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>            <span class=nx>startButton</span><span class=p>.</span><span class=nx>disabled</span> <span class=o>=</span> <span class=kc>false</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=nx>stopButton</span><span class=p>.</span><span class=nx>disabled</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>});</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;/</span><span class=nt>script</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;/</span><span class=nt>body</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;/</span><span class=nt>html</span><span class=p>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>为了简化示例代码，使用了开始和结束按钮来手动控制语音的录制。如果要实现实时对话，除了需要合理设置语音采集的时间间隔，还需要确保后端能够快速响应，避免延迟影响用户体验（这在我的笔记本电脑上无法做到）。</p><h3 id=websocket-服务端>WebSocket 服务端</h3><p>服务端实现为：</p><ul><li>使用 <code>Python</code> 和 <code>fastapi</code> 框架搭建 <code>WebSocket</code> 服务。</li><li>使用 <code>whisper</code> 进行语音识别，将语音转换为文本，注意系统环境需要额外安装 <code>ffmpeg</code> 命令行工具。</li><li>通过 <code>llama.cpp</code> 加载 <code>LLM</code>（我使用的是 <code>llama3.2-1B</code> 模型） 并生成响应文本。</li></ul><p>以下是服务端的代码示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>fastapi</span> <span class=kn>import</span> <span class=n>FastAPI</span><span class=p>,</span> <span class=n>WebSocket</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>uvicorn</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>whisper</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>tempfile</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>os</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>signal</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>app</span> <span class=o>=</span> <span class=n>FastAPI</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 加载 Whisper 模型，默认存储位置 ~/.cache/whisper，可以通过 download_root 设置</span>
+</span></span><span class=line><span class=cl><span class=n>model</span> <span class=o>=</span> <span class=n>whisper</span><span class=o>.</span><span class=n>load_model</span><span class=p>(</span><span class=s2>&#34;base&#34;</span><span class=p>,</span> <span class=n>download_root</span><span class=o>=</span><span class=s2>&#34;WHISPER_MODEL&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nd>@app.websocket</span><span class=p>(</span><span class=s2>&#34;/ws&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>websocket_endpoint</span><span class=p>(</span><span class=n>websocket</span><span class=p>:</span> <span class=n>WebSocket</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>await</span> <span class=n>websocket</span><span class=o>.</span><span class=n>accept</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=k>while</span> <span class=kc>True</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=c1># 接收音频数据</span>
+</span></span><span class=line><span class=cl>            <span class=n>audio_data</span> <span class=o>=</span> <span class=k>await</span> <span class=n>websocket</span><span class=o>.</span><span class=n>receive_bytes</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=c1># 保存临时音频文件</span>
+</span></span><span class=line><span class=cl>            <span class=k>with</span> <span class=n>tempfile</span><span class=o>.</span><span class=n>NamedTemporaryFile</span><span class=p>(</span><span class=n>delete</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span> <span class=n>suffix</span><span class=o>=</span><span class=s2>&#34;.webm&#34;</span><span class=p>)</span> <span class=k>as</span> <span class=n>temp_audio</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=n>temp_audio</span><span class=o>.</span><span class=n>write</span><span class=p>(</span><span class=n>audio_data</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=n>temp_audio_path</span> <span class=o>=</span> <span class=n>temp_audio</span><span class=o>.</span><span class=n>name</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=c1># Whisper 语音识别</span>
+</span></span><span class=line><span class=cl>            <span class=n>result</span> <span class=o>=</span> <span class=n>model</span><span class=o>.</span><span class=n>transcribe</span><span class=p>(</span><span class=n>temp_audio_path</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>os</span><span class=o>.</span><span class=n>remove</span><span class=p>(</span><span class=n>temp_audio_path</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>text</span> <span class=o>=</span> <span class=n>result</span><span class=p>[</span><span class=s2>&#34;text&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>            <span class=nb>print</span><span class=p>(</span><span class=s2>&#34;user input: &#34;</span><span class=p>,</span> <span class=n>text</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=c1># 生成 AI 回复</span>
+</span></span><span class=line><span class=cl>            <span class=n>response_text</span> <span class=o>=</span> <span class=n>LLMResponse</span><span class=p>(</span><span class=n>text</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=nb>print</span><span class=p>(</span><span class=s2>&#34;AI response: &#34;</span><span class=p>,</span> <span class=n>response_text</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>await</span> <span class=n>websocket</span><span class=o>.</span><span class=n>send_json</span><span class=p>({</span><span class=s2>&#34;input&#34;</span><span class=p>:</span> <span class=n>text</span><span class=p>,</span> <span class=s2>&#34;response&#34;</span><span class=p>:</span> <span class=n>response_text</span><span class=p>})</span>
+</span></span><span class=line><span class=cl>    <span class=k>except</span> <span class=ne>Exception</span> <span class=k>as</span> <span class=n>e</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=nb>print</span><span class=p>(</span><span class=s2>&#34;Error: &#34;</span><span class=p>,</span> <span class=n>e</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>handle_shutdown</span><span class=p>(</span><span class=n>signal_num</span><span class=p>,</span> <span class=n>frame</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Received shutdown signal: </span><span class=si>{</span><span class=n>signal_num</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>setup_signal_handlers</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=n>signal</span><span class=o>.</span><span class=n>signal</span><span class=p>(</span><span class=n>signal</span><span class=o>.</span><span class=n>SIGTERM</span><span class=p>,</span> <span class=n>handle_shutdown</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>signal</span><span class=o>.</span><span class=n>signal</span><span class=p>(</span><span class=n>signal</span><span class=o>.</span><span class=n>SIGINT</span><span class=p>,</span> <span class=n>handle_shutdown</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=vm>__name__</span> <span class=o>==</span> <span class=s2>&#34;__main__&#34;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>setup_signal_handlers</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>config</span> <span class=o>=</span> <span class=n>uvicorn</span><span class=o>.</span><span class=n>Config</span><span class=p>(</span><span class=s2>&#34;main:app&#34;</span><span class=p>,</span> <span class=n>port</span><span class=o>=</span><span class=mi>8765</span><span class=p>,</span> <span class=n>log_level</span><span class=o>=</span><span class=s2>&#34;info&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>server</span> <span class=o>=</span> <span class=n>uvicorn</span><span class=o>.</span><span class=n>Server</span><span class=p>(</span><span class=n>config</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>server</span><span class=o>.</span><span class=n>run</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>此外，<code>llama.cpp</code> 使用 Docker 容器运行，作为 HTTP 服务来提供 <code>LLM</code> 的能力。启动命令如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>docker run -p 8080:8080 -v ~/ai-models:/models <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    ghcr.io/ggerganov/llama.cpp:server <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    -m /models/llama3.2-1B.gguf -c <span class=m>512</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    --host 0.0.0.0 --port <span class=m>8080</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>WebSocket server</code> 与 <code>llama.cpp</code> 之间则可以直接使用 HTTP 的方式通信，示例代码如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>requests</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>json</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>LlamaCppClient</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>host</span><span class=o>=</span><span class=s2>&#34;http://localhost&#34;</span><span class=p>,</span> <span class=n>port</span><span class=o>=</span><span class=mi>8080</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>base_url</span> <span class=o>=</span> <span class=sa>f</span><span class=s2>&#34;</span><span class=si>{</span><span class=n>host</span><span class=si>}</span><span class=s2>:</span><span class=si>{</span><span class=n>port</span><span class=si>}</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>completion</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>prompt</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>url</span> <span class=o>=</span> <span class=sa>f</span><span class=s2>&#34;</span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>base_url</span><span class=si>}</span><span class=s2>/v1/chat/completions&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=n>headers</span> <span class=o>=</span> <span class=p>{</span><span class=s2>&#34;Content-Type&#34;</span><span class=p>:</span> <span class=s2>&#34;application/json&#34;</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=n>payload</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;messages&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=s2>&#34;role&#34;</span><span class=p>:</span> <span class=s2>&#34;system&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=s2>&#34;content&#34;</span><span class=p>:</span> <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>                        You are a friendly conversation partner. Be natural, engaging, and helpful in our discussions. Respond to questions clearly and follow the conversation flow naturally.
+</span></span></span><span class=line><span class=cl><span class=s2>                    &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>                <span class=p>},</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=s2>&#34;role&#34;</span><span class=p>:</span> <span class=s2>&#34;user&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=s2>&#34;content&#34;</span><span class=p>:</span> <span class=n>prompt</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        
+</span></span><span class=line><span class=cl>        <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>response</span> <span class=o>=</span> <span class=n>requests</span><span class=o>.</span><span class=n>post</span><span class=p>(</span><span class=n>url</span><span class=p>,</span> <span class=n>headers</span><span class=o>=</span><span class=n>headers</span><span class=p>,</span> <span class=n>data</span><span class=o>=</span><span class=n>json</span><span class=o>.</span><span class=n>dumps</span><span class=p>(</span><span class=n>payload</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>            <span class=n>response</span><span class=o>.</span><span class=n>raise_for_status</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>response</span><span class=o>.</span><span class=n>json</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=k>except</span> <span class=n>requests</span><span class=o>.</span><span class=n>exceptions</span><span class=o>.</span><span class=n>RequestException</span> <span class=k>as</span> <span class=n>e</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=p>{</span><span class=s2>&#34;error&#34;</span><span class=p>:</span> <span class=nb>str</span><span class=p>(</span><span class=n>e</span><span class=p>)}</span>
+</span></span></code></pre></td></tr></table></div></div><p>最后，用户与 AI 的聊天结果类似下图：</p><p><img class=lazyload src=/svg/loading.min.svg data-src=https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-result.png data-srcset="https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-result.png, https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-result.png 1.5x, https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-result.png 2x" data-sizes=auto alt=https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-result.png title=https://raw.githubusercontent.com/RifeWang/images/master/ai/voice-chat-result.png></p><h2 id=总结>总结</h2><p>通过结合 Web 端的语音识别和语音合成功能、<code>Whisper</code> 的语音转文本能力、以及 <code>llama.cpp</code> 提供的 <code>LLM</code> 服务，我们成功构建了一个语音对话系统。语音对话的场景非常丰富，例如口语外教、语音问答等等。希望本文的示例能够为你在构建语音交互式 AI 系统时提供启发。</p><hr><p>(我是凌虚，关注我，无广告，专注技术，不煽动情绪，欢迎与我交流)</p><hr><p>参考资料：</p><ul><li><em><a href=https://github.com/openai/whisper target=_blank rel="noopener noreffer">https://github.com/openai/whisper</a></em></li><li><em><a href=https://github.com/ggerganov/llama.cpp/blob/master/examples/server/README.md target=_blank rel="noopener noreffer">https://github.com/ggerganov/llama.cpp/blob/master/examples/server/README.md</a></em></li><li><em><a href=https://github.com/fastapi/fastapi target=_blank rel="noopener noreffer">https://github.com/fastapi/fastapi</a></em></li><li><em><a href=https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisUtterance target=_blank rel="noopener noreffer">https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisUtterance</a></em></li></ul></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Updated on 2024-11-24</span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="Share on Twitter" data-sharer=twitter data-url=https://rifewang.github.io/web-voice-chat-llm/ data-title="Web 端语音对话 AI 示例：使用 Whisper 和 llama.cpp 构建语音聊天机器人" data-hashtags=AI,LLM><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Facebook" data-sharer=facebook data-url=https://rifewang.github.io/web-voice-chat-llm/ data-hashtag=AI><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Hacker News" data-sharer=hackernews data-url=https://rifewang.github.io/web-voice-chat-llm/ data-title="Web 端语音对话 AI 示例：使用 Whisper 和 llama.cpp 构建语音聊天机器人"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Share on Line" data-sharer=line data-url=https://rifewang.github.io/web-voice-chat-llm/ data-title="Web 端语音对话 AI 示例：使用 Whisper 和 llama.cpp 构建语音聊天机器人"><i data-svg-src=/lib/simple-icons/icons/line.min.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Share on 微博" data-sharer=weibo data-url=https://rifewang.github.io/web-voice-chat-llm/ data-title="Web 端语音对话 AI 示例：使用 Whisper 和 llama.cpp 构建语音聊天机器人"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/ai/>AI</a>,&nbsp;<a href=/tags/llm/>LLM</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/>Home</a></span></section></div><div class=post-nav><a href=/technology-selection/ class=prev rel=prev title=构建自己的框架去做技术选型><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>构建自己的框架去做技术选型</a>
+<a href=/audio-asr-tts/ class=next rel=next title="AI 声音：数字音频、语音识别、TTS 简介与使用示例">AI 声音：数字音频、语音识别、TTS 简介与使用示例<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2017 - 2025</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>凌虚</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Back to Top"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="View Comments"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",maxResultLength:10,noResultsFound:"No results found",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

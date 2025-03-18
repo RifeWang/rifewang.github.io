@@ -1,55 +1,53 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Tag - 凌虚 Blog</title><link>https://rifewang.github.io/tags/kubernetes/</link><description>Kubernetes - Tag - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Fri, 11 Oct 2024 16:46:19 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/tags/kubernetes/" rel="self" type="application/rss+xml"/><item><title>Kubernetes：Seccomp、AppArmor、SELinux &amp; Pod 安全性标准和准入</title><link>https://rifewang.github.io/k8s-pod-security/</link><pubDate>Fri, 11 Oct 2024 16:46:19 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-pod-security/</guid><description><![CDATA[<p>在云原生环境中，为确保容器化应用的安全运行，Kubernetes 利用了 Linux 内核的三大安全机制：<code>Seccomp</code>、<code>AppArmor</code> 和 <code>SELinux</code>，并引入了 Pod 安全性标准与准入控制来增强 Pod 的安全性。</p>]]></description></item><item><title>Kubernetes: kube-proxy 和 CNI 是如何协作的？</title><link>https://rifewang.github.io/kube-proxy-cni/</link><pubDate>Mon, 07 Oct 2024 19:06:17 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/kube-proxy-cni/</guid><description><![CDATA[<p>在 Kubernetes 中，<code>kube-proxy</code> 和 <code>CNI</code> 插件协同工作，确保集群内 Pod 之间的互联互通。</p>
-<h2 id="kube-proxy--cni">Kube-proxy &amp; CNI</h2>
-<p></p>
-<p>如上图所示，假设我们有一个类型为 <code>ClusterIP</code> 的 <code>Service</code>，它对应两个位于不同节点的 Pod。</p>]]></description></item><item><title>Kubernetes CSI 简介：工作流程和原理</title><link>https://rifewang.github.io/k8s-csi/</link><pubDate>Sun, 29 Sep 2024 17:11:31 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-csi/</guid><description><![CDATA[<p>本文将会以 <a href="https://github.com/kubernetes-csi/csi-driver-nfs" target="_blank" rel="noopener noreffer ">CSI driver - NFS</a> 为例，讲述 <code>CSI</code> 驱动的工作流程和原理。</p>
-<h2 id="csi-概述">CSI 概述</h2>
-<p><code>CSI</code> 驱动通常分为两个部分：</p>
-<ul>
-<li><code>Controller plugin</code>: 负责存储资源的管理，如卷的创建、删除、扩容、快照等。</li>
-<li><code>Node plugin</code>: 处理节点级别的存储操作，负责在具体的节点上执行卷的挂载和卸载等任务。</li>
-</ul>
-<p></p>]]></description></item><item><title>OCI 简介：Kubernetes 环境下从代码到容器的全流程</title><link>https://rifewang.github.io/oci/</link><pubDate>Thu, 26 Sep 2024 14:30:07 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/oci/</guid><description><![CDATA[<h2 id="oci-简介">OCI 简介</h2>
-<p>在容器化技术的演进中，<code>OCI</code>（Open Container Initiative）提供了一套标准化的规范，帮助统一容器的构建、分发和运行。<code>OCI</code> 规范包含三个部分：</p>]]></description></item><item><title>kubectl 执行一条命令之后发生了什么？</title><link>https://rifewang.github.io/kubectl-to-k8s/</link><pubDate>Sun, 22 Sep 2024 14:34:08 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/kubectl-to-k8s/</guid><description><![CDATA[<p><code>kubectl</code> 是与 Kubernetes 集群交互的命令行工具，用户通过它可以对集群资源进行操作和管理。你有没有想过，当我们执行一条 <code>kubectl</code> 命令之后，背后都发生了什么？</p>
-<h2 id="详细过程">详细过程</h2>
-<h3 id="kubectl---kube-api-server">kubectl -&gt; kube-api-server</h3>
-<p>根据通信类型，我把 <code>kubectl</code> 命令分为两类：单向通信和双向通信。</p>]]></description></item><item><title>Kubernetes 集群内 DNS</title><link>https://rifewang.github.io/k8s-dns/</link><pubDate>Tue, 17 Sep 2024 19:50:36 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-dns/</guid><description><![CDATA[<h2 id="dns-简介">DNS 简介</h2>
-<p>在互联网早期，随着连接设备数量的增加，IP 地址的管理与记忆变得越来越复杂。为了简化网络资源的访问，<code>DNS</code>（Domain Name System）应运而生。<code>DNS</code> 的核心作用是将用户可读的域名（如 <a href="https://www.example.com" target="_blank" rel="noopener noreffer ">www.example.com</a>）解析为对应的 IP 地址（如 93.184.215.34），从而使用户无需记忆复杂的数字串，便能轻松访问全球各地的网络资源。</p>]]></description></item><item><title>Kubernetes CNI 网络模型概览：VETH &amp; Bridge / Overlay / BGP</title><link>https://rifewang.github.io/k8s-cni-network-model/</link><pubDate>Fri, 13 Sep 2024 12:11:23 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-cni-network-model/</guid><description><![CDATA[<h2 id="序言">序言</h2>
-<p>网络是容器通信的基础，Kubernetes 本身并未提供开箱即用的网络互通功能，只提出了两点基本要求：</p>
-<blockquote>
-<ul>
-<li>pods can communicate with all other pods on any other node without NAT</li>
-<li>agents on a node (e.g. system daemons, kubelet) can communicate with all pods on that node</li>
-</ul>
-</blockquote>
-<p>至于如何实现这些通信能力，通常依赖于 <code>CNI</code> 插件来完成。</p>]]></description></item><item><title>Kubernetes 之 kubelet 与 CRI、CNI 的交互过程</title><link>https://rifewang.github.io/kubelet-cri-cni/</link><pubDate>Sat, 07 Sep 2024 14:46:34 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/kubelet-cri-cni/</guid><description><![CDATA[<h2 id="序言">序言</h2>
-<p>当一个新的 Pod 被提交创建之后，<code>Kubelet</code>、<code>CRI</code>、<code>CNI</code> 这三个组件之间进行了哪些交互？</p>
-<h2 id="kubelet---cri---cni">Kubelet -&gt; CRI -&gt; CNI</h2>
-<p></p>
-<p>如上图所示：</p>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Kubernetes - Tag - 凌虚 Blog</title><link>https://rifewang.github.io/tags/kubernetes/</link><description>Kubernetes - Tag - 凌虚 Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Mon, 23 Dec 2024 16:55:13 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/tags/kubernetes/" rel="self" type="application/rss+xml"/><item><title>Kubernetes APF（API 优先级和公平调度）简介</title><link>https://rifewang.github.io/k8s-apf/</link><pubDate>Mon, 23 Dec 2024 16:55:13 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-apf/</guid><description><![CDATA[<p>在 Kubernetes 集群中，<code>kube-apiserver</code> 是一个至关重要的组件，它不仅要对外响应客户端的 HTTPS 请求，还要对内与 <code>controller-manager</code>、<code>scheduler</code>、<code>kubelet</code> …… 等等其它组件交互。</p>]]></description></item><item><title>我对 OpenAI Kubernetes 集群故障的追问与疑惑</title><link>https://rifewang.github.io/openai-k8s-fail-confusion/</link><pubDate>Thu, 19 Dec 2024 15:06:08 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/openai-k8s-fail-confusion/</guid><description><![CDATA[<p>2024 年 12 月 11 号，<code>OpenAI</code> 的 <code>Kubernetes</code> 集群发生故障，<code>API</code>、<code>ChatGPT</code>、<code>Sora</code> 等服务都受到了影响，且时间长达 4 小时 22 分钟。</p>
+<p>关于这次故障，官方有公开复盘，也有很多媒体博主追踪报导。然而，我对此并不满意，<strong>本文我将会提出自己的疑惑与追问</strong>。</p>]]></description></item><item><title>Kubernetes：CPU 配置、Linux CFS、编程语言的性能问题</title><link>https://rifewang.github.io/k8s-cpu-linux-cfs-app-performance/</link><pubDate>Wed, 11 Dec 2024 15:44:11 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-cpu-linux-cfs-app-performance/</guid><description><![CDATA[<h2 id="kubernetes-cpu-配置---linux-cfs">Kubernetes CPU 配置 -&gt; Linux CFS</h2>
+<p>在使用 Kubernetes 时，可以通过 <code>resources.requests</code> 和 <code>resources.limits</code> 配置资源的请求和限额，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">app</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">requests</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;250m&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">limits</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;500m&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>对容器的资源配置会通过 <code>CRI</code> 组件（如 <code>containerd</code>、<code>cri-o</code> 交由更底层的 <code>runc</code> 或 <code>kata-container</code>）去设置 Linux 的 cgroup。</p>]]></description></item><item><title>Kubernetes 集群网络：Flannel 与 Calico 的区别</title><link>https://rifewang.github.io/flannel-calico/</link><pubDate>Sat, 30 Nov 2024 10:23:42 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/flannel-calico/</guid><description><![CDATA[<p>有读者提问：<code>Flannel</code> 与 <code>Calico</code> 的区别。文本将解析一下这两个组件。</p>
+<h2 id="flannel">Flannel</h2>
+<p><code>Flannel</code> 的架构非常简单，只有两个组件：<code>flanneld</code> 和 <code>flannel-cni-plugin</code>。</p>
+<p>在功能特性上，<code>Flannel</code> 有三个部分：</p>]]></description></item><item><title>RAG 示例：使用 langchain、Redis、llama.cpp 构建一个 kubernetes 知识库问答</title><link>https://rifewang.github.io/rag-langchain-redis-llamacpp/</link><pubDate>Tue, 19 Nov 2024 16:22:09 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/rag-langchain-redis-llamacpp/</guid><description><![CDATA[<p><code>RAG</code>（<code>Retrieval Augmented Generation</code> 检索增强生成）是目前业界中的一种主流方法，通过增加额外知识的方式来减少大语言模型（<code>LLM</code>）的幻觉问题（一本正经的胡说八道）。</p>]]></description></item><item><title>Kubernetes 10 问，测测你对 k8s 的理解程度</title><link>https://rifewang.github.io/k8s-10-questions/</link><pubDate>Sat, 16 Nov 2024 15:14:17 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-10-questions/</guid><description><![CDATA[<h2 id="kubernetes-10-问">Kubernetes 10 问</h2>
 <ol>
-<li><code>Kubelet</code> 从 kube-api-server 处监听到有新的 pod 被调度到了自己的节点且需要创建。</li>
-<li><code>Kubelet</code> 创建 sandbox 并配置好 Pod 的环境，其中包括：
-<ul>
-<li><code>Kubelet</code> 通过 gRPC 调用 <code>CRI</code> 组件创建 sandbox。</li>
-<li><code>CRI</code> 通过命令行调用 <code>CNI</code> 设置 pod 的网络。</li>
-</ul>
+<li>
+<p>假设集群有 2 个 node 节点，其中一个有 pod，另一个则没有，那么新的 pod 会被调度到哪个节点上？</p>
 </li>
-<li><code>Kubelet</code> 创建 container 阶段：
-<ul>
-<li>调用 <code>CRI</code> 拉取镜像。</li>
-<li>调用 <code>CRI</code> 创建 container。</li>
-<li>调用 <code>CRI</code> 启动 container。</li>
-</ul>
-</li>
-</ol>
-<p>注意：</p>]]></description></item><item><title>Kubernetes 网关流量管理：Ingress 与 Gateway API</title><link>https://rifewang.github.io/k8s-ingress-vs-gateway/</link><pubDate>Sat, 31 Aug 2024 17:09:40 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-ingress-vs-gateway/</guid><description><![CDATA[<h2 id="引言">引言</h2>
-<p>随着 Kubernetes 在云原生领域的广泛使用，流量管理成为了至关重要的一环。为了有效地管理从外部流入集群的流量，Kubernetes 提供了多种解决方案，其中最常见的是 <code>Ingress</code> 和新兴的 <code>Gateway API</code>。</p>]]></description></item><item><title>Kubernetes scheduler 概述及自定义调度器</title><link>https://rifewang.github.io/k8s-custom-scheduler/</link><pubDate>Sat, 15 Jun 2024 20:04:06 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-custom-scheduler/</guid><description><![CDATA[<h2 id="kube-scheduler">kube-scheduler</h2>
-<p><code>kube-scheduler</code> 是 k8s 集群中控制平面的一个重要组件，其负责的工作简单且专一：给未分配的 pod 分配一个 node 节点。</p>
-<p>调度器的大致工作过程可以分为以下几步：</p>
-<ul>
-<li>监听到未绑定 node 的 pod。</li>
-<li>过滤节点：挑选出来适合分配这个 pod 的 node 节点（可能有多个）。</li>
-<li>节点打分：给过滤出来的节点进行打分。</li>
-<li>最后选择得分最高的那个 node 与 pod 绑定（如果最高得分有多个 node 则随机选择一个）。</li>
-</ul>
-<p>更加详细的步骤则参考下图所示：</p>]]></description></item></channel></rss>
+<li>
+<p>应用程序通过容器的形式运行，如果 OOM（Out-of-Memory）了，是容器重启还是所在的 Pod 被重建？</p>]]></description></item><item><title>Kubernetes Extended Resource 扩展资源使用简介</title><link>https://rifewang.github.io/k8s-extended-resources/</link><pubDate>Wed, 06 Nov 2024 19:30:34 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-extended-resources/</guid><description><![CDATA[<p>Kubernetes 除了提供基于 CPU 和内存的传统计算资源调度外，还支持自定义的 <code>Extended Resource</code> 扩展资源，以便调度和管理其它各种类型的资源。</p>
+<h2 id="extended-resource">Extended Resource</h2>
+<p><code>Extended Resource</code> 扩展资源的创建和使用过程如下图所示：</p>]]></description></item><item><title>Kubernetes Node 节点的生命周期简述</title><link>https://rifewang.github.io/k8s-node-lifecycle/</link><pubDate>Fri, 01 Nov 2024 20:42:58 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-node-lifecycle/</guid><description><![CDATA[<p><code>Node</code> 节点是 Kubernetes 的核心组件之一，其生命周期可以简要概括为：注册、运行、下线。本文将简要介绍 <code>Node</code> 生命周期中发生的关键事件。</p>
+<p></p>
+<h3 id="节点注册">节点注册</h3>
+<p>每个 <code>node</code> 节点都需要运行 <code>kubelet</code>，<code>kubelet</code> 启动后会向 <code>kube-apiserver</code> 发起节点的注册请求，即创建一个新的 <code>node</code> 资源对象。</p>]]></description></item><item><title>Kubernetes Node 节点上的镜像管理</title><link>https://rifewang.github.io/k8s-image-gc/</link><pubDate>Mon, 28 Oct 2024 23:10:53 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-image-gc/</guid><description><![CDATA[<p>本文将详细介绍 Kubernetes 如何管理节点上的镜像。</p>
+<h2 id="拉取镜像">拉取镜像</h2>
+<p></p>
+<p><code>Kubelet</code> 通过 gRPC 协议与 <code>CRI</code> 组件（如 <code>containerd</code>、<code>cri-o</code>）进行交互。在创建新 Pod 时，<code>kubelet</code> 调用 gRPC 的 <code>ImageService.PullImage</code> 方法，由 <code>CRI</code> 组件将镜像下载到节点上。镜像在磁盘上的组织和管理由 <code>CRI</code> 组件负责，不同的 CRI 组件存在差异。</p>]]></description></item><item><title>Kubernetes GPU 调度和 Device Plugin、CDI、NFD、GPU Operator 概述</title><link>https://rifewang.github.io/k8s-gpu-deviceplugin-cdi-nfd/</link><pubDate>Sun, 20 Oct 2024 12:56:58 +0800</pubDate><author>凌虚</author><guid>https://rifewang.github.io/k8s-gpu-deviceplugin-cdi-nfd/</guid><description><![CDATA[<p>随着人工智能（<code>AI</code>）和机器学习（<code>ML</code>）的快速发展，<code>GPU</code> 已成为 Kubernetes 中不可或缺的资源。然而，Kubernetes 最初设计的调度机制主要针对 CPU 和内存等常规资源，未对异构硬件（如 GPU）提供原生支持。</p>]]></description></item></channel></rss>
