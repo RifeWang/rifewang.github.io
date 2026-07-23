@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PostgreSQL on 凌虚 Blog</title><link>https://rifewang.github.io/tags/postgresql/</link><description>Recent content in PostgreSQL on 凌虚 Blog</description><generator>Hugo</generator><language>zh-CN</language><copyright>Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</copyright><lastBuildDate>Thu, 23 Jul 2026 16:12:20 +0800</lastBuildDate><atom:link href="https://rifewang.github.io/tags/postgresql/index.xml" rel="self" type="application/rss+xml"/><item><title>基于 PostgreSQL WAL 构建 CDC 系统：原理与工程实现</title><link>https://rifewang.github.io/pg-wal-cdc-principles-and-implementation/</link><pubDate>Thu, 23 Jul 2026 11:11:00 +0800</pubDate><guid>https://rifewang.github.io/pg-wal-cdc-principles-and-implementation/</guid><description>&lt;h2 id="序言"&gt;序言&lt;/h2&gt;
+&lt;p&gt;数据库中的一行记录发生变化后，影响往往不只停留在数据库内部：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;商品和内容发生变化，需要及时更新 Elasticsearch 索引；&lt;/li&gt;
+&lt;li&gt;用户资料或配置发生变化，需要刷新 Redis 和派生视图；&lt;/li&gt;
+&lt;li&gt;业务数据需要持续进入 Kafka、数据仓库或数据湖；&lt;/li&gt;
+&lt;li&gt;账户、权限等关键数据的修改，需要留下审计记录并触发后续流程。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这些场景的下游各不相同，却都依赖同一种能力：持续捕获数据库中的 &lt;code&gt;INSERT&lt;/code&gt;、&lt;code&gt;UPDATE&lt;/code&gt; 和 &lt;code&gt;DELETE&lt;/code&gt;，并可靠地把变化传递出去。这就是 &lt;strong&gt;&lt;code&gt;CDC&lt;/code&gt;（Change Data Capture，变更数据捕获）&lt;/strong&gt;。&lt;/p&gt;</description></item></channel></rss>
