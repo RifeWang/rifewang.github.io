@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Chronicle of Kubernetes: From Borg to the Cloud-Native Operating System</title>
+<style>
+  body { margin: 0; background: #f7f7f5; color: #242424; font-family: Georgia, "Times New Roman", serif; line-height: 1.65; }
+  article { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; background: #fff; }
+  h1, h2, h3 { font-family: Arial, Helvetica, sans-serif; line-height: 1.25; }
+  h1 { font-size: 42px; margin: 0 0 16px; }
+  h2 { margin-top: 48px; }
+  h1 + h2 { margin-top: 0; color: #6b6b6b; font-size: 22px; font-weight: 400; }
+  h3 { margin-top: 32px; }
+  p, li { font-size: 19px; }
+  code { padding: 2px 5px; border-radius: 4px; background: #f2f2f2; font-family: Menlo, Consolas, monospace; font-size: 0.85em; }
+  blockquote { margin: 28px 0; padding-left: 20px; border-left: 4px solid #242424; font-style: italic; }
+  a { color: #1565c0; }
+  hr { margin: 48px 0; border: 0; border-top: 1px solid #ddd; }
+  img { display: block; margin: 24px 0; }
+  ul, ol { padding-left: 26px; }
+  li { margin: 0 0 10px; }
+</style>
+</head>
+<body>
+<article>
+<h1>A Chronicle of Kubernetes: From Borg to the Cloud-Native Operating System</h1>
+<h2>The key features and turning points that shaped Kubernetes over more than a decade—told as a story even non-experts can follow</h2>
+<blockquote>
+<p>If a data center is a harbor and containers are standardized shipping boxes, then <code>Kubernetes</code> is the harbor’s scheduling system: which berth a ship gets, how cargo is loaded and unloaded, what happens when something breaks, and how capacity expands when traffic spikes. It does not manufacture the boxes. It decides whether those boxes can run at scale.</p>
+</blockquote>
+<hr>
+<h2>Opening: Why Ordinary People Keep Bumping Into <code>Kubernetes</code></h2>
+<p>You may never have written a line of <code>YAML</code>, yet you are probably already using <code>Kubernetes</code>.</p>
+<p>Open an app on your phone, scroll through short videos, or ask ChatGPT a question—chances are high that the services behind them run on a <code>Kubernetes</code> cluster. It has become something like the default operating system of the cloud age: it does not write business logic, but it places thousands of services onto machines, keeps them alive, and scales them with traffic.</p>
+<p>The name comes from Greek and means “helmsman” or “pilot.” The community often shortens it to <strong>K8s</strong> (the eight letters between K and s). The logo is a heptagon—that is not an accident, and we will come back to it.</p>
+<p>This chronicle will not copy every release changelog. I want to make three things clear:</p>
+<ol>
+<li>What problem <code>Kubernetes</code> actually solves</li>
+<li>Which milestones and capabilities truly changed the industry along the way</li>
+<li>Why it, rather than Swarm, Mesos, or someone else, became the default answer</li>
+</ol>
+<p>Even if you have never touched <code>kubectl</code>, you should still come away with a working picture.</p>
+<hr>
+<h2>Prequel: Google’s Internal Borg (from about 2003)</h2>
+<p>The story starts at Google.</p>
+<p>Long before public cloud and Docker made containers mainstream, Google was already using <strong>containers</strong> to carve a physical machine into many isolated rooms, packing Search, Gmail, YouTube, and other services together at very high utilization. The system that managed those “rooms” was called <strong>Borg</strong>.</p>
+<p>Borg was not a product for outsiders. It was Google’s internal cluster butler, answering very plain questions:</p>
+<ul>
+<li>Which machine should this task land on?</li>
+<li>If a machine dies, how do we move the work automatically?</li>
+<li>When traffic spikes, how do we open more replicas?</li>
+<li>When jobs of different priority fight for resources, who yields?</li>
+</ul>
+<p>Google later built <strong>Omega</strong>, exploring more flexible scheduling and a shared-state model. The Borg / Omega paper in ACM Queue, <em>Borg, Omega, and Kubernetes</em>, became nearly required reading in container orchestration.</p>
+<p>For non-specialists, one sentence is enough:</p>
+<blockquote>
+<p><code>Kubernetes</code> was not invented from a blank sheet. It is Google retelling more than a decade of lessons about running containers at scale—this time in the open.</p>
+</blockquote>
+<p>It inherited many of Borg’s instincts. The clearest example is treating a group of tightly cooperating containers as one scheduling unit (an <code>alloc</code> in Borg, a <code>Pod</code> in <code>Kubernetes</code>). At the same time, it deliberately improved on Borg’s limits: Borg mainly grouped work with a relatively rigid <code>Job</code>, while <code>Kubernetes</code> organizes objects with flexible <code>Label</code>s and selectors, and puts more weight on a declarative “desired state”—you describe what you want, and the system works to make it so.</p>
+<p>On the control plane, it also differs from later Omega: instead of opening the shared store directly to trusted components, it exposes only a REST API with validation and policy.</p>
+<hr>
+<h2>2013–2014: Docker Lights the Fuse, and Scheduling Becomes Everyone’s Problem</h2>
+<p>In 2013, Docker made containers usable for almost anyone. Before that, containers felt like ops black magic. After Docker, developers could package an app on a laptop and move it to a server nearly unchanged.</p>
+<p>Once the shipping boxes were standardized, the next question appeared immediately:</p>
+<p><strong>A few containers on one machine are easy. Who manages thousands of containers across hundreds or thousands of machines?</strong></p>
+<p>So “orchestration” became the new battlefield: automated deploy, scaling, service discovery, failure recovery. Whoever made this into a general platform had a shot at becoming cloud infrastructure’s standard.</p>
+<p>In the summer of 2013, Google’s Joe Beda, Brendan Burns, and Craig McLuckie pitched leadership on an idea: build an open-source container management system that brought Borg / Omega experience to the outside world. The internal codename was <strong>Project Seven of Nine</strong>—a nod to <em>Star Trek</em>’s Seven of Nine. That is also why the <code>Kubernetes</code> logo has seven sides.</p>
+<p>On June 6, 2014, <code>Kubernetes</code> was open-sourced and the first commit landed. The industry usually treats that day as its birthday.</p>
+<p>It was imperfect then—even rough. But the direction was right: developer experience first, a declarative API, extensibility, and open source from day one.</p>
+<hr>
+<h2>2015: 1.0 Ships, and the Helm Goes to the CNCF</h2>
+<p>A little more than a year later, on July 21, 2015, <code>Kubernetes</code> <strong>1.0</strong> was released. Google also announced that it was donating the project to the newly formed <strong>CNCF</strong> (Cloud Native Computing Foundation), hosted by the Linux Foundation.</p>
+<p>The symbolism mattered.</p>
+<p>If <code>Kubernetes</code> had remained “Google’s open-source project,” competitors would have hesitated. Once it sat under a neutral foundation, Red Hat, IBM, Intel, VMware—and later AWS and Microsoft—were far more willing to bet on it. The CNCF’s goal was never only to grow <code>Kubernetes</code>; it was to advance a whole “cloud-native” stack: container packaging, dynamic scheduling, and microservice-oriented design.</p>
+<p>About a month later, on August 26, 2015, Google’s managed offering <strong>Google Container Engine</strong> (later GKE) also reached general availability. Cloud vendors began selling “we will run the <code>Kubernetes</code> control plane for you” as a product.</p>
+<p>By 1.0, the core story was already in place:</p>
+<ul>
+<li><strong><code>Pod</code></strong> — The smallest scheduling unit: a small room that can hold one or more tightly cooperating containers</li>
+<li><strong><code>Node</code></strong> — A worker machine (physical or virtual)</li>
+<li><strong><code>Service</code></strong> — A stable access point in front of a changing set of <code>Pod</code>s</li>
+<li><strong><code>Label</code> / <code>Selector</code></strong> — Tag objects, then filter by those tags—like sorting codes on parcels</li>
+<li><strong>Declarative API</strong> — You say “keep 3 replicas alive,” and the system makes it so, instead of you <code>SSH</code>ing in by hand</li>
+</ul>
+<p>Many capabilities people later take for granted—<code>Deployment</code>, <code>DaemonSet</code>, <code>StatefulSet</code>, <code>Ingress</code>, mature <code>RBAC</code>—grew after 1.0. Version 1.0 was more like a usable minimum loop: proof that orchestration could be a platform.</p>
+<hr>
+<h2>2015–2017: The Orchestration Wars, and Why <code>Kubernetes</code> Won</h2>
+<p>For a while, the market had at least three main contenders:</p>
+<ul>
+<li><strong>Docker Swarm</strong>: tightest Docker integration, easiest to start</li>
+<li><strong>Apache Mesos + Marathon</strong>: older, strong at very large and heterogeneous workloads</li>
+<li><strong><code>Kubernetes</code></strong>: steep learning curve, but a complete and extensible model</li>
+</ul>
+<p>Nomad and others were in the mix too. The press liked to call it the “orchestration war.”</p>
+<p><code>Kubernetes</code> won not because any single switch was magical, but because several forces stacked:</p>
+<ol>
+<li><strong>Google’s production credibility + CNCF’s neutral governance</strong>, which lowered the political risk of betting on it</li>
+<li><strong>A well-designed API and extension points</strong>, on which later <code>CRD</code>s, <code>Operator</code>s, and interfaces were built</li>
+<li><strong>Ecosystem reinforcement</strong>: monitoring, networking, storage, CI/CD, and security tools prioritized <code>Kubernetes</code></li>
+<li><strong>Cloud vendors lining up</strong>: once AWS, Azure, and GCP all offered managed <code>Kubernetes</code>, enterprise choice was nearly locked in</li>
+</ol>
+<p>The climax came at DockerCon Europe in October 2017: Docker announced native <code>Kubernetes</code> support alongside Swarm. Coverage was nearly unanimous—the orchestration war had a winner.</p>
+<p>Swarm did not vanish overnight, and Mesos still lives in some niches. But the industry already knew what the default answer was.</p>
+<hr>
+<h2>2016–2018: From “It Can Run” to “It Can Run for Real”</h2>
+<p>If 1.0 was learning to walk, the next few years were building muscle. Several capabilities that changed daily use largely arrived in this period.</p>
+<h3><code>Deployment</code>: Releases Stop Feeling Like Defusing a Bomb</h3>
+<p>Early on, people mostly poked at <code>Pod</code>s or <code>ReplicationController</code>s. Later, <strong><code>Deployment</code></strong> became the standard posture for stateless apps: rolling updates, rollbacks, declared replica counts.</p>
+<p>Think of it this way:</p>
+<blockquote>
+<p>Stop deciding by hand which container to kill first and which to start next. Tell the system what the new version looks like, and ask it to replace smoothly.</p>
+</blockquote>
+<p><code>DaemonSet</code> (one copy per node—good for logging/monitoring agents), <code>StatefulSet</code> (stateful apps with stable identity and storage), <code>ReplicaSet</code>, and other core workload APIs all graduated to stable together in <code>Kubernetes</code> <strong>1.9</strong> (early 2018) as <code>apps/v1</code>.</p>
+<p>That meant common application shapes finally had first-class, officially stable APIs.</p>
+<h3><code>RBAC</code>: Who Can Do What to the Cluster</h3>
+<p>Once a cluster hits production, permissions cannot mean “everyone can <code>kubectl</code> as they please.”</p>
+<p><strong><code>RBAC</code></strong> (Role-Based Access Control) became generally available in <strong>1.8</strong> (2017). It answers whether an account can read a <code>Secret</code>, delete a <code>Namespace</code>, or change a node.</p>
+<p>For non-security people, one sentence is enough:</p>
+<blockquote>
+<p><code>RBAC</code> turned <code>Kubernetes</code> from “a farm of servers sharing the root password” into “a system with a gate.”</p>
+</blockquote>
+<h3>Networking and Policy: Beyond <code>Service</code>, Learn to Say “No”</h3>
+<p>By default, <code>Kubernetes</code> is quite “friendly”—<code>Pod</code>s can often talk to each other freely. That is great for demos and dangerous in production.</p>
+<p><strong><code>NetworkPolicy</code></strong> lets you write rules about who may talk to whom. Together with <code>CNI</code> plugins (Calico, Cilium, Flannel, and others), cluster networking moved from “it connects” to “it is controllable.” <code>NetworkPolicy</code> under <code>networking.k8s.io/v1</code> became stable in <strong>1.7</strong> (2017); <strong>1.8</strong> added more useful <code>egress</code> policies. The old <code>extensions/v1beta1</code> version stopped being served in 1.16.</p>
+<h3>Package Management and Application Delivery</h3>
+<p>An API alone is not enough; people still have to install complex apps. Tools like <strong>Helm</strong> spread quickly in this period, packaging sets of <code>YAML</code> into installable, upgradable Charts. <code>Kubernetes</code> turns resources into reality; Helm delivers the whole application.</p>
+<hr>
+<h2>2016–2019: The Real Killer Feature—Extensibility</h2>
+<p>If the orchestration war was about “who can schedule containers,” <code>Kubernetes</code> won the second half with another sentence:</p>
+<blockquote>
+<p><strong>Turn the platform into something that can grow new platforms.</strong></p>
+</blockquote>
+<h3><code>CRI</code> / <code>CNI</code> / <code>CSI</code>: Do Not Bind to Any One Implementation</h3>
+<p><code>Kubernetes</code> realized early that it should not be both referee and every athlete.</p>
+<ul>
+<li><strong><code>CRI</code></strong> (Container Runtime Interface): how containers are created and deleted belongs to the runtime. Introduced as Alpha with <strong>1.5</strong> at the end of 2016, it first paved the “pluggable runtime” path; over the following years, <code>containerd</code>, <code>CRI-O</code>, and others matured their <code>CRI</code> implementations.</li>
+<li><strong><code>CNI</code></strong> (Container Network Interface): how container networking is wired belongs to network plugins.</li>
+<li><strong><code>CSI</code></strong> (Container Storage Interface): how persistent storage is attached belongs to storage plugins. <code>CSI</code> reached GA in <strong>1.13</strong> (early 2019).</li>
+</ul>
+<p>The strategic value of these three interfaces outweighs almost any single feature:</p>
+<blockquote>
+<p>Networking vendors, storage vendors, and runtime projects can join the race without changing the <code>Kubernetes</code> kernel. A larger ecosystem stabilizes the standard; a stable standard grows the ecosystem.</p>
+</blockquote>
+<h3><code>CRD</code>: Teach <code>Kubernetes</code> New Nouns</h3>
+<p>A <strong><code>CustomResourceDefinition</code> (<code>CRD</code>)</strong> lets you register new API types in the cluster—<code>PostgresCluster</code>, <code>Certificate</code>, <code>Prometheus</code>, and so on. After that, <code>kubectl get</code> can manage them just like native <code>Pod</code>s.</p>
+<p><code>CRD</code>s grew out of <code>ThirdPartyResources</code>; after a redesign they entered beta in <strong>1.7</strong> and reached GA in <strong>1.16</strong> (2019) as <code>apiextensions.k8s.io/v1</code>.</p>
+<p>For newcomers, this is almost the key to modern <code>Kubernetes</code>:</p>
+<blockquote>
+<p>Many “advanced capabilities” you see in a cluster are not magic suddenly appearing in the kernel. Someone used a <code>CRD</code> to teach the cluster a new object, then wrote a controller to implement it.</p>
+</blockquote>
+<h3><code>Operator</code>: Turn Operations Knowledge Into Software</h3>
+<p>In November 2016, CoreOS introduced the <strong><code>Operator</code></strong> pattern: encode expert know-how about deploying, backing up, failing over, and upgrading a complex system into a controller that watches custom resources. <code>CRD</code>s were not yet stable then; early implementations leaned more on mechanisms such as <code>ThirdPartyResource</code>. Once <code>CRD</code>s matured, <code>Operator</code>s almost all moved onto that path.</p>
+<p>Early open-source examples included the <code>etcd Operator</code> and <code>Prometheus Operator</code>. The pattern then exploded—databases, message queues, certificates, and machine-learning platforms could all “live” in the cluster as <code>Operator</code>s.</p>
+<p>In one metaphor:</p>
+<blockquote>
+<p>A <code>Deployment</code> keeps “three identical web replicas” alive; an <code>Operator</code> keeps “this stateful system alive the way an expert would.”</p>
+</blockquote>
+<hr>
+<h2>2018: The Big Three Clouds Align, and <code>Kubernetes</code> Becomes Cloud’s Common Language</h2>
+<ul>
+<li><strong>GKE</strong>: generally available since 2015—first out of the gate</li>
+<li><strong>Amazon EKS</strong>: generally available in June 2018</li>
+<li><strong>Azure AKS</strong>: also generally available in June 2018</li>
+</ul>
+<p>By then, AWS, Azure, and GCP all offered managed <code>Kubernetes</code>. For enterprises, that meant:</p>
+<blockquote>
+<p>Learn one model and you can speak on multiple clouds. Differences fall more on surrounding services, networking, and identity—not on whether you must learn a third orchestrator.</p>
+</blockquote>
+<p><code>Kubernetes</code> went from an open-source project to a <strong>portability layer</strong> for cloud computing—not eliminating lock-in entirely, but sharply reducing lock-in at the “how does the app run” layer.</p>
+<p>A bit earlier, in November 2017, the CNCF launched <strong>Certified Kubernetes Conformance</strong>: any distribution calling itself <code>Kubernetes</code> had to pass a test suite guaranteeing core API behavior. That helped avoid severe Unix- or Android-style fragmentation, and made it easier in 2018 for enterprises to treat the major clouds’ managed offerings as different accents of the same language.</p>
+<hr>
+<h2>2020–2022: Letting Go, and Coming of Age</h2>
+<p>Any system that lives a decade must learn to throw away old tickets.</p>
+<h3>Saying Goodbye to <code>dockershim</code></h3>
+<p>For a long time, many people thought “<code>Kubernetes</code> = running containers with Docker.” In reality, <code>Kubernetes</code> depends on a <strong>container runtime interface</strong>; Docker Engine was only the most popular early implementation.</p>
+<p>To stay compatible with Docker, <code>kubelet</code> once shipped a built-in shim called <strong><code>dockershim</code></strong>. It was formally deprecated in <strong>1.20</strong> and removed in <strong>1.24</strong> (April 2022).</p>
+<p>The community recommended moving to <code>CRI</code>-compatible runtimes such as <code>containerd</code> and <code>CRI-O</code>. End users could still build images with Docker; the change was mainly about which runtime actually runs containers on cluster nodes.</p>
+<p>It was a psychological coming of age:</p>
+<blockquote>
+<p><code>Kubernetes</code> told the world clearly that the container ecosystem’s standards are <code>OCI</code> / <code>CRI</code>—not one company’s toolchain.</p>
+</blockquote>
+<h3>Reworking the Security Model: From <code>PSP</code> to Pod Security Admission</h3>
+<p><strong><code>PodSecurityPolicy</code> (<code>PSP</code>)</strong> once limited <code>Pod</code> privileges as a built-in mechanism, but it was hard to use and hard to evolve. It was deprecated in <strong>1.21</strong> and removed in <strong>1.25</strong> (2022).</p>
+<p>It was replaced by the simpler <strong>Pod Security Admission</strong>: label namespaces and apply one of three standards—<code>Privileged</code> / <code>Baseline</code> / <code>Restricted</code>. For finer needs, hand off to external policy engines such as <code>OPA</code> / Gatekeeper or <code>Kyverno</code>.</p>
+<p>The direction is clear: safer by default, less magic in the mechanism.</p>
+<h3>The Control Plane Grows “Adult” Features Too</h3>
+<p>These years also brought capabilities that rarely make marketing slides but matter enormously at scale: API Priority and Fairness (keeping an admin path open under overload), finer scheduling, topology awareness, and more. They do not sell posters, but they decide whether you can sleep when the cluster has thousands of nodes.</p>
+<hr>
+<h2>2023–2026: Ingress Evolves, and AI Pushes New Cargo Into the Old Harbor</h2>
+<h3><code>Gateway API</code>: The Next Generation of Traffic Ingress</h3>
+<p>For years, exposing HTTP/HTTPS services mostly relied on <strong><code>Ingress</code></strong>. It is simple, but extensions fragmented—annotations everywhere, behavior varying by implementation.</p>
+<p><strong><code>Gateway API</code></strong> released <strong>v1.0</strong> in October 2023, graduating core resources such as <code>Gateway</code>, <code>GatewayClass</code>, and <code>HTTPRoute</code> to stable. It separates “how infrastructure provides an entry point” from “how applications declare routes,” and better fits multi-team, multi-implementation coexistence.</p>
+<p><code>Ingress</code> will not vanish overnight, but new projects increasingly default to <code>Gateway API</code>. It feels like the earlier move from <code>ReplicationController</code> to <code>Deployment</code>: the old still works; the new is the direction.</p>
+<h3>AI / GPU: An Old Captain Meets New Cargo</h3>
+<p>Large-model training and inference pushed GPUs, high-speed networking, and huge job scheduling back to center stage. <code>Kubernetes</code> was not invented for LLMs, but it is already the only cluster substrate general enough for most companies—so Device Plugins, topology-aware scheduling, batch jobs, and queue systems keep stacking on top.</p>
+<p>Around November 2023, public reports showed Google using GKE and related capabilities to schedule a distributed training job on the order of 50,000 TPU v5e chips. That suggests:</p>
+<blockquote>
+<p>It may not be the final form of AI infrastructure, but right now it is the most ready layer organizations can actually digest.</p>
+</blockquote>
+<p>At the same time, security, observability, and platform engineering (Internal Developer Platforms) keep hiding <code>Kubernetes</code> behind self-service—developers may never touch the cluster directly, while platform teams almost always build on it.</p>
+<hr>
+<h2>A Timeline for Quick Reference</h2>
+<ul>
+<li><strong>~2003 onward</strong> — Google’s internal Borg manages containerized workloads at scale</li>
+<li><strong>2013</strong> — Docker makes containers a daily developer tool; <code>Kubernetes</code> starts as Project Seven of Nine</li>
+<li><strong>2014-06-06</strong> — <code>Kubernetes</code> is open-sourced</li>
+<li><strong>2015-07-21</strong> — <code>Kubernetes</code> 1.0; CNCF is formed and receives the project</li>
+<li><strong>2015-08-26</strong> — Google Container Engine (later GKE) reaches GA</li>
+<li><strong>2016</strong> — <code>CRI</code> Alpha (1.5); CoreOS proposes the <code>Operator</code>; the ecosystem accelerates</li>
+<li><strong>2017</strong> — <code>NetworkPolicy</code> GA (1.7); <code>RBAC</code> GA (1.8); Docker announces <code>Kubernetes</code> support; CNCF launches conformance certification</li>
+<li><strong>2018</strong> — Core workload APIs GA (1.9); EKS / AKS reach GA</li>
+<li><strong>2019</strong> — <code>CSI</code> GA (1.13); <code>CRD</code> GA (1.16)</li>
+<li><strong>2020–2022</strong> — <code>dockershim</code> deprecated (1.20) and removed (1.24); <code>PSP</code> removed; Pod Security Admission stable (1.25)</li>
+<li><strong>2023-10</strong> — <code>Gateway API</code> v1.0; core resources become stable</li>
+<li><strong>2024</strong> — Tenth open-source anniversary; continued push into AI, multi-cluster, and platform engineering</li>
+<li><strong>2025–2026</strong> — <code>Gateway API</code> keeps promoting experimental features to stable; K8s remains the default cloud-native substrate</li>
+</ul>
+<hr>
+<h2>Why It Became the Protagonist of This Chronicle</h2>
+<p>Looking back over more than a decade, <code>Kubernetes</code>’s victory compresses into four words:</p>
+<ol>
+<li><strong>Timing</strong>: Docker solved packaging; it filled in scaled operations</li>
+<li><strong>Experience</strong>: a decade of Borg scars produced clearer abstractions</li>
+<li><strong>Governance</strong>: handing it to the CNCF made even competitors willing to build together</li>
+<li><strong>Interfaces</strong>: <code>CRI</code>/<code>CNI</code>/<code>CSI</code> + <code>CRD</code>/<code>Operator</code> let others keep building on top of it</li>
+</ol>
+<p>It was never “simple.” The learning curve is steep, the <code>YAML</code> is long and ugly, and production incidents can be dramatic—all fair complaints. But infrastructure rarely wins by being flawless. It wins by being <strong>general enough, extensible enough, and backed by a strong enough ecosystem</strong>.</p>
+<p>If you remember only one metaphor, make it this:</p>
+<blockquote>
+<p>Docker turned software into standard shipping boxes; <code>Kubernetes</code> taught the harbor to schedule automatically. The monitoring, service meshes, GitOps, and platform engineering that grew later are mostly docks, cranes, and customs houses added onto that harbor.</p>
+</blockquote>
+<p>Looking ahead, the harbor will not disappear—but it will look less and less like the pier developers face every day. More teams will hide it behind platform engineering and self-service. More workloads—from microservices to batch jobs to AI training and inference—will treat it as the default berth. <code>Gateway API</code>, policy as code, multi-cluster, and edge scheduling may keep turning “how to expose, how to govern, how to place across regions” into more standardized shipping lanes.</p>
+<p><code>Kubernetes</code> may not be the last chapter forever, but it has already written cloud-native’s common language into infrastructure. What is more likely over the next decade is not building an entirely new harbor from scratch, but raising this one higher and deeper so more people can dock with confidence.</p>
+<hr>
+<h2>References</h2>
+<ul>
+<li><a href="https://queue.acm.org/detail.cfm?id=2898444">Borg, Omega, and Kubernetes - ACM Queue</a></li>
+<li><a href="https://cloud.google.com/blog/products/containers-kubernetes/from-google-to-the-world-the-kubernetes-origin-story">How Kubernetes came to be - Google Cloud Blog</a></li>
+<li><a href="https://www.cncf.io/announcements/2015/06/21/new-cloud-native-computing-foundation-to-drive-alignment-among-container-technologies/">CNCF founding announcement and Kubernetes donation (2015-07-21)</a></li>
+<li><a href="https://kubernetes.io/blog/2016/12/container-runtime-interface-cri-in-kubernetes/">Introducing CRI in Kubernetes</a></li>
+<li><a href="https://kubernetes.io/blog/2018/01/core-workloads-api-ga/">Core Workloads API GA (1.9)</a></li>
+<li><a href="https://kubernetes.io/blog/2019/01/15/container-storage-interface-ga/">CSI for Kubernetes GA</a></li>
+<li><a href="https://kubernetes.io/blog/2019/09/18/kubernetes-1-16-release-announcement/">Kubernetes 1.16: CRD GA</a></li>
+<li><a href="https://kubernetes.io/blog/2022/01/07/kubernetes-is-moving-on-from-dockershim/">Dockershim removal (1.24)</a></li>
+<li><a href="https://kubernetes.io/blog/2022/08/25/pod-security-admission-stable/">Pod Security Admission stable / PSP removed (1.25)</a></li>
+<li><a href="https://kubernetes.io/blog/2023/10/31/gateway-api-ga/">Gateway API v1.0: GA Release</a></li>
+<li><a href="https://www.theregister.com/2024/06/12/kubertenes_decade_anniversary/">KuberTENes: a decade review - The Register</a></li>
+</ul>
+</article>
+</body>
+</html>
