@@ -2,7 +2,7 @@
 
 ## The key features and turning points that shaped Kubernetes over more than a decade—told as a story even non-experts can follow
 
-<!-- Medium: upload kubernetes-chronicle-cover.png as the Featured image. Prefer pasting from kubernetes-chronicle.medium.html for formatting. -->
+<!-- Medium: upload kubernetes-chronicle-cover.png as the Featured image. Prefer pasting from html/kubernetes-chronicle.medium.html for formatting. -->
 
 > If a data center is a harbor and containers are standardized shipping boxes, then `Kubernetes` is the harbor’s scheduling system: which berth a ship gets, how cargo is loaded and unloaded, what happens when something breaks, and how capacity expands when traffic spikes. It does not manufacture the boxes. It decides whether those boxes can run at scale.
 

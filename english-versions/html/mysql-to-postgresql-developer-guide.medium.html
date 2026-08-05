@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From MySQL to PostgreSQL: A Quick-Start Guide for Developers</title>
+<style>
+  body { margin: 0; background: #f7f7f5; color: #242424; font-family: Georgia, "Times New Roman", serif; line-height: 1.65; }
+  article { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; background: #fff; }
+  h1, h2, h3 { font-family: Arial, Helvetica, sans-serif; line-height: 1.25; }
+  h1 { font-size: 42px; margin: 0 0 16px; }
+  h2 { margin-top: 48px; }
+  h1 + h2 { margin-top: 0; color: #6b6b6b; font-size: 22px; font-weight: 400; }
+  h3 { margin-top: 32px; }
+  p, li { font-size: 19px; }
+  code { padding: 2px 5px; border-radius: 4px; background: #f2f2f2; font-family: Menlo, Consolas, monospace; font-size: 0.85em; }
+  pre { overflow-x: auto; padding: 18px; border-radius: 6px; background: #1f2328; color: #f0f0f0; }
+  pre code { padding: 0; background: transparent; color: inherit; }
+  .comparison-list { margin: 20px 0 28px; padding-left: 26px; }
+  .comparison-list li { margin: 0 0 12px; padding-left: 5px; }
+  .comparison-list .arrow { padding: 0 5px; font-weight: 700; }
+  blockquote { margin: 28px 0; padding-left: 20px; border-left: 4px solid #242424; font-style: italic; }
+  a { color: #1565c0; }
+  hr { margin: 48px 0; border: 0; border-top: 1px solid #ddd; }
+</style>
+</head>
+<body>
+<article>
+<h1>From MySQL to PostgreSQL: A Quick-Start Guide for Developers</h1>
+<h2>A practical comparison of PostgreSQL architecture, connections, permissions, types, SQL, transactions, Vacuum, and indexes for developers familiar with MySQL, designed to help you quickly build the right mental model</h2>
+<h2>Preface: They Differ in More Than Just Syntax</h2>
+<p>If you are already familiar with MySQL, most of PostgreSQL will look familiar at first: both are relational databases, both support transactions, indexes, constraints, and SQL, and both are well supported by mainstream programming languages and ORMs.</p>
+<p>The places most likely to cause problems are precisely those that “look almost the same”:</p>
+<ul>
+<li>Should a MySQL database map to a PostgreSQL database or schema?</li>
+<li>What should replace <code>AUTO_INCREMENT</code>, <code>DATETIME</code>, <code>TINYINT(1)</code>, and <code>JSON</code>?</li>
+<li>How should <code>INSERT IGNORE</code>, <code>REPLACE INTO</code>, and <code>ON DUPLICATE KEY UPDATE</code> be rewritten?</li>
+<li>Both systems have MVCC and Repeatable Read, but do they provide the same concurrency semantics?</li>
+<li>Why do long-running transactions, Vacuum, and connection counts require special attention in PostgreSQL?</li>
+</ul>
+<p>This article does not debate whether MySQL or PostgreSQL is “better,” nor does it enumerate every feature. Instead, it first clarifies PostgreSQL’s overall architecture, connection model, and permission system, then walks through data types and constraints, SQL dialect differences, transactional concurrency, Vacuum, and indexes.</p>
+<p>There is only one central idea to remember:</p>
+<blockquote>
+<p>Your MySQL experience can serve as a frame of reference for understanding PostgreSQL, but it must not make decisions for PostgreSQL by default.</p>
+</blockquote>
+<hr>
+<h2>1. Overall Architecture: The Additional Schema Layer</h2>
+<h3>1.1 From Three Levels to Four</h3>
+<p>The first step in understanding PostgreSQL is to understand the object hierarchy in each system. MySQL typically has three levels—instance, database, and table. PostgreSQL adds a schema layer between database and table, creating four levels:</p>
+<ul class="comparison-list">
+<li><strong>instance</strong> <span class="arrow">→</span> <strong>cluster / instance</strong><br>Manages a collection of databases</li>
+<li><strong>database</strong> <span class="arrow">→</span> <strong>database or schema</strong><br>The appropriate mapping depends on transaction, permission, and isolation requirements</li>
+<li><strong>no separate equivalent</strong> <span class="arrow">→</span> <strong>schema</strong><br>A namespace within a database</li>
+<li><strong>table</strong> <span class="arrow">→</span> <strong>table</strong><br>Every table must belong to a schema</li>
+</ul>
+<p>Objects such as indexes, sequences, types, and functions also belong to a schema. A PostgreSQL database can contain multiple schemas, and different schemas can contain tables with the same name, such as <code>account.users</code> and <code>audit.users</code>.</p>
+<p>This additional layer directly changes how you divide a system into business domains, because a PostgreSQL connection can access only one database and cannot perform a cross-database JOIN. If two modules need to be queried and modified within the same transaction, place them in different schemas of the same database. You can certainly split them into multiple databases, but cross-database access then requires <code>postgres_fdw</code>, <code>dblink</code>, or multiple application-level connections.</p>
+<p>A more practical way to decide between databases and schemas in PostgreSQL is:</p>
+<ul>
+<li>If you need cross-module transactions and JOINs, prefer multiple schemas in the same database.</li>
+<li>If you need strong isolation or independent operations, consider separate databases.</li>
+<li>Do not create many PostgreSQL databases merely because you are accustomed to separating business domains with databases in MySQL.</li>
+</ul>
+<h3>1.2 <code>public</code> Is Only the Default Schema</h3>
+<p>After creating a database, you will usually see a schema named <code>public</code>. It is not a database; it is merely the default namespace.</p>
+<p>When you write <code>SELECT * FROM users</code> without specifying a schema, PostgreSQL searches the entries in <code>search_path</code> in order:</p>
+<pre><code class="language-sql">SHOW search_path;
+-- &quot;$user&quot;, public
+</code></pre>
+<p>This is convenient, but it also means that the table accessed by a SQL statement depends on session state. Production code is safer when it explicitly uses names such as <code>app.users</code> instead of relying on the search path.</p>
+<h3>1.3 Taking a Look: Comparing <code>psql</code> with the MySQL CLI</h3>
+<p>The most intuitive way to understand these levels is to connect and inspect them. Docker can quickly provide a development instance:</p>
+<pre><code class="language-bash">docker run --name pg-dev \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=shop \
+  -p 5432:5432 \
+  -d postgres:18
+</code></pre>
+<p>The connection string resembles its MySQL counterpart, and <code>psql</code> accepts it directly:</p>
+<pre><code class="language-bash">psql &quot;postgresql://postgres:postgres@localhost:5432/shop&quot;
+</code></pre>
+<p><code>psql</code> is probably the first unfamiliar part of moving from MySQL. In the MySQL client, <code>SHOW DATABASES</code>, <code>USE shop</code>, <code>SHOW TABLES</code>, and <code>DESC users</code> are all SQL statements that run with a trailing semicolon. In <code>psql</code>, their counterparts are client commands beginning with a backslash, so your old muscle memory produces a syntax error.</p>
+<p>Here is a comparison of common commands:</p>
+<ul class="comparison-list">
+<li><strong>List databases</strong> — <code>SHOW DATABASES</code><br><em><code>psql</code>:</em> <code>\l</code></li>
+<li><strong>Switch databases</strong> — <code>USE shop</code><br><em><code>psql</code>:</em> <code>\c shop</code>, which actually reconnects</li>
+<li><strong>List tables</strong> — <code>SHOW TABLES</code><br><em><code>psql</code>:</em> <code>\dt</code></li>
+<li><strong>Describe a table</strong> — <code>DESC users</code><br><em><code>psql</code>:</em> <code>\d app.users</code></li>
+<li><strong>List users</strong> — Query <code>mysql.user</code><br><em><code>psql</code>:</em> <code>\du</code></li>
+<li><strong>Show the current connection</strong> — <code>SELECT CONNECTION_ID()</code><br><em><code>psql</code>:</em> <code>SELECT pg_backend_pid()</code></li>
+<li><strong>Display expanded results</strong> — <code>\G</code><br><em><code>psql</code>:</em> <code>\x</code></li>
+</ul>
+<p>These commands may look arbitrary, but they follow a pattern: <code>d</code> means describe, followed by the first letter of the object type. Thus <code>\dt</code> lists tables, <code>\di</code> indexes, <code>\dn</code> schemas, and <code>\df</code> functions. Remember that pattern instead of memorizing every command; <code>\?</code> lists them all.</p>
+<p>Also remember that backslash commands are parsed by the <code>psql</code> client, not by PostgreSQL as SQL. Applications must query <code>information_schema</code> or <code>pg_catalog</code> for metadata; the database will not recognize a <code>\d</code> command sent through an application connection.</p>
+<hr>
+<h2>2. Connection Model: One Connection, One Process</h2>
+<ul class="comparison-list">
+<li><strong>What one connection represents</strong><br><em>MySQL:</em> One thread<br><em>PostgreSQL:</em> One independent backend process</li>
+<li><strong>Connection overhead</strong><br><em>MySQL:</em> Relatively low; thousands of concurrent connections are not unusual<br><em>PostgreSQL:</em> Every process has its own memory and scheduling cost</li>
+<li><strong>Application-side connection pool</strong><br><em>MySQL:</em> Standard practice<br><em>PostgreSQL:</em> Standard practice, but pool sizes must follow a global budget</li>
+<li><strong>External connection pool</strong><br><em>MySQL:</em> Rarely needed<br><em>PostgreSQL:</em> Usually added as another layer at large connection scales</li>
+</ul>
+<p>A global budget means that the pool sizes of all application instances, plus connections needed by operations, monitoring, and background jobs, must remain within <code>max_connections</code>, with spare capacity reserved for administrators. There is no universal formula such as “twice the CPU core count” for pool sizing. Determine it through load testing while observing connection-acquisition waits, CPU, I/O, lock contention, query latency, and throughput.</p>
+<p>When connection counts grow, you also need to know who owns each connection. Application connection strings should include an identifiable <code>application_name</code>:</p>
+<pre><code class="language-text">postgresql://user:password@localhost:5432/shop?application_name=order-api
+</code></pre>
+<p>It appears in <code>pg_stat_activity</code>, allowing you to identify the service behind a problematic connection while investigating slow queries and lock waits.</p>
+<p>Finally, if you add an external pooler such as PgBouncer, remember that its commonly used transaction-pooling mode binds a backend connection only for the duration of one transaction. Anything expected to persist across transactions is unreliable—including session state set by <code>SET</code> (such as <code>search_path</code>), temporary tables, and <code>currval()</code>. Use <code>SET LOCAL</code> and <code>RETURNING</code> instead.</p>
+<hr>
+<h2>3. Authentication and Authorization: Roles Only, with Privileges Declared in Advance</h2>
+<p>PostgreSQL does not distinguish between separate “user” and “role” object types; it has roles only. The <code>LOGIN</code> attribute determines whether a role can log in, and <code>CREATE USER</code> is merely an alias for <code>CREATE ROLE ... LOGIN</code>. Unlike MySQL’s <code>&#39;user&#39;@&#39;host&#39;</code>, a PostgreSQL role does not include a source host. Source addresses, databases, users, and authentication methods are managed through <code>pg_hba.conf</code> or a cloud database’s access controls.</p>
+<p>A common design separates object ownership from application access: a non-login owner owns all tables, while the application account receives only read and write privileges.</p>
+<pre><code class="language-sql">CREATE ROLE shop_owner NOLOGIN;
+CREATE ROLE shop_app LOGIN PASSWORD &#39;replace-me&#39;;
+
+CREATE SCHEMA app AUTHORIZATION shop_owner;
+
+GRANT USAGE ON SCHEMA app TO shop_app;
+GRANT SELECT, INSERT, UPDATE, DELETE
+ON ALL TABLES IN SCHEMA app TO shop_app;
+</code></pre>
+<p>There is an easy trap here: <code>ON ALL TABLES</code> affects only tables that exist when the statement runs. Tables created later do not automatically inherit those privileges. To grant privileges on future objects, declare them in advance with <code>ALTER DEFAULT PRIVILEGES</code>. Crucially, the rule is matched according to who creates the objects:</p>
+<pre><code class="language-sql">ALTER DEFAULT PRIVILEGES FOR ROLE shop_owner IN SCHEMA app
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO shop_app;
+</code></pre>
+<p>In other words, subsequent tables must be created as <code>shop_owner</code> for this declaration to apply.</p>
+<hr>
+<h2>4. Data Types: Not Simple One-to-One Replacements</h2>
+<p>Most MySQL types have PostgreSQL counterparts. These can be carried over without much thought:</p>
+<ul class="comparison-list">
+<li><strong><code>TINYINT</code> / <code>SMALLINT</code></strong> <span class="arrow">→</span> <code>smallint</code></li>
+<li><strong><code>INT</code> / <code>BIGINT</code></strong> <span class="arrow">→</span> <code>integer</code> / <code>bigint</code></li>
+<li><strong><code>FLOAT</code> / <code>DOUBLE</code></strong> <span class="arrow">→</span> <code>real</code> / <code>double precision</code></li>
+<li><strong><code>TEXT</code> / <code>LONGTEXT</code></strong> <span class="arrow">→</span> <code>text</code></li>
+<li><strong><code>DATE</code> / <code>TIME</code></strong> <span class="arrow">→</span> <code>date</code> / <code>time</code></li>
+<li><strong><code>BLOB</code></strong> <span class="arrow">→</span> <code>bytea</code></li>
+</ul>
+<p>The remaining types deserve closer inspection before migration:</p>
+<ul class="comparison-list">
+<li><strong><code>BIGINT AUTO_INCREMENT</code></strong> <span class="arrow">→</span> <strong><code>bigint GENERATED BY DEFAULT AS IDENTITY</code></strong><br>Backed by an independent sequence object</li>
+<li><strong><code>INT UNSIGNED</code></strong> <span class="arrow">→</span> <strong><code>bigint</code> with a <code>CHECK</code> limiting its range</strong><br>There are no unsigned integers; using <code>integer</code> halves the available range, while <code>BIGINT UNSIGNED</code> must fall back to <code>numeric(20, 0)</code></li>
+<li><strong><code>TINYINT(1)</code> / <code>BOOL</code></strong> <span class="arrow">→</span> <strong><code>boolean</code></strong><br>Accepts only <code>true</code>, <code>false</code>, and <code>NULL</code>; integers are not implicitly converted, so <code>VALUES (1)</code> raises a type error</li>
+<li><strong><code>DECIMAL(m, n)</code></strong> <span class="arrow">→</span> <strong><code>numeric(m, n)</code></strong><br>Do not omit precision in either system: bare <code>DECIMAL</code> in MySQL means <code>DECIMAL(10, 0)</code> and discards fractional digits, while bare <code>numeric</code> in PostgreSQL has arbitrary precision</li>
+<li><strong><code>VARCHAR(n)</code></strong> <span class="arrow">→</span> <strong><code>varchar(n)</code> or <code>text</code></strong><br>They have the same performance; the value of <code>varchar(n)</code> is expressing a business constraint, not being “shorter and faster”</li>
+<li><strong><code>DATETIME</code> / <code>TIMESTAMP</code></strong> <span class="arrow">→</span> <strong><code>timestamp</code> / <code>timestamptz</code></strong><br>The dividing line is “wall-clock time” versus an “absolute point in time”</li>
+<li><strong><code>JSON</code></strong> <span class="arrow">→</span> <strong><code>jsonb</code></strong><br><code>json</code> stores only text; <code>jsonb</code> supports comparison, search, and GIN indexes</li>
+<li><strong><code>ENUM(...)</code></strong> <span class="arrow">→</span> <strong><code>text</code> with a <code>CHECK</code>, or a native enum</strong><br>Adding or removing values from a native enum changes the type definition, making it unsuitable for frequently changing business states</li>
+<li><strong>UUID stored as <code>CHAR(36)</code></strong> <span class="arrow">→</span> <strong>Native <code>uuid</code></strong><br>For primary keys, prefer time-ordered UUIDv7 over fully random v4</li>
+<li><strong>no equivalent</strong> <span class="arrow">→</span> <strong><code>array</code>, <code>range</code>, <code>inet</code>, <code>tsvector</code>, and others</strong><br>Useful, but not substitutes for sound table design</li>
+</ul>
+<p>Three areas deserve additional explanation.</p>
+<h3>4.1 Identity Guarantees Uniqueness, Not Continuity</h3>
+<p><code>BY DEFAULT</code> permits explicitly supplied IDs and behaves more like <code>AUTO_INCREMENT</code>. <code>GENERATED ALWAYS</code> is stricter: explicitly inserting a value requires <code>OVERRIDING SYSTEM VALUE</code>, a difference that becomes especially visible during bulk imports. The <code>bigserial</code> commonly found in older code still works, but it is a historical shorthand for “column + sequence + default.” Prefer the SQL-standard identity syntax for new tables.</p>
+<p>More importantly, adjust your expectations of the ID itself. Identity is backed by an independent sequence object. Failed inserts, transaction rollbacks, <code>ON CONFLICT</code>, caching, and crashes can all consume sequence values:</p>
+<blockquote>
+<p>Auto-incrementing IDs guarantee uniqueness, not continuity, and they cannot precisely represent transaction commit order.</p>
+</blockquote>
+<h3>4.2 The Boundary Between <code>timestamp</code> and <code>timestamptz</code></h3>
+<p><code>timestamp</code> (fully, <code>timestamp without time zone</code>) stores a “wall-clock time” and does not represent a unique instant on the global timeline. <code>timestamptz</code> (fully, <code>timestamp with time zone</code>) stores an absolute point in time, converting input and output according to the session time zone. Note that it does not retain the original time-zone name: after writing <code>2026-07-24 09:00 Asia/Shanghai</code>, the database stores the corresponding instant. Reading it under a different <code>TimeZone</code> changes the displayed value.</p>
+<p>As a rule of thumb, MySQL <code>TIMESTAMP</code> is closer to <code>timestamptz</code>, while <code>DATETIME</code> is closer to <code>timestamp</code>, but every column must ultimately be evaluated according to its business semantics. Order creation and payment times should use <code>timestamptz</code>. Birthdays, “opens daily at 09:00,” and future events at a particular location may require <code>date</code>, <code>time</code>, <code>timestamp</code>, or even a separately stored IANA time-zone name such as <code>Asia/Shanghai</code>. For fields modeled according to local-time semantics, remember to test duplicated and nonexistent local times around DST transitions.</p>
+<p>Choosing the right type is only the first step. Absolute timestamps must remain consistent throughout the entire path: configure database connections with <code>TimeZone=UTC</code>, use ISO 8601 values with offsets in APIs, store values as <code>timestamptz</code>, and convert them to the user’s time zone only in the presentation layer.</p>
+<p>MySQL’s <code>ON UPDATE CURRENT_TIMESTAMP</code> also has no PostgreSQL equivalent. To update <code>updated_at</code> automatically, either create a trigger or assign it explicitly in every <code>UPDATE</code>.</p>
+<h3>4.3 <code>jsonb</code> and Several Types MySQL Does Not Have</h3>
+<p><code>json</code> stores the original input text, preserving whitespace and key order; <code>jsonb</code> stores a parsed binary structure. A MySQL <code>JSON</code> column should usually become <code>jsonb</code>, because only <code>jsonb</code> supports containment checks and GIN indexes:</p>
+<pre><code class="language-sql">SELECT *
+FROM app.orders
+WHERE attributes @&gt; &#39;{&quot;channel&quot;: &quot;ios&quot;}&#39;::jsonb;
+
+CREATE INDEX orders_attributes_gin_idx
+ON app.orders USING gin (attributes);
+</code></pre>
+<p>But JSONB is not an excuse to avoid designing a schema. Stable data that is frequently filtered, constrained, or related to other data should still be modeled as ordinary columns.</p>
+<p>The same restraint applies to the types at the end of the table that lack MySQL equivalents: they are worth using, but not as shortcuts around proper modeling. UUIDv7 is recommended for primary keys because fully random v4 values scatter inserts across the index, a cost familiar to most MySQL developers. Recent PostgreSQL versions include <code>uuidv7()</code>; with older versions, generate it in the application. Arrays suit small, clearly bounded sets such as tags and permissions, but should not replace normal one-to-many relationships. Range types represent intervals and, together with exclusion constraints, can express “overlap is forbidden,” as the next section demonstrates.</p>
+<hr>
+<h2>5. Constraints: Let the Database Guarantee Correctness</h2>
+<p>Both systems support <code>PRIMARY KEY</code>, <code>UNIQUE</code>, <code>FOREIGN KEY</code>, <code>CHECK</code>, and <code>NOT NULL</code> with largely identical syntax. The main differences are:</p>
+<ul class="comparison-list">
+<li><strong><code>NULL</code> under <code>UNIQUE</code></strong><br><em>MySQL:</em> Multiple <code>NULL</code> values are allowed, with no way to change the behavior<br><em>PostgreSQL:</em> The default is the same, but <code>NULLS NOT DISTINCT</code> can make <code>NULL</code> values conflict</li>
+<li><strong>Uniqueness for only some rows</strong><br><em>MySQL:</em> No corresponding syntax<br><em>PostgreSQL:</em> A conditional unique index: <code>CREATE UNIQUE INDEX ... WHERE ...</code></li>
+<li><strong>Indexes on foreign-key columns</strong><br><em>MySQL:</em> Created automatically by InnoDB<br><em>PostgreSQL:</em> Not created automatically; you must add them</li>
+<li><strong>Exclusion constraints</strong><br><em>MySQL:</em> Cannot be declared<br><em>PostgreSQL:</em> <code>EXCLUDE</code> expresses that no two rows may simultaneously satisfy a set of conditions</li>
+</ul>
+<p>One easily forgotten detail is the same in both systems: a <code>CHECK</code> passes when its expression evaluates to either <code>TRUE</code> or <code>NULL</code>. Consequently, <code>CHECK (amount &gt;= 0)</code> does not prevent <code>NULL</code>; add <code>NOT NULL</code> if null values are forbidden.</p>
+<h3>5.1 Uniqueness Can Be Conditional</h3>
+<p>To make <code>NULL</code> values conflict with one another, simply declare <code>UNIQUE NULLS NOT DISTINCT (provider, external_id)</code>.</p>
+<p>A more common requirement is uniqueness only for rows satisfying a condition. With soft deletion, an ordinary UNIQUE constraint cannot express “an email address can belong to only one account that has not been deleted,” but a conditional unique index can:</p>
+<pre><code class="language-sql">CREATE UNIQUE INDEX users_active_email_uq
+ON app.users (lower(email))
+WHERE deleted_at IS NULL;
+</code></pre>
+<p>Only rows where <code>deleted_at IS NULL</code> enter the index. Soft-deleted records automatically leave the uniqueness check, allowing the same email address to register again. Indexing <code>lower(email)</code> also makes uniqueness case-insensitive.</p>
+<h3>5.2 <code>EXCLUDE</code>: A Constraint MySQL Cannot Declare</h3>
+<p>Another class of constraint has no MySQL equivalent: preventing reservation periods for the same room from overlapping.</p>
+<pre><code class="language-sql">CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+CREATE TABLE app.reservations (
+    id          bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+    room_id     bigint NOT NULL,
+    during      tstzrange NOT NULL,
+    EXCLUDE USING gist (
+        room_id WITH =,
+        during WITH &amp;&amp;
+    )
+);
+</code></pre>
+<p>This declares that no two rows may have both the same room number and overlapping time ranges. Unlike “check for an overlap, then insert,” it genuinely guarantees correctness under concurrency. Section 7 explains why a query cannot provide the same protection.</p>
+<h3>5.3 Foreign-Key Columns Are Not Indexed Automatically</h3>
+<p>When InnoDB creates a foreign key, it also creates an index on the referencing columns in the child table. PostgreSQL does not. This is easy to overlook because the foreign key still works without an index. However, when the parent table executes a <code>DELETE</code> or <code>UPDATE</code>, PostgreSQL must scan the child table for referencing rows. Frequent changes to parent rows can therefore accumulate scan overhead and lock waits.</p>
+<p>In practice, you need not create a dedicated index for every foreign key. It is enough for the foreign-key column to be the first column of a composite index. For example, an index on the orders table beginning with <code>user_id</code> can support both referential checks and queries for a user’s orders.</p>
+<p>Conversely, primary keys and UNIQUE constraints already have indexes. Do not create duplicate indexes on the same columns.</p>
+<hr>
+<h2>6. Writing SQL: CRUD and Dialect Differences</h2>
+<p>The following examples use <code>$1</code> and <code>$2</code> as parameter placeholders, following the PostgreSQL server protocol. The actual syntax in an application depends on the driver or ORM; some Python drivers, for example, use <code>%s</code>.</p>
+<h3>6.1 Retrieve Written Values with <code>RETURNING</code></h3>
+<p>MySQL applications often call <code>LAST_INSERT_ID()</code> after an insert. PostgreSQL can directly return identity values, defaults, and columns modified by triggers:</p>
+<pre><code class="language-sql">INSERT INTO app.users (email, display_name)
+VALUES ($1, $2)
+RETURNING id, email, created_at;
+</code></pre>
+<p><code>RETURNING</code> also applies to updates and deletes:</p>
+<pre><code class="language-sql">UPDATE app.orders
+SET status = &#39;paid&#39;,
+    updated_at = now()
+WHERE id = $1
+  AND status = &#39;pending&#39;
+RETURNING id, status, updated_at;
+</code></pre>
+<p>The application can determine whether the state transition succeeded from whether a row was returned, without first querying and then updating.</p>
+<h3>6.2 <code>ON CONFLICT</code> Is More Explicit Than “Ignore All Errors”</h3>
+<p>The PostgreSQL counterpart to MySQL’s <code>ON DUPLICATE KEY UPDATE</code> is <code>INSERT ... ON CONFLICT</code>, but it requires an explicit conflict target that matches a unique constraint or unique index. For the earlier partial unique index on <code>app.users</code> involving <code>lower(email)</code> and a condition, both the expression and predicate must be specified:</p>
+<pre><code class="language-sql">INSERT INTO app.users (email, display_name)
+VALUES ($1, $2)
+ON CONFLICT ((lower(email))) WHERE deleted_at IS NULL
+DO UPDATE SET display_name = EXCLUDED.display_name
+RETURNING id, email, display_name;
+</code></pre>
+<p><code>ON CONFLICT DO NOTHING</code> ignores only the corresponding uniqueness or exclusion conflict. It is not equivalent to MySQL’s <code>INSERT IGNORE</code>, which may also downgrade certain invalid values, truncation problems, and constraint errors to warnings.</p>
+<p>Likewise, <code>ON CONFLICT DO UPDATE</code> is not equivalent to <code>REPLACE INTO</code>. MySQL <code>REPLACE</code> usually deletes the old row and inserts a new one, potentially triggering deletions, foreign-key cascades, and new default values. A PostgreSQL upsert updates the conflicting row. Before rewriting such SQL, confirm whether the business actually requires an “update” or a “delete followed by an insert.”</p>
+<h3>6.3 <code>UPDATE ... FROM</code> and <code>DELETE ... USING</code></h3>
+<p>MySQL’s <code>UPDATE ... JOIN</code> becomes <code>UPDATE ... FROM</code> in PostgreSQL, with the join condition in <code>WHERE</code>:</p>
+<pre><code class="language-sql">UPDATE app.orders AS o
+SET status = &#39;canceled&#39;,
+    updated_at = now()
+FROM app.users AS u
+WHERE u.id = o.user_id
+  AND u.deleted_at IS NOT NULL;
+</code></pre>
+<p>Joined deletion follows the same pattern, replacing <code>FROM</code> with <code>USING</code>.</p>
+<p>There are two differences from MySQL. First, ensure that each target row matches at most one source row. If <code>FROM</code> produces multiple matches, PostgreSQL chooses one arbitrarily, and you must not rely on the result. Second, the statement modifies only one target table; it is not equivalent to MySQL’s multi-table update or multi-table delete.</p>
+<h3>6.4 Differences in Common Functions and Expressions</h3>
+<p>Everyday SQL requires several common rewrites:</p>
+<ul class="comparison-list">
+<li><strong><code>IFNULL(value, default)</code></strong> <span class="arrow">→</span> <code>COALESCE(value, default)</code></li>
+<li><strong><code>GROUP_CONCAT(name ORDER BY name SEPARATOR &#39;,&#39;)</code></strong> <span class="arrow">→</span> <code>string_agg(name, &#39;,&#39; ORDER BY name)</code></li>
+<li><strong><code>DATE_FORMAT(created_at, &#39;%Y-%m-%d&#39;)</code></strong> <span class="arrow">→</span> <code>to_char(created_at, &#39;YYYY-MM-DD&#39;)</code></li>
+<li><strong><code>LIMIT offset, count</code></strong> <span class="arrow">→</span> <code>LIMIT count OFFSET offset</code></li>
+<li><strong><code>CAST(value AS type)</code></strong> <span class="arrow">→</span> Also uses <code>CAST</code>, or can be written as <code>value::type</code></li>
+</ul>
+<p>String comparison is the easiest difference to overlook. MySQL’s default collation is case-insensitive—the <code>ci</code> suffix in <code>utf8mb4_0900_ai_ci</code> means case-insensitive—so <code>WHERE email = &#39;Foo@example.com&#39;</code> can match a stored value of <code>foo@example.com</code>. PostgreSQL does not behave this way by default. <code>text</code> comparison is strictly case-sensitive, so the same SQL returns nothing:</p>
+<pre><code class="language-sql">-- Case-sensitive; a difference in letter case prevents a match
+SELECT id FROM app.users WHERE email = $1;
+
+-- Case-insensitive and able to use the lower(email) index
+SELECT id FROM app.users WHERE lower(email) = lower($1);
+</code></pre>
+<p>This is also why the earlier unique index on <code>app.users</code> indexes <code>lower(email)</code> rather than <code>email</code>. An alternative to wrapping both sides in <code>lower()</code> is changing the column to the <code>citext</code> type, which makes comparison itself case-insensitive at the cost of another extension dependency.</p>
+<p>Both systems provide <code>concat()</code>, but their <code>NULL</code> semantics differ. MySQL’s <code>concat(&#39;a&#39;, NULL)</code> returns <code>NULL</code>, whereas PostgreSQL ignores <code>NULL</code> and returns <code>&#39;a&#39;</code>. If you need null-propagating behavior, use the <code>||</code> operator, which makes the whole expression <code>NULL</code> when an operand is <code>NULL</code>.</p>
+<p>Integer division can silently change results. In MySQL, <code>SELECT 1 / 2</code> returns <code>0.5000</code>. In PostgreSQL, division between two integers remains integer division and returns <code>0</code>. Cast first when you need a fractional result: <code>1::numeric / 2</code>.</p>
+<p>The default sort order for <code>NULL</code> is also reversed. MySQL usually places <code>NULL</code> first in ascending order, while PostgreSQL places it last by default. For stable semantics, write <code>ORDER BY deleted_at ASC NULLS LAST</code> explicitly.</p>
+<h3>6.5 Batch Updates Cannot Use <code>LIMIT</code> Directly</h3>
+<p>PostgreSQL has no MySQL-style <code>UPDATE ... LIMIT</code> or <code>DELETE ... LIMIT</code>. A reliable approach first selects primary keys in a stable order and then updates them:</p>
+<pre><code class="language-sql">WITH batch AS (
+    SELECT id
+    FROM app.jobs
+    WHERE status = &#39;ready&#39;
+      AND run_at &lt;= now()
+    ORDER BY run_at, id
+    FOR UPDATE SKIP LOCKED
+    LIMIT 100
+)
+UPDATE app.jobs AS j
+SET status = &#39;running&#39;,
+    worker_id = $1,
+    started_at = now()
+FROM batch
+WHERE j.id = batch.id
+RETURNING j.id, j.payload;
+</code></pre>
+<p>This is also a minimal implementation of a concurrent job queue: multiple worker processes claim jobs simultaneously, and <code>SKIP LOCKED</code> skips rows already locked by another process.</p>
+<h3>6.6 Reduce Application Code with CTEs, Window Functions, and LATERAL</h3>
+<p>MySQL 8 supports these features too, but code migrated from MySQL often underuses them and instead pulls data into the application for computation.</p>
+<p>To query each user’s three most recent orders:</p>
+<pre><code class="language-sql">WITH ranked_orders AS (
+    SELECT o.*,
+           row_number() OVER (
+               PARTITION BY user_id
+               ORDER BY created_at DESC, id DESC
+           ) AS rn
+    FROM app.orders AS o
+)
+SELECT *
+FROM ranked_orders
+WHERE rn &lt;= 3;
+</code></pre>
+<p>Top-N queries, cumulative values, rankings, and adjacent-row calculations do not require loading the entire data set into application memory.</p>
+<p><code>LATERAL</code> allows a subquery on the right to reference rows on the left, making it useful for “one row per group”:</p>
+<pre><code class="language-sql">SELECT u.id,
+       u.email,
+       latest.id AS latest_order_id,
+       latest.amount
+FROM app.users AS u
+LEFT JOIN LATERAL (
+    SELECT o.id, o.amount
+    FROM app.orders AS o
+    WHERE o.user_id = u.id
+    ORDER BY o.created_at DESC, o.id DESC
+    LIMIT 1
+) AS latest ON true;
+</code></pre>
+<p>Combined with an index on <code>(user_id, created_at DESC, id DESC)</code>, this can execute such queries efficiently and avoid issuing one SQL statement per user in an application loop.</p>
+<hr>
+<h2>7. Transactions and Concurrency: Where Code Still Runs but Its Semantics Change</h2>
+<h3>7.1 Different Default Isolation Levels</h3>
+<p>This is one of the most easily overlooked differences:</p>
+<ul>
+<li>MySQL InnoDB usually defaults to <code>REPEATABLE READ</code>.</li>
+<li>PostgreSQL defaults to <code>READ COMMITTED</code>.</li>
+</ul>
+<p>Both can be reconfigured, so inspect the actual setting rather than relying on assumptions.</p>
+<p>Under PostgreSQL Read Committed, each statement receives a new snapshot when it begins. This means two successive queries of the same row within one transaction can return different results if another transaction commits an update between them. That does not happen under InnoDB Repeatable Read.</p>
+<p>Switching to Repeatable Read does not let you apply InnoDB experience directly. Both systems hold a fixed snapshot during the transaction, but they handle write conflicts very differently. InnoDB <code>UPDATE</code> and <code>DELETE</code> statements continue against a newer committed version. PostgreSQL instead fails with SQLSTATE <code>40001</code> if another transaction has modified and committed the target row. Serializable’s SSI detection returns the same error code.</p>
+<p>Therefore, using Repeatable Read or Serializable in PostgreSQL requires the application to catch <code>40001</code>, roll back, and retry the entire transaction from <code>BEGIN</code>. PostgreSQL Repeatable Read is fundamentally Snapshot Isolation and can still exhibit write skew, so do not treat it as Serializable.</p>
+<h3>7.2 Do Not Carry Over InnoDB Gap-Lock Assumptions</h3>
+<p>For locking range reads, updates, and deletes under Repeatable Read, InnoDB commonly uses next-key locks to lock records and the gaps between them, preventing inserts into the range.</p>
+<p>PostgreSQL has no equivalent ordinary gap lock. <code>SELECT ... FOR UPDATE</code> locks only rows that are actually returned. A query returning no rows does not mean that future inserts satisfying the condition are locked out.</p>
+<p>This is why Section 5 emphasized constraints. In PostgreSQL, constraints are not merely a supplement to application validation; they are a primary mechanism for concurrency correctness. If the business logic relies on “verify that no row exists, then insert,” replace it with:</p>
+<ul>
+<li>Database constraints such as UNIQUE or EXCLUDE.</li>
+<li><code>INSERT ... ON CONFLICT</code>.</li>
+<li>Serializable isolation with correct retries.</li>
+<li>An advisory lock when necessary, with a carefully designed lock key and lifecycle.</li>
+</ul>
+<p>Do not substitute a query result for a constraint.</p>
+<h3>7.3 <code>NOWAIT</code> and <code>SKIP LOCKED</code></h3>
+<p>In addition to the familiar <code>FOR UPDATE</code> and <code>FOR SHARE</code>, row locks support two modifiers. <code>NOWAIT</code> raises an error if the lock cannot be acquired immediately instead of waiting in a queue. <code>SKIP LOCKED</code> skips rows that are already locked. The latter deliberately returns an inconsistent view, which is suitable for work queues where any available worker may claim a job, but not for ordinary reports or account-balance queries.</p>
+<h3>7.4 Sequences Do Not Roll Back</h3>
+<p>Sequence values are not governed by transaction control. If a transaction inserts a row and then executes <code>ROLLBACK</code>, the allocated ID will usually not be reused by the next insert. Changes to sequence state made by <code>setval()</code> likewise are not undone when a transaction rolls back.</p>
+<p>If the business requires invoice numbers with absolutely no gaps, that is a business-numbering problem requiring serialization, auditing, and compensation. It cannot be solved directly with an identity primary key.</p>
+<h3>7.5 DDL Can Be Transactional, but It Still Takes Locks</h3>
+<p>PostgreSQL allows the following:</p>
+<pre><code class="language-sql">BEGIN;
+ALTER TABLE app.orders ADD COLUMN note text;
+UPDATE app.orders SET note = &#39;&#39;;
+COMMIT;
+</code></pre>
+<p>The whole operation can be rolled back on failure. MySQL 8.x atomic DDL primarily guarantees that each individual DDL statement completes atomically; it does not mean that DDL can be rolled back transactionally together with multiple DML statements.</p>
+<p>But being transactional does not mean being nonblocking, and not all DDL can run inside a transaction. The frequently used <code>CREATE INDEX CONCURRENTLY</code> on large tables is one exception. It avoids blocking normal writes for an extended period at the cost of taking longer and consuming more CPU and I/O, and it cannot run inside a transaction block (<code>VACUUM</code> and <code>CREATE DATABASE</code> cannot either). Migration scripts must treat it as a separate step. If it fails, it also leaves an invalid index that must be dropped before rebuilding.</p>
+<h3>7.6 Timeouts: Put Limits on Locks and Statements</h3>
+<p>PostgreSQL has several timeout parameters that are easy to confuse:</p>
+<ul>
+<li><code>lock_timeout</code>: the maximum time spent waiting for any single lock.</li>
+<li><code>statement_timeout</code>: the maximum execution time for an entire statement, including lock waits.</li>
+<li><code>transaction_timeout</code>: the maximum duration of a transaction from beginning to end, after which it is aborted.</li>
+<li><code>idle_in_transaction_session_timeout</code>: the maximum time a session may remain inactive after opening a transaction.</li>
+<li><code>deadlock_timeout</code>: how long to wait before starting deadlock detection, not an upper limit on lock waits.</li>
+</ul>
+<p>In practice, <code>lock_timeout</code> is usually shorter than <code>statement_timeout</code>, and both are shorter than the application request deadline. When a deadlock occurs, PostgreSQL aborts one of the transactions. Applications should use a consistent lock-acquisition order whenever possible.</p>
+<h3>7.7 Retry the Entire Transaction After an Error</h3>
+<p>After a statement fails inside an explicit PostgreSQL transaction, the transaction usually enters an aborted state. Subsequent statements receive <code>25P02</code>; you must execute <code>ROLLBACK</code> or roll back to a savepoint established in advance. This also determines retry granularity: only the entire transaction can be retried, not just the failed statement.</p>
+<p>Use PostgreSQL’s five-character SQLSTATE—not error text—to decide whether an error is retryable:</p>
+<ul class="comparison-list">
+<li><strong><code>23505</code></strong> — unique violation<br><em>Typical handling:</em> Return a conflict, or handle it according to explicit business semantics</li>
+<li><strong><code>23503</code></strong> — foreign key violation<br><em>Typical handling:</em> Return a data-relationship error</li>
+<li><strong><code>40001</code></strong> — serialization failure<br><em>Typical handling:</em> Retry the entire transaction from <code>BEGIN</code></li>
+<li><strong><code>40P01</code></strong> — deadlock detected<br><em>Typical handling:</em> Retry the entire transaction with a limit and backoff</li>
+<li><strong><code>55P03</code></strong> — lock not available<br><em>Typical handling:</em> Retry a limited number of times when appropriate for the contention scenario</li>
+<li><strong><code>57014</code></strong> — query canceled<br><em>Typical handling:</em> First determine whether the cause was a timeout, user cancellation, or an administrative operation</li>
+</ul>
+<p>Do not match error text such as “duplicate key value”; it can change with language, version, and context.</p>
+<p>Retries themselves require two disciplines: use a maximum attempt count, exponential backoff, and random jitter; and make side effects outside the database—HTTP calls, messages, files, and so on—idempotent, or use a transactional outbox.</p>
+<p>If the network disconnects around <code>COMMIT</code>, the client may be unable to tell whether the transaction committed. Blindly replaying the write is unsafe; you need a business idempotency key or a way to query the result.</p>
+<hr>
+<h2>8. Vacuum: The Lesson Every MySQL Developer Must Learn</h2>
+<h3>8.1 The Cost of Snapshots</h3>
+<p>The “snapshots” repeatedly discussed in the previous section become multiple row versions at the storage layer. The two systems retain old versions differently. InnoDB stores historical versions in the undo log and removes them through purge. PostgreSQL writes new versions directly into the table: an <code>UPDATE</code> appends a new tuple to the heap, and the old tuple becomes a dead tuple once it is no longer visible to any transaction. A <code>DELETE</code> likewise leaves a version awaiting reclamation.</p>
+<p>The consequence is that PostgreSQL’s garbage accumulates in the table itself, so something must collect it. That process is Vacuum, whose responsibilities include:</p>
+<ul>
+<li>Reclaiming space occupied by dead tuples for later reuse by the same table.</li>
+<li>Maintaining the visibility map so some queries can read only the index without visiting the table.</li>
+<li>Removing invalid references from indexes.</li>
+<li>Freezing old transaction IDs to prevent transaction ID wraparound.</li>
+</ul>
+<p><code>ANALYZE</code> gathers statistics that the query planner uses to estimate data distribution. Autovacuum automatically runs Vacuum and Analyze according to configured thresholds. It is not an optional background optimization; it is part of normal PostgreSQL operation.</p>
+<h3>8.2 Ordinary Vacuum Usually Does Not Shrink Files</h3>
+<p>Ordinary <code>VACUUM</code> primarily makes space reusable within the table; it usually does not immediately return file space to the operating system. After deleting a large amount of data, disk usage may therefore fail to decrease and may even continue growing—one of the most confusing behaviors for developers arriving from MySQL.</p>
+<p><code>VACUUM FULL</code> rewrites the entire table and shrinks its file, but it needs additional disk space and an <code>ACCESS EXCLUSIVE</code> lock. It should not be a routine scheduled task. When bloat appears, first determine why reclamation cannot keep up instead of running Full at fixed intervals.</p>
+<h3>8.3 Long-Running Transactions Prevent Old Versions from Being Reclaimed</h3>
+<p>As long as an old snapshot might still see a historical tuple, Vacuum cannot remove it. The two most common causes are long-running transactions and sessions that execute <code>BEGIN</code> but do not commit, remaining <code>idle in transaction</code>. Under MySQL, such sessions enlarge undo; under PostgreSQL, they directly stall garbage collection across the database.</p>
+<p>The most important application rule is therefore:</p>
+<blockquote>
+<p>Keep transactions as short as possible. Do not wait for user input, remote HTTP calls, message queues, or lengthy business computations inside a transaction.</p>
+</blockquote>
+<p>There should also be a safeguard outside the code. The <code>transaction_timeout</code> and <code>idle_in_transaction_session_timeout</code> settings from the previous section exist for exactly these cases, ensuring that a single runaway transaction cannot indefinitely hold back reclamation across the database.</p>
+<p>To find such transactions, query <code>pg_stat_activity</code> and sort by <code>xact_start</code> to see how long the oldest transaction has been open; the <code>state</code> column identifies <code>idle in transaction</code> sessions. To check whether reclamation is keeping up, inspect <code>n_dead_tup</code> and <code>last_autovacuum</code> in <code>pg_stat_user_tables</code>. Remember that <code>n_dead_tup</code> is only an estimate, not an exact measure of bloat.</p>
+<hr>
+<h2>9. Indexes and Query Optimization: Beyond B-Tree to the PostgreSQL Toolbox</h2>
+<h3>9.1 B-Tree Experience Still Applies</h3>
+<p>B-Tree remains the default index and supports equality, ranges, ordering, and <code>IS NULL</code>. Composite indexes still depend on their leftmost columns. Consider paginating through a user’s orders:</p>
+<pre><code class="language-sql">CREATE INDEX orders_user_created_idx
+ON app.orders (user_id, created_at DESC, id DESC)
+INCLUDE (status, amount);
+
+SELECT id, created_at, status, amount
+FROM app.orders
+WHERE user_id = $1
+ORDER BY created_at DESC, id DESC
+LIMIT 20;
+</code></pre>
+<p>InnoDB secondary-index entries automatically contain the primary key, but ordinary PostgreSQL secondary indexes provide no such guarantee. Here, <code>id</code> participates in sorting and determines the pagination position, so it must be an index key. The <code>status</code> and <code>amount</code> columns are needed only in the result and are attached with <code>INCLUDE</code>. This index does not suit querying all site-wide orders by <code>created_at</code> alone. An index containing a column does not mean every query involving that column can use it efficiently.</p>
+<h3>9.2 Three Highly Practical B-Tree Variants</h3>
+<p>An expression index allows queries such as <code>WHERE lower(display_name) = $1</code> to use an index without maintaining an additional redundant column:</p>
+<pre><code class="language-sql">CREATE INDEX users_display_name_lower_idx
+ON app.users (lower(display_name));
+</code></pre>
+<p>A partial index contains only rows satisfying a condition. It is useful when data is distributed very unevenly and queries care about only a small subset of statuses:</p>
+<pre><code class="language-sql">CREATE INDEX orders_pending_created_idx
+ON app.orders (created_at, id)
+WHERE status = &#39;pending&#39;;
+</code></pre>
+<p>The planner must be able to prove that the query condition implies the index predicate. With a parameterized condition such as <code>status = $1</code>, the planner may be unable to confirm that <code>$1</code> is always <code>&#39;pending&#39;</code>, so it may not use the partial index.</p>
+<p>Covering indexes are expressed with <code>INCLUDE</code>; the <code>orders_user_created_idx</code> from the previous subsection is one example. <code>INCLUDE</code> columns do not participate in searching, sorting, or uniqueness. They merely give an Index Only Scan the opportunity to obtain result values directly. Whether the scan can truly avoid visiting the table also depends on the visibility map discussed in the previous section, so “adding INCLUDE always eliminates table access” is false.</p>
+<h3>9.3 GIN, GiST, and BRIN Solve Different Problems</h3>
+<ul class="comparison-list">
+<li><strong>GIN</strong> — JSONB, arrays, full-text search<br><em>Characteristics:</em> An inverted index with powerful querying but higher write and build costs</li>
+<li><strong>GiST</strong> — Ranges, geometry, nearest-neighbor search<br><em>Characteristics:</em> An extensible framework whose capabilities depend on the operator class</li>
+<li><strong>BRIN</strong> — Very large time-series tables and columns highly correlated with physical order<br><em>Characteristics:</em> Very small but lossy, requiring rechecks</li>
+</ul>
+<p>Two earlier examples belong to these categories: the GIN index on <code>jsonb</code> and the GiST index underlying the exclusion constraint.</p>
+<p>BRIN is not merely “a general B-Tree that uses less space.” It can exclude large numbers of data blocks with a tiny index only when the table is sufficiently large and the indexed column is highly correlated with the physical insertion order—a continuously appended timestamp is the classic example.</p>
+<h3>9.4 Let Actual Execution Plans Speak</h3>
+<p>Plain <code>EXPLAIN</code> shows only the planner’s estimates. The truly useful approach adds <code>ANALYZE</code> and <code>BUFFERS</code> to execute the query:</p>
+<pre><code class="language-sql">EXPLAIN (ANALYZE, BUFFERS)
+SELECT *
+FROM app.orders
+WHERE user_id = 1
+ORDER BY created_at DESC, id DESC
+LIMIT 20;
+</code></pre>
+<p>Focus on three things: which node consumes most of the time, whether estimated row counts differ drastically from actual row counts, and whether data was found in cache or read from disk. Severe estimation errors usually mean statistics are stale or the data distribution violates the planner’s assumptions, which is also one of the most common causes of degraded execution plans.</p>
+<p>Remember that <code>cost</code> is the planner’s cost unit, not milliseconds. <code>EXPLAIN ANALYZE</code> really executes the statement, so take particular care with write operations.</p>
+<p>PostgreSQL has no built-in general-purpose query hints and therefore no MySQL-style <code>FORCE INDEX</code> for forcing a particular index. When asking “why didn’t it use the index?”, first verify that the query condition genuinely matches the index. Implicit type conversions, functions wrapped around columns, and incompatible collations can all prevent index use. Only then consider whether table size and selectivity make an index worthwhile.</p>
+<hr>
+<h2>10. Extensions: The Other Half of PostgreSQL’s Capabilities</h2>
+<p>The <code>btree_gist</code> used earlier is an extension. This is one of the greatest differences between PostgreSQL and MySQL: many tasks that require external components in MySQL are available in PostgreSQL through a single <code>CREATE EXTENSION</code>.</p>
+<p>Extensions are more than “built-in function libraries.” They can add types, operators, index access methods, background processes, and even hooks into the query planner. The previous section noted that PostgreSQL has no built-in query hints, but the <code>pg_hint_plan</code> extension adds them. Extensions can change nearly everything that core code can, so PostgreSQL’s practical capability boundary is much broader than its built-in feature list.</p>
+<h3>10.1 Extensions Are Database-Scoped</h3>
+<p>Installing an extension is simple—<code>CREATE EXTENSION IF NOT EXISTS pg_trgm</code> is enough—but two details are easy to miss.</p>
+<p>First, an extension is installed in <strong>one particular database</strong>, not across the entire instance. To use it in another database within the same instance, install it again. This follows the hierarchy described in Section 1: the types and functions added by an extension belong to a schema and therefore to a database.</p>
+<p>Second, installing extensions usually requires administrative privileges. Some extensions marked as trusted—such as <code>pg_trgm</code>, <code>btree_gist</code>, <code>citext</code>, and <code>pgcrypto</code>—can be installed by ordinary users who have permission to create objects, but many others still require a superuser. Extensions therefore belong in initialization scripts; applications should not create them on demand at runtime.</p>
+<p>Use <code>\dx</code> to see what is currently installed and query <code>pg_available_extensions</code> to see what can be installed on the instance.</p>
+<h3>10.2 Extension Categories Worth Knowing</h3>
+<ul class="comparison-list">
+<li><strong><code>pg_stat_statements</code></strong> — Aggregates call counts and execution time by SQL fingerprint<br><em>Typical MySQL approach:</em> Slow query log plus <code>performance_schema</code></li>
+<li><strong><code>pg_trgm</code></strong> — Makes <code>LIKE &#39;%keyword%&#39;</code> and similarity matching indexable<br><em>Typical MySQL approach:</em> Full-table scan or an ngram full-text index</li>
+<li><strong><code>citext</code></strong> — A case-insensitive text type<br><em>Typical MySQL approach:</em> The default collation is already case-insensitive</li>
+<li><strong><code>pgcrypto</code></strong> — Hashing, encryption, and decryption functions<br><em>Typical MySQL approach:</em> Implement in the application or use <code>AES_ENCRYPT</code></li>
+<li><strong><code>postgres_fdw</code></strong> — Queries tables in another database as though they were local<br><em>Typical MySQL approach:</em> The <code>FEDERATED</code> engine, which is rarely used</li>
+<li><strong><code>pg_cron</code></strong> — Scheduled tasks inside the database<br><em>Typical MySQL approach:</em> The <code>EVENT</code> scheduler</li>
+<li><strong><code>pgvector</code></strong> — A vector type and nearest-neighbor search<br><em>Typical MySQL approach:</em> Deploy a separate vector database</li>
+<li><strong><code>PostGIS</code></strong> — Comprehensive geospatial capabilities<br><em>Typical MySQL approach:</em> Built-in spatial types, with a large capability gap</li>
+<li><strong><code>TimescaleDB</code></strong> — Partitioning, compression, and preaggregation for time-series workloads<br><em>Typical MySQL approach:</em> Manual partitioning plus archival</li>
+</ul>
+<p><code>pg_stat_statements</code> is worth installing first. It must be preloaded and is usually configured by an administrator; managed databases often enable it by default. It aggregates call counts, total execution time, and average execution time by statement fingerprint, providing the entry point for the execution-plan analysis from the previous section. First use it to identify which statements deserve investigation, then run <code>EXPLAIN (ANALYZE, BUFFERS)</code> on specific statements. Focusing only on individually slow queries can easily miss statements that are fast per call but execute hundreds of thousands of times.</p>
+<p><code>pg_trgm</code> addresses a pain point familiar to MySQL developers. Because <code>LIKE &#39;%keyword%&#39;</code> has no usable prefix, a B-Tree cannot help, and both systems default to a full-table scan. <code>pg_trgm</code> splits strings into three-character fragments and builds a GIN index, allowing both fuzzy matching and <code>similarity()</code> ordering to use an index.</p>
+<p><code>pgvector</code> illustrates another point: PostgreSQL often uses extensions to absorb an entire new class of requirements. It adds a <code>vector</code> type and nearest-neighbor indexes, keeping embedding search in the business database and eliminating the need to synchronize a separate external vector store.</p>
+<h3>10.3 The Cost: Extensions Become Part of the Runtime Environment</h3>
+<p>Installing an extension is not as lightweight as adding a package dependency.</p>
+<p>Managed databases usually expose only an allowlist of extensions, and the list differs by cloud provider. Before making core functionality depend on an extension, confirm that the target environment supports it. Ask especially early about extensions with deeper integration, such as PostGIS, TimescaleDB, and pgvector.</p>
+<p>Extensions have their own versions. A major database upgrade may require <code>ALTER EXTENSION ... UPDATE</code>, and some extensions can even block an upgrade path. Their maintenance activity is worth checking during technology selection.</p>
+<p>One final rule: when built-in functionality is sufficient, do not introduce an extension. Use the built-in <code>gen_random_uuid()</code> to generate UUIDs instead of installing <code>uuid-ossp</code>; <code>jsonb</code> is enough for key-value storage, and <code>hstore</code> is now encountered mainly when maintaining legacy code.</p>
+<hr>
+<h2>11. Conclusion: Make MySQL Experience a Reference Point, Not a Constraint</h2>
+<p>Moving from MySQL to PostgreSQL does not require discarding all your existing experience.</p>
+<p>You can retain your understanding of relational modeling, transactional thinking, indexing fundamentals, constraints, and performance diagnosis through execution plans. What you must rebuild are the following default assumptions:</p>
+<ul class="comparison-list">
+<li><strong>A database is a schema</strong> <span class="arrow">→</span> Databases and schemas are different levels</li>
+<li><strong>One connection is one thread</strong> <span class="arrow">→</span> One connection is one process</li>
+<li><strong><code>AUTO_INCREMENT</code> is a column property</strong> <span class="arrow">→</span> Identity is backed by an independent sequence object</li>
+<li><strong><code>VARCHAR(255)</code> is a safe default</strong> <span class="arrow">→</span> Use <code>text</code> when there is no business-defined maximum</li>
+<li><strong><code>INSERT IGNORE</code> / <code>REPLACE</code></strong> <span class="arrow">→</span> <code>ON CONFLICT</code> has narrower, more explicit semantics</li>
+<li><strong>InnoDB defaults to RR</strong> <span class="arrow">→</span> PostgreSQL defaults to RC; concurrency semantics must be explicit</li>
+<li><strong>Range locks can prevent inserts</strong> <span class="arrow">→</span> PostgreSQL has no ordinary gap lock; rely on constraints, upserts, or Serializable</li>
+<li><strong>Old versions live in undo and are removed by purge</strong> <span class="arrow">→</span> Old versions remain in the table and are reclaimed by Vacuum</li>
+<li><strong>Indexes are essentially all B-Trees</strong> <span class="arrow">→</span> Choose B-Tree, GIN, GiST, or BRIN according to operators and data distribution</li>
+<li><strong>Add an external component when the database falls short</strong> <span class="arrow">→</span> Fuzzy matching, geospatial, vector, and many other capabilities have corresponding extensions</li>
+</ul>
+<p>Individually, none of these differences looks large. The difficulty is that most do not produce errors: SQL still runs and code still reaches production. Problems emerge only when concurrency rises, data grows, or a long-running transaction gets stuck. The real task when moving from MySQL is therefore not memorizing syntax mappings. It is pausing whenever you think, “surely it naturally works this way,” and verifying whether that MySQL-derived assumption still holds in PostgreSQL.</p>
+<hr>
+<h2>References</h2>
+<ul>
+<li><a href="https://www.postgresql.org/docs/current/">PostgreSQL Documentation</a></li>
+<li><a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-isolation-levels.html">MySQL 8.4 Reference Manual: InnoDB Transaction Isolation Levels</a></li>
+</ul>
+</article>
+</body>
+</html>
