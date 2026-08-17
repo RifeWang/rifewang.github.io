@@ -61,4 +61,4 @@ Disallow: /
 User-agent: ZoominfoBot
 Disallow: /
 
-Sitemap: https://rifewang.github.io/sitemap.xml
+Sitemap: https://lingxu.pages.dev/sitemap.xml

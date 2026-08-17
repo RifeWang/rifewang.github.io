@@ -1,0 +1,3 @@
+# RSS/Atom feeds are not search-result pages.
+/*.xml
+  X-Robots-Tag: noindex
