@@ -144,7 +144,7 @@ disableComments = true
 
 从上图可以看到，在我的客户端处理一张图像可以在一秒内完成，当然实际耗时取决于硬件资源和图像大小。
 
-最后，如果你对此类主题感兴趣，可以阅读我的[其它相关文章](https://lingxu.pages.dev/categories/engineering/)。
+最后，如果你对此类主题感兴趣，可以阅读我的[其它相关文章](/categories/engineering/)。
 
 ---
 
