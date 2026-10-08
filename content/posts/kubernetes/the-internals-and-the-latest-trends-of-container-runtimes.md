@@ -301,7 +301,7 @@ runc v1.2 发布后，用户命名空间预计将在 Docker 和 Kubernetes 中�
 - **2017**：runc [v1.0-rc4](https://github.com/opencontainers/runc/releases/tag/v1.0.0-rc4) 获得对 rootless容器的初步支持。
 - **2018**：一些工具已经开始支持，[containerd](https://twitter.com/_AkihiroSuda_/status/953231819008180224)、[BuildKit](https://twitter.com/_AkihiroSuda_/status/955698849560997888)（`docker build`的后端）、[Docker](https://github.com/AkihiroSuda/docker/commit/588a4e91fc8cb99af040dcde795ba6722a162127)、[Podman](https://github.com/containers/podman/commit/19f5a504ffb1470991f331db412be456e41caab5)。[slirp4netns](https://github.com/rootless-containers/slirp4netns) 被我自己创建，以通过转换以太网来允许 SETUID-less 网络数据包发送至非特权套接字系统调用。
 - **2019**：Docker [v19.03](https://docs.docker.com/engine/release-notes/19.03/#19030) 发布，对 rootless 容器提供实验性支持。Podman [v1.1](https://github.com/containers/podman/releases/tag/v1.1.0) 也在今年发布，具有相同的功能，略领先于 Docker v19.03。
-- **2020**：Docker [v20.10](/nttlabs/docker-20-10-59cc4bd59d37) 发布，rootless 容器全面可用。
+- **2020**：Docker [v20.10](https://medium.com/nttlabs/docker-20-10-59cc4bd59d37) 发布，rootless 容器全面可用。
 
 ![](https://miro.medium.com/1*41peAl7SSpEZqQGpkRmmUw.png)
 
